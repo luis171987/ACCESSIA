@@ -3,7 +3,7 @@ android {
     namespace = "org.accessia.browser"
     compileSdk {
         version = release(37) {
-            minorApiLevel = 0
+            minorApiLevel = 2
         }
     }
     defaultConfig {

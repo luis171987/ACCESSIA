@@ -122,7 +122,10 @@ class MainActivity : Activity() {
     private fun setupExtension() {
         runtime.webExtensionController.installBuiltIn("resource://android/assets/accessia_ext/").accept(
             { extension ->
-                session.webExtensionController.setMessageDelegate(extension, object : WebExtension.MessageDelegate {
+                if (extension == null) {
+                    announce("Extensión no disponible: resultado vacío.")
+                } else {
+                    session.webExtensionController.setMessageDelegate(extension, object : WebExtension.MessageDelegate {
                     override fun onConnect(port: WebExtension.Port) {
                         contentPort = port
                         port.setDelegate(object : WebExtension.PortDelegate {
@@ -140,9 +143,10 @@ class MainActivity : Activity() {
                         })
                     }
                 }, "accessia")
-                announce("Extensión de accesibilidad instalada.")
+                    announce("Extensión de accesibilidad instalada.")
+                }
             },
-            { error -> announce("Extensión no disponible: ${error.message}") }
+            { error -> announce("Extensión no disponible: ${error?.message ?: "causa desconocida"}") }
         )
     }
 
