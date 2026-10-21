@@ -35,7 +35,7 @@ class AccessiaCommandGuideContract(unittest.TestCase):
             'private fun configureResponseVoice()',
             'private fun chooseResponseVoice()',
             'prefs.getString("tts_voice_name", null)',
-            'Normaliz', 'SpeechRecognizer', 'preserv',
+            'Normalizer.normalize(', 'SpeechRecognizer', 'Conservar puntos',
         ):
             self.assertIn(marker, source)
 
