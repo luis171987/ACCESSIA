@@ -759,7 +759,9 @@ class MainActivity : Activity() {
             command in setOf("ayuda", "comandos", "ver comandos", "mostrar comandos",
                 "abrir ayuda", "abrir comandos", "guia", "guia de comandos",
                 "lista de comandos", "que puedo decir", "que comandos puedo usar",
-                "informacion", "informacion de comandos", "manual") -> showCommandGuide()
+                "informacion", "informacion de comandos", "manual",
+                "dime los comandos", "cuales son los comandos", "abrir la guia",
+                "mostrar la guia", "abrir el manual", "lista de funciones") -> showCommandGuide()
 
             command in setOf("salir", "salir de accessia", "cerrar accessia",
                 "cerrar aplicacion", "cerrar navegador", "terminar navegador",
@@ -794,7 +796,7 @@ class MainActivity : Activity() {
                 "actualizar", "refrescar pagina") -> session.reload()
 
             command in setOf("historial", "mostrar historial", "ver historial",
-                "abrir historial", "muestrame el historial") ->
+                "abrir historial", "abrir el historial", "muestrame el historial") ->
                 showLinks("historial", "Historial")
 
             command in setOf("favoritos", "mostrar favoritos", "ver favoritos",
@@ -808,7 +810,8 @@ class MainActivity : Activity() {
             command in setOf("descargas", "mostrar descargas", "ver descargas",
                 "abrir descargas", "abrir las descargas", "ver las descargas",
                 "mostrar las descargas", "muestrame las descargas",
-                "gestor de descargas") -> showDownloads()
+                "gestor de descargas", "abrir el gestor de descargas",
+                "acceder a descargas", "ir a descargas") -> showDownloads()
 
             command in setOf("mostrar botones", "mostrar controles",
                 "mostrar controles flotantes", "abrir botones",
@@ -842,7 +845,13 @@ class MainActivity : Activity() {
             }
 
             command.startsWith("abrir ") || command.startsWith("abre ") -> {
-                val term = command.substringAfter(' ').trim()
+                // Conservar puntos, guiones y acentos en dominios como wikipedia.org.
+                val stripped = raw.trim().replace(
+                    Regex("^(?:(?:oye )?accessia[ ,]+)?(?:(?:quiero|puedes|podrias|por favor)\\s+)?" +
+                        "(?:abrir|abre)\\s+", RegexOption.IGNORE_CASE), ""
+                ).trim()
+                val term = if (stripped != raw.trim()) stripped
+                    else command.substringAfter(' ').trim()
                 if (term.isNotEmpty()) navigate(term)
                 else announce("Dime qué página quieres abrir.")
             }
