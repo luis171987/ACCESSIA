@@ -1,7 +1,11 @@
 plugins { id("com.android.application") }
 android {
     namespace = "org.accessia.browser"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 0
+        }
+    }
     defaultConfig {
         applicationId = "org.accessia.browser"
         minSdk = 28
