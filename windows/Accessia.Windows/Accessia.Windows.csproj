@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>Accessia.Windows</AssemblyName>
+    <Authors>GENAI INDUSTRIES; Luis Carlos Moreno Jiménez</Authors>
+    <Company>GENAI INDUSTRIES</Company>
+    <Description>ACCESSIA — Navegador Inteligente de Accesibilidad Universal</Description>
+    <Copyright>Copyright © 2026 GENAI INDUSTRIES — Luis Carlos Moreno Jiménez</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>

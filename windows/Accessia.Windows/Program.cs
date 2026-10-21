@@ -33,7 +33,7 @@ public sealed class MainWindow : Form
 
     public MainWindow()
     {
-        Text = "ACCESSIA — Navegador accesible (prototipo)";
+        Text = "ACCESSIA — GENAI INDUSTRIES (prototipo)";
         Width = 1100;
         Height = 800;
         MinimumSize = new System.Drawing.Size(750, 500);
@@ -61,6 +61,7 @@ public sealed class MainWindow : Form
         controls.Controls.Add(NewButton("Pausar", () => _ = Command("pausar")));
         controls.Controls.Add(NewButton("Continuar", () => _ = Command("continuar")));
         controls.Controls.Add(NewButton("Estudio automático", () => RequestAutoStudy()));
+        controls.Controls.Add(NewButton("Créditos", () => ShowCredits()));
         controls.Controls.Add(NewButton("Cerrar página", () => browser.CoreWebView2?.Navigate("about:blank")));
         voiceButton.Click += (_, _) => ToggleVoice();
         controls.Controls.Add(voiceButton);
@@ -84,7 +85,13 @@ public sealed class MainWindow : Form
     {
         try
         {
-            await browser.EnsureCoreWebView2Async();
+            // Each Windows account receives its own browser profile under LOCALAPPDATA.
+            var profilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "GENAI INDUSTRIES", "ACCESSIA", "WebView2");
+            Directory.CreateDirectory(profilePath);
+            var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: profilePath);
+            await browser.EnsureCoreWebView2Async(environment);
             browser.CoreWebView2.Settings.IsStatusBarEnabled = false;
             browser.CoreWebView2.Settings.AreDevToolsEnabled = false;
             browser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
@@ -164,6 +171,11 @@ public sealed class MainWindow : Form
         catch (Exception) { SetStatus("No se pudo ejecutar el comando en este documento."); }
     }
 
+    private void ShowCredits()
+    {
+        SetStatus("ACCESSIA, creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. Licencia MIT. Programa gratuito.");
+    }
+
     private void RequestAutoStudy()
     {
         var response = MessageBox.Show(this,
@@ -196,7 +208,7 @@ public sealed class MainWindow : Form
                 "pausar", "continuar", "reproducir", "cursor siguiente", "cursor anterior",
                 "seleccionar", "siguiente lección", "subir", "bajar", "leer página",
                 "activar estudio automático", "desactivar estudio automático",
-                "confirmar", "cancelar", "cerrar navegador", "cerrar página", "volver", "adelante", "ayuda"
+                "confirmar", "cancelar", "cerrar navegador", "cerrar página", "volver", "adelante", "ayuda", "acerca de", "créditos"
             });
             var grammar = new GrammarBuilder { Culture = info.Culture };
             grammar.Append(phrases);
@@ -246,6 +258,7 @@ public sealed class MainWindow : Form
         }
         switch (command)
         {
+            case "acerca de": case "créditos": ShowCredits(); break;
             case "cerrar navegador": Close(); break;
             case "cerrar página": browser.CoreWebView2?.Navigate("about:blank"); break;
             case "volver": if (browser.CoreWebView2?.CanGoBack == true) browser.CoreWebView2.GoBack(); break;

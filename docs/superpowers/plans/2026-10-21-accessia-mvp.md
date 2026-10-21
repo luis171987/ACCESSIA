@@ -1,5 +1,7 @@
 # ACCESSIA MVP Implementation Plan
 
+**Autoría oficial:** GENAI INDUSTRIES — Luis Carlos Moreno Jiménez — Santa Cruz de la Sierra, Bolivia.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Prototipo nativo para Android/Windows que controle videos y enlaces accesibles mediante instrucciones del usuario, con continuidad educativa optativa.
@@ -57,6 +59,6 @@
 ### Task 5: Despliegue y certificación
 **Files:** `.github/workflows/`, `docs/`
 **Interfaces:** build de PR + binarios de pre-release solo tras QA.
-- [ ] Crear repositorio público autenticado en GitHub.
+- [x] Crear repositorio público autenticado en GitHub (evidencia: registro Termux del autor 21/10/2026).
 - [ ] Configurar runners, firmas, SBOM y gestión de incidencias.
 - [ ] Ejecutar pruebas de usuario y auditoría WCAG/Play policies.

@@ -79,6 +79,7 @@ class MainActivity : Activity() {
         addAction(actions, "Siguiente control") { sendWebCommand("cursor siguiente") }
         addAction(actions, "Seleccionar") { sendWebCommand("seleccionar") }
         addAction(actions, "Estudio automático") { askAutoStudy() }
+        addAction(actions, "Créditos") { showCredits() }
         column.addView(actions)
         voiceButton = Button(this).apply {
             text = "Activar voz"
@@ -107,6 +108,10 @@ class MainActivity : Activity() {
         session.loadUri("https://www.wikipedia.org/")
         setupSpeech()
         setupTts()
+    }
+
+    private fun showCredits() {
+        announce("ACCESSIA, creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. Software gratuito de código abierto MIT.")
     }
 
     private fun addAction(row: LinearLayout, label: String, task: () -> Unit) {
@@ -270,6 +275,7 @@ class MainActivity : Activity() {
             return
         }
         when {
+            command == "acerca de" || command == "créditos" || command == "creditos" -> showCredits()
             command == "cerrar página" || command == "cerrar pestaña" -> {
                 contentPort = null
                 session.loadUri("about:blank")

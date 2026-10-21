@@ -1,6 +1,6 @@
 # ACCESSIA — Especificación de diseño (21 octubre 2026)
 
-**Responsable propuesto:** Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. **Visibilidad:** pública; **licencia:** MIT; **coste para usuarios:** gratuito. **Estado:** diseño inicial sujeto a validación con usuarios.
+**Creado por:** **GENAI INDUSTRIES**, de **Luis Carlos Moreno Jiménez**, Santa Cruz de la Sierra, Bolivia. **Visibilidad:** pública; **licencia:** MIT; **coste para usuarios:** gratuito. **Estado:** diseño inicial sujeto a validación con usuarios.
 
 ## Problema
 Personas con discapacidad motora no pueden o tienen dificultades para accionar botones, controles multimedia y enlaces de plataformas educativas. Un navegador que interprete órdenes de voz o pulsadores puede sustituir acciones motoras sin suplantar decisiones académicas.

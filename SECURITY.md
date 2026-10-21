@@ -1,9 +1,17 @@
-# Seguridad y divulgación responsable
+# Seguridad y divulgación responsable — ACCESSIA
 
-ACCESSIA es un prototipo. No se deben introducir contraseñas, datos bancarios ni información sensible en versiones no auditadas. No se instalan servicios ocultos, no se evade autentificación ni CAPTCHA. El motor puede actuar sobre elementos de la pestaña visible solo tras orden del usuario o consentimiento de continuidad limitado al documento.
+**Creado por GENAI INDUSTRIES**, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.
 
-## Notificar problemas
-Antes de publicar un fallo explotable, utiliza una incidencia privada o contacto del responsable del repositorio una vez exista. No adjuntes tokens, contraseñas ni datos de estudiantes. Para la versión pública final, habilitar **GitHub Private Vulnerability Reporting**.
+ACCESSIA es un prototipo, **NO** una aplicación de seguridad certificada. No se deben introducir datos financieros ni secretos de alto riesgo en esta versión no auditada. No evita CAPTCHA, DRM, autenticación ni controles antibot.
 
-## Requisitos previos a distribución
-Firmas verificables y release reproducible, política de privacidad revisada, SBOM, escaneo de dependencias, pruebas de permisos y validación WCAG con personas usuarias. La declaración `isAccessibilityTool=true` en Android solo procederá tras comprobar los criterios de Google Play y la finalidad real del producto.
+- [Política de credenciales y perfiles individuales](docs/03-seguridad/01-credenciales-por-usuario.md).
+- [Escaneo público y respuesta a incidentes](docs/03-seguridad/02-auditoria-y-respuesta.md).
+- [Diagrama de privacidad](docs/02-diagramas/06-credenciales-y-privacidad.md).
+
+## Informar vulnerabilidades
+
+Utilizar **Private Vulnerability Reporting** de GitHub si está habilitado. No publicar contraseñas, tokens, claves privadas ni datos de estudiantes en issues. Los hallazgos de seguridad críticos deben tratarse de forma confidencial y con revocación de secretos afectados.
+
+## Antes de distribuir
+
+Evaluar firma, SBOM, dependencia GeckoView, privacidad/voz, consentimiento, lectores de pantalla, pruebas de accesibilidad con personas usuarias y políticas de distribución. Ni la documentación ni las pruebas unitarias constituyen certificación.

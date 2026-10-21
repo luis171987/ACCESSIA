@@ -1,4 +1,7 @@
-# Android — prototipo Kotlin/GeckoView
+# Android — ACCESSIA, creado por GENAI INDUSTRIES
+
+Creador: Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.
+
 
 Compilar y ejecutar únicamente en entorno controlado. No se ha validado `assembleDebug` aquí porque no se dispone del SDK/Gradle de Android ni de acceso a Maven.
 

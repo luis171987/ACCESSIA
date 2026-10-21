@@ -1,53 +1,59 @@
 # ACCESSIA — Navegador Inteligente de Accesibilidad Universal
 
-**Proyecto gratuito y de código abierto (MIT).** Origen: Santa Cruz de la Sierra, Bolivia. Propuesto por Luis Carlos Moreno Jiménez. Repositorio previsto: `luis171987/ACCESSIA`.
+**Creado por GENAI INDUSTRIES**, de **Luis Carlos Moreno Jiménez**, Santa Cruz de la Sierra, Bolivia.
 
-> **ESTADO: prototipo de desarrollo — NO es una versión pública validada ni un producto certificado.**
-> No se han generado ni verificado APK/EXE. El código requiere builds y pruebas en Android/Windows.
+**Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
 
-ACCESSIA busca facilitar la navegación por Internet y la continuidad de cursos a personas con discapacidad motora. El estudiante mantiene el control de las actividades académicas.
+> **Estado: prototipo de desarrollo.** La publicación inicial del código se realizó, según el registro de Termux facilitado por el autor el 21/10/2026, en [luis171987/ACCESSIA](https://github.com/luis171987/ACCESSIA). Este documento NO acredita builds de APK/EXE, certificaciones, funcionamiento sin manos en dispositivos reales ni disponibilidad universal.
 
-## Qué incluye este repositorio
+ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
 
-- `shared/accessia.js`: motor de navegación DOM, foco accesible, control de video HTML5 y continuidad autorizada de lecciones.
-- `shared/tests/`: pruebas automáticas sin dependencias externas usando Node.js.
-- `shared/demo/`: demostración local, **no sustituye pruebas en plataformas educativas reales**.
-- `android/`: prototipo nativo Kotlin/GeckoView, comandos de voz mientras está en primer plano y extensión integrada.
-- `windows/`: prototipo nativo C#/Windows Forms/WebView2, botones accesibles y reconocimiento de voz si Windows tiene motor instalado.
-- `docs/`: arquitectura, limitaciones, planes de mejora y seguridad.
+## Acceso rápido y orden correlativo
 
-## Acciones principales
+| ID | Módulo | Carpeta técnica | Documentación/diagrama |
+|---|---|---|---|
+| M01 | Gestión, identidad y alcance | `docs/01-gobierno/` | [01 Identidad](docs/01-gobierno/01-identidad-y-licencia.md) |
+| M02 | Motor compartido de accesibilidad | `shared/` | [D03 Navegación](docs/02-diagramas/03-navegacion-dom.md) |
+| M03 | Cliente Android | `android/` | [D07 Plataformas](docs/02-diagramas/07-plataformas-y-datos.md) |
+| M04 | Cliente Windows | `windows/` | [D07 Plataformas](docs/02-diagramas/07-plataformas-y-datos.md) |
+| M05 | Pruebas y calidad | `shared/tests/`, `tools/tests/` | [D08 Integración continua](docs/02-diagramas/08-ci-cd-y-distribucion.md) |
+| M06 | Seguridad, privacidad y publicación | `docs/03-seguridad/`, `tools/`, `.github/` | [D06 Credenciales](docs/02-diagramas/06-credenciales-y-privacidad.md) |
 
-`cerrar página`, `cerrar navegador`, `pausar`, `continuar`, `reproducir`, `siguiente`, `anterior`, `seleccionar`, `bajar`, `subir`, `activar estudio automático`, `desactivar estudio automático`, `siguiente lección`.
+**[📚 ÍNDICE MAESTRO DE DOCUMENTOS Y 12 DIAGRAMAS](docs/00-INDICE-MAESTRO.md)** · [Mapa de carpetas](docs/01-gobierno/02-estructura-correlativa.md) · [Estado verificable](docs/ESTADO_ACTUAL.md) · [Guía de seguridad](docs/03-seguridad/01-credenciales-por-usuario.md).
 
-La función «estudio automático» requiere activación explícita en cada página. No adelanta videos, contesta evaluaciones ni elude restricciones de sitios o mecanismos antibots. Si la página parece una evaluación o no se identifica inequívocamente la continuación, se detiene.
+Las carpetas técnicas conservan nombres estándar (`.github`, `android/app/src/main`, `windows/`, `shared/`) para no romper las herramientas de compilación; su orden correlativo se expresa con los identificadores **M01–M06** y con documentos **D01–D12**, no con renombres artificiales incompatibles.
 
-## Pruebas verificables (sin SDK)
+## Características implementadas en el prototipo
+
+- Motor JavaScript compartido `shared/accessia.js`: foco, selección, video HTML5, continuidad explícita limitada al documento y bloqueo ante evaluaciones o navegación ambigua.
+- Android: fuente Kotlin/GeckoView, voz experimental en primer plano y controles accesibles.
+- Windows: fuente C#/WinForms/WebView2, reconocimiento de voz según motores disponibles, perfil del navegador separado por cuenta de Windows.
+- Demo educativa y pruebas unitarias Node. **Los seis agentes especializados son roles de arquitectura, no seis modelos autónomos implementados.**
+
+Comandos: `pausar`, `continuar`, `cursor siguiente`, `cursor anterior`, `seleccionar`, `activar estudio automático`, `desactivar estudio automático`, `cerrar página`, `cerrar navegador`, `acerca de` (créditos).
+
+## Pruebas locales
 
 ```bash
-cd shared
-node --test tests/*.test.js
+node --test shared/tests/*.test.js
+python3 -m unittest discover -s tools/tests -p 'test_*.py'
+python3 tools/check_public_secrets.py
 ```
 
-## Android (fuente)
+## Compilar
 
-Abrir `android/` con Android Studio que soporte AGP 9.0.1 y JDK 17. Configurar el SDK Android 36. Compilar `assembleDebug` con Gradle de versión compatible. El paquete GeckoView se descarga del Maven oficial de Mozilla; consultar `android/app/build.gradle.kts` para la versión elegida y actualizarla si es necesario. El micrófono exige permiso explícito. La escucha experimental funciona solo en primer plano, depende del servicio de reconocimiento disponible y **no garantiza manos libres continuo**.
+- **Android**: abrir `android/` con Android Studio compatible con AGP 9.0.1, JDK 17, Android SDK 36 y GeckoView. Consultar `android/README.md`.
+- **Windows**: Windows 10/11, .NET SDK 8, WebView2 Runtime; `dotnet build windows/Accessia.Windows/Accessia.Windows.csproj -c Release`. Consultar `windows/README.md`.
+- **GitHub Actions**: `.github/workflows/` ejecuta pruebas y compilaciones de desarrollo. Un artefacto no equivale a instalador auditado o firmado.
 
-## Windows (fuente)
+## Cuentas, claves y privacidad
 
-Abrir `windows/Accessia.Windows/Accessia.Windows.csproj` en Windows 10/11 con .NET SDK 8 y WebView2 Runtime; compilar con `dotnet build` y probar. El reconocimiento depende de un motor de idioma instalado en Windows; si no está disponible, la navegación por botones sigue operativa.
+**ACCESSIA no incluye contraseñas, usuarios de demostración compartidos, claves SSH privadas ni tokens de acceso.** Cada persona usa sus propias cuentas de los sitios que visita; ACCESSIA no solicita la contraseña de GitHub del creador. Los perfiles web quedan bajo las protecciones de la cuenta del sistema operativo (no se promete aislamiento total frente a malware o un sistema comprometido).
 
-## Publicación del código
+NUNCA agregues `.env` real, `*.pem`, `*.key`, `id_rsa`, archivos de sesión, cookies, logs de autenticación ni certificados de firma al repositorio. Antes de publicar ejecuta `python3 tools/check_public_secrets.py`, inspecciona las diferencias y revisa GitHub secret scanning. Consulta [la política de credenciales](docs/03-seguridad/01-credenciales-por-usuario.md).
 
-**No se ha creado el repositorio remoto ni se ha realizado push a GitHub desde esta conversación.** Para publicarlo como proyecto público, crear `ACCESSIA` en la cuenta `luis171987` con visibilidad `Public`, sin inicializar, y subir todos los archivos de este ZIP, o usar GitHub Desktop/CLI para `git push` con tu propia autenticación. Nunca incluyas tokens o credenciales en el repositorio.
+## Créditos y licencia
 
-## Referencias técnicas
+**ACCESSIA — creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.** Código fuente licenciado bajo **MIT**: ver [LICENSE](LICENSE). MIT permite modificar, redistribuir e incluso comercializar derivados; el repositorio oficial se ofrece gratuitamente. La licencia del código no confiere por sí misma derechos de uso sobre la marca **GENAI INDUSTRIES** ni garantiza registro marcario. Las dependencias de terceros conservan sus propias licencias.
 
-- Mozilla GeckoView: https://firefox-source-docs.mozilla.org/mobile/android/geckoview/
-- Microsoft WebView2: https://learn.microsoft.com/en-us/microsoft-edge/webview2/
-- W3C WCAG: https://www.w3.org/TR/WCAG22/
-- Cloudflare Verified Bots: https://developers.cloudflare.com/bots/concepts/bot/verified-bots/
-
-## Licencia
-
-MIT. Ver `LICENSE`. GeckoView, WebView2 y sus bibliotecas conservan sus propias licencias y avisos legales.
+**Contacto y reportes de seguridad:** ver [SECURITY.md](SECURITY.md). No envíes contraseñas, capturas de cuentas ni datos personales en incidencias públicas.

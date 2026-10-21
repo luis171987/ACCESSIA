@@ -1,3 +1,5 @@
 # Contribuir a ACCESSIA
 
-Se aceptan propuestas de accesibilidad, pruebas, traducciones y correcciones. No publiques datos sensibles, conversaciones privadas, grabaciones ni credenciales de estudiantes. Toda función de automatización académica debe conservar decisiones del usuario y respetar políticas de plataformas. Antes de proponer soporte para un sitio, documenta el consentimiento institucional y usa un entorno de pruebas.
+**Autoría original:** GENAI INDUSTRIES — Luis Carlos Moreno Jiménez — Santa Cruz de la Sierra, Bolivia.
+
+Bienvenidas mejoras de accesibilidad, pruebas y traducciones que mantengan la autonomía del estudiante. Respeta la [matriz de trazabilidad](docs/01-gobierno/03-matriz-trazabilidad.md) y actualiza el diagrama D correspondiente a cada cambio de flujo. No publiques claves, tokens, archivos de firma, datos personales, grabaciones privadas ni cuentas compartidas. Ejecuta el escaneo de secretos antes de subir cambios y documenta toda integración educativa con autorización explícita.

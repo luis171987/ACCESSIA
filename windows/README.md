@@ -1,4 +1,7 @@
-# Windows — ACCESSIA prototipo
+# Windows — ACCESSIA, creado por GENAI INDUSTRIES
+
+Creador: Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.
+
 
 Requiere Windows 10/11, Microsoft WebView2 Runtime y SDK .NET 8 para compilación.
 
