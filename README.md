@@ -1,10 +1,17 @@
 # ACCESSIA — Navegador Inteligente de Accesibilidad Universal
 
+<p align="center">
+  <img src="docs/assets/accessia-logo-oficial.png" alt="Logo oficial aprobado de ACCESSIA" width="540" />
+</p>
+
+<p align="center"><sub><strong>Creado por GENAI INDUSTRIES</strong> · Luis Carlos Moreno Jiménez · Santa Cruz de la Sierra, Bolivia</sub></p>
+
+
 **Creado por GENAI INDUSTRIES**, de **Luis Carlos Moreno Jiménez**, Santa Cruz de la Sierra, Bolivia.
 
 **Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
 
-> **Estado: prototipo de desarrollo.** La publicación inicial del código se realizó, según el registro de Termux facilitado por el autor el 21/10/2026, en [luis171987/ACCESSIA](https://github.com/luis171987/ACCESSIA). Este documento NO acredita builds de APK/EXE, certificaciones, funcionamiento sin manos en dispositivos reales ni disponibilidad universal.
+> **Estado: prototipo de desarrollo.** La APK debug del commit `d74f8f0` compiló en GitHub Actions y fue instalada en un Honor Magic 7 Lite el 21/10/2026. Se reportaron problemas de rendimiento y reconocimiento de voz. La actualización v0.2 está **pendiente de CI y validación de campo**; no constituye certificación de accesibilidad ni disponibilidad universal.
 
 ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
 
@@ -32,6 +39,17 @@ Las carpetas técnicas conservan nombres estándar (`.github`, `android/app/src/
 
 Comandos: `pausar`, `continuar`, `cursor siguiente`, `cursor anterior`, `seleccionar`, `activar estudio automático`, `desactivar estudio automático`, `cerrar página`, `cerrar navegador`, `acerca de` (créditos).
 
+## Mejoras propuestas en ACCESSIA v0.2 (rama de revisión)
+
+- Identidad oficial: logo original aprobado e icono del lanzador Android.
+- Interfaz nativa azul marino/cian, cabecera compacta, menú, botón flotante y controles desplegables opcionales.
+- Voz: errores de escucha más explicativos, reintentos controlados, idioma seleccionable y frases de búsqueda largas.
+- Funciones locales: favoritos, historial, limpieza de historial, recarga y comando `salir`.
+- Descargas: acceso al gestor de descargas Android. **Descargas automáticas desde GeckoView aún no implementadas.**
+- Inicio sin página remota precargada, para reducir la latencia percibida.
+
+[Plan de validación Android v0.2](docs/ACCESSIA_V02_PRUEBAS.md) · [Seguimiento funcional](https://github.com/luis171987/ACCESSIA/issues/1).
+
 ## Pruebas locales
 
 ```bash
@@ -42,7 +60,7 @@ python3 tools/check_public_secrets.py
 
 ## Compilar
 
-- **Android**: abrir `android/` con Android Studio compatible con AGP 9.0.1, JDK 17, Android SDK 36 y GeckoView. Consultar `android/README.md`.
+- **Android**: abrir `android/` con Android Studio compatible con AGP 9.4.0, JDK 17, Android SDK 37.2 y GeckoView Nightly fijado en Gradle. Consultar `android/README.md`.
 - **Windows**: Windows 10/11, .NET SDK 8, WebView2 Runtime; `dotnet build windows/Accessia.Windows/Accessia.Windows.csproj -c Release`. Consultar `windows/README.md`.
 - **GitHub Actions**: `.github/workflows/` ejecuta pruebas y compilaciones de desarrollo. Un artefacto no equivale a instalador auditado o firmado.
 

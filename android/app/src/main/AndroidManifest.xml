@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <application android:label="ACCESSIA" android:theme="@android:style/Theme.Material.Light.NoActionBar"
+    <queries>
+        <intent><action android:name="android.speech.RecognitionService" /></intent>
+    </queries>
+    <application android:label="ACCESSIA" android:icon="@drawable/accessia_icon" android:roundIcon="@drawable/accessia_icon" android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false" android:allowBackup="false">
         <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>
