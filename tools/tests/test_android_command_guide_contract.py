@@ -39,6 +39,11 @@ class AccessiaCommandGuideContract(unittest.TestCase):
         ):
             self.assertIn(marker, source)
 
+    def test_android_manifest_exposes_recognition_and_tts_services(self):
+        manifest = (ROOT / "android/app/src/main/AndroidManifest.xml").read_text()
+        self.assertIn("android.speech.RecognitionService", manifest)
+        self.assertIn("android.intent.action.TTS_SERVICE", manifest)
+
     def test_documentation_describes_actual_scope(self):
         guide = DOC.read_text()
         readme = README.read_text()
