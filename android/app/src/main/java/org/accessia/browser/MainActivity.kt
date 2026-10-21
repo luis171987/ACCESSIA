@@ -17,6 +17,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
 import android.speech.tts.UtteranceProgressListener
 import android.view.Gravity
 import android.view.View
@@ -36,6 +37,7 @@ import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoView
 import org.mozilla.geckoview.WebExtension
 import java.net.URLEncoder
+import java.text.Normalizer
 import java.util.Locale
 import kotlin.math.min
 
@@ -48,6 +50,7 @@ class MainActivity : Activity() {
     private lateinit var voiceButton: Button
     private lateinit var floatingButton: Button
     private lateinit var floatingPanel: LinearLayout
+    private lateinit var welcomePanel: LinearLayout
     private val handler = Handler(Looper.getMainLooper())
     private val prefs by lazy { getSharedPreferences("accessia_v02", MODE_PRIVATE) }
     private var contentPort: WebExtension.Port? = null
@@ -123,6 +126,7 @@ class MainActivity : Activity() {
                 setTextColor(Color.rgb(160, 221, 247))
             })
         }, LinearLayout.LayoutParams(0, -2, 1f))
+        heading.addView(actionButton("Ayuda") { showCommandGuide() }, LinearLayout.LayoutParams(dp(72), dp(48)))
         heading.addView(actionButton("⋯") { showMenu() }, LinearLayout.LayoutParams(dp(52), dp(48)))
         main.addView(heading)
 
@@ -173,8 +177,34 @@ class MainActivity : Activity() {
             addView(buttons)
         })
 
+        val pageHolder = FrameLayout(this)
         val webView = GeckoView(this).apply { contentDescription = "Página web de ACCESSIA" }
-        main.addView(webView, LinearLayout.LayoutParams(-1, 0, 1f))
+        pageHolder.addView(webView, FrameLayout.LayoutParams(-1, -1))
+        welcomePanel = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(24), dp(20), dp(24), dp(20))
+            setBackgroundColor(Color.rgb(244, 249, 252))
+            addView(TextView(context).apply {
+                text = "Bienvenido a ACCESSIA"
+                textSize = 23f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(navy)
+                gravity = Gravity.CENTER
+            })
+            addView(TextView(context).apply {
+                text = "Aquí puedes buscar, navegar por voz y aprender los comandos. " +
+                    "Di «ayuda» o pulsa el botón Guía de comandos."
+                textSize = 16f
+                setTextColor(Color.rgb(32, 60, 92))
+                gravity = Gravity.CENTER
+                setPadding(0, dp(18), 0, dp(18))
+            })
+            addView(actionButton("📖 Guía de comandos") { showCommandGuide() })
+            addView(actionButton("🎙 Activar micrófono") { toggleVoice() })
+        }
+        pageHolder.addView(welcomePanel, FrameLayout.LayoutParams(-1, -1))
+        main.addView(pageHolder, LinearLayout.LayoutParams(-1, 0, 1f))
 
         val bottom = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
@@ -246,6 +276,7 @@ class MainActivity : Activity() {
             ) {
                 if (!url.isNullOrBlank()) {
                     currentUrl = url
+                    welcomePanel.visibility = if (url == "about:blank") View.VISIBLE else View.GONE
                     if (!address.hasFocus()) address.setText(if (url == "about:blank") "" else url)
                     if (url.startsWith("https://")) remember("historial", url, 120)
                 }
@@ -268,7 +299,7 @@ class MainActivity : Activity() {
     }
 
     private fun showMenu() {
-        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma de voz", "Estudio automático", "Acerca de ACCESSIA", "Salir")
+        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta")
         AlertDialog.Builder(this).setTitle("Menú ACCESSIA").setItems(items) { _, n ->
             when (n) {
                 0 -> {
@@ -284,6 +315,8 @@ class MainActivity : Activity() {
                 5 -> askAutoStudy()
                 6 -> showCredits()
                 7 -> exitApp()
+                8 -> showCommandGuide()
+                9 -> chooseResponseVoice()
             }
         }.show()
     }
@@ -359,6 +392,158 @@ class MainActivity : Activity() {
             }.setNegativeButton("Cancelar", null).show()
     }
 
+    private fun showCommandGuide() {
+        val categories = arrayOf(
+            "🔎 Buscar y abrir sitios", "🧭 Navegar por páginas",
+            "⭐ Favoritos, historial y descargas", "🎙 Voz e interfaz",
+            "♿ Accesibilidad y vídeos", "🔐 Privacidad y límites"
+        )
+        val instructions = arrayOf(
+            """
+            Di: «buscar universidades de Santa Cruz con becas».
+            Di: «buscar en google accesibilidad para estudiantes».
+            Di: «abrir wikipedia.org».
+            También puedes escribir búsquedas largas en la barra superior.
+
+            Consejo: primero activa el micrófono. Espera a que aparezca
+            «Escuchando» y habla a un volumen normal, sin gritar.
+            """.trimIndent(),
+            """
+            «atrás» o «volver»
+            «adelante»
+            «recargar» o «actualizar página»
+            «cerrar página» (deja la portada visible)
+            «salir» o «cerrar navegador» (cierra ACCESSIA)
+
+            Los comandos de navegación funcionan sin abrir el menú.
+            """.trimIndent(),
+            """
+            «guardar en favoritos» (solo páginas HTTPS)
+            «ver favoritos»
+            «ver historial»
+            «abrir descargas» o «ver descargas»
+
+            El historial se puede borrar desde su ventana, con confirmación.
+            Descargas abre el administrador de Android. Esta versión
+            todavía no implementa todas las descargas desde GeckoView.
+            """.trimIndent(),
+            """
+            «ayuda», «mostrar comandos» o «guía de comandos»
+            «mostrar botones» o «mostrar controles flotantes»
+            «ocultar botones»
+            «desactivar voz»
+            «elegir voz» (escucha una muestra de cada voz disponible)
+            «idioma de voz» (idioma del reconocimiento)
+
+            También puedes cambiar estas opciones desde ⋯.
+            El reconocimiento requiere permiso de micrófono y un motor Android.
+            La voz de respuesta depende de las voces instaladas.
+            """.trimIndent(),
+            """
+            «cursor siguiente»
+            «cursor anterior»
+            «seleccionar»
+            «pausar» o «pausar vídeo»
+            «continuar» o «continuar vídeo»
+            «activar estudio automático»
+
+            Estas órdenes necesitan una página compatible con la
+            extensión de ACCESSIA. No funcionan en la portada vacía.
+            La continuidad educativa necesita confirmación; no resuelve
+            exámenes ni sortea restricciones.
+            """.trimIndent(),
+            """
+            ACCESSIA escucha solo mientras la app está visible y
+            se ha activado el micrófono. No conserva grabaciones de voz
+            desde esta función. El reconocimiento puede depender de
+            servicios del sistema y de Internet.
+
+            Si una orden falla, prueba desde el botón del menú y anota
+            la frase y el mensaje de error. «Ayuda» siempre es local.
+            """.trimIndent()
+        )
+        AlertDialog.Builder(this)
+            .setTitle("Guía de voz y funciones · ACCESSIA")
+            .setItems(categories) { _, index ->
+                AlertDialog.Builder(this)
+                    .setTitle(categories[index])
+                    .setMessage(instructions[index])
+                    .setPositiveButton("Entendido", null)
+                    .setNeutralButton("Más categorías") { _, _ -> showCommandGuide() }
+                    .show()
+            }
+            .setNegativeButton("Cerrar", null)
+            .show()
+    }
+
+    private fun spanishResponseVoices(): List<Voice> =
+        try {
+            tts?.voices?.filter { it.locale.language == "es" }
+                ?.sortedWith(compareByDescending<Voice> { it.quality }.thenBy { it.name })
+                ?: emptyList()
+        } catch (_: Exception) { emptyList() }
+
+    private fun configureResponseVoice() {
+        val engine = tts ?: return
+        engine.setSpeechRate(0.96f)
+        engine.setPitch(1.0f)
+        val available = spanishResponseVoices()
+        val saved = prefs.getString("tts_voice_name", null)
+        val selected = available.firstOrNull { it.name == saved }
+            ?: available.firstOrNull { it.locale.toLanguageTag().equals("es-MX", true) }
+            ?: available.firstOrNull { it.locale.toLanguageTag().equals("es-US", true) }
+            ?: available.firstOrNull()
+        if (selected != null) {
+            if (engine.setVoice(selected) != TextToSpeech.SUCCESS) {
+                engine.language = Locale.forLanguageTag("es-MX")
+            }
+        } else {
+            engine.language = Locale.forLanguageTag("es-MX")
+        }
+    }
+
+    private fun chooseResponseVoice() {
+        val engine = tts
+        if (!ttsReady || engine == null) {
+            updateStatus("La síntesis de voz todavía no está lista.")
+            return
+        }
+        val voices = spanishResponseVoices()
+        if (voices.isEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("Voces en español")
+                .setMessage("No se encontraron voces en español instaladas. " +
+                    "Revisa el motor de texto a voz y descarga voces desde los ajustes de Android.")
+                .setPositiveButton("Entendido", null).show()
+            return
+        }
+        val names = voices.map {
+            val quality = if (it.quality >= Voice.QUALITY_HIGH) "alta calidad" else "estándar"
+            it.locale.toLanguageTag() + " · " + it.name + " · " + quality
+        }.toTypedArray()
+        AlertDialog.Builder(this).setTitle("Elegir y probar voz en español")
+            .setMessage("Escucha las opciones y selecciona la voz femenina que prefieras. " +
+                "Android no informa de forma fiable el género de cada voz.")
+            .setItems(names) { _, index ->
+                val chosen = voices[index]
+                if (engine.setVoice(chosen) == TextToSpeech.SUCCESS) {
+                    prefs.edit().putString("tts_voice_name", chosen.name).apply()
+                    handler.removeCallbacks(restartListening)
+                    if (voiceActive) { voiceActive = false; recognizer?.cancel() }
+                    speaking = true
+                    val spoken = engine.speak(
+                        "Hola, soy ACCESSIA. Estoy lista para ayudarte a navegar.",
+                        TextToSpeech.QUEUE_FLUSH, null, "accessia-voice-preview"
+                    )
+                    if (spoken == TextToSpeech.ERROR) {
+                        speaking = false
+                        updateStatus("No se pudo reproducir esa voz. Prueba otra.")
+                        scheduleListen()
+                    } else updateStatus("Voz seleccionada: " + chosen.locale.toLanguageTag())
+                } else updateStatus("Esta voz no está disponible. Elige otra.")
+            }.setNegativeButton("Cancelar", null).show()
+    }
+
     private fun showCredits() {
         AlertDialog.Builder(this).setTitle("ACCESSIA")
             .setMessage("Navegador accesible. Creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. Proyecto gratuito, código MIT. Versión de pruebas: la compatibilidad de voz y las descargas deben validarse en cada dispositivo.")
@@ -419,6 +604,7 @@ class MainActivity : Activity() {
         if (parsed.scheme != "https" || parsed.host.isNullOrBlank()) { announce("Dirección no válida."); return }
         currentUrl = destination
         contentPort = null
+        welcomePanel.visibility = View.GONE
         session.loadUri(destination)
         updateStatus("Abriendo ${parsed.host}…")
     }
@@ -487,7 +673,7 @@ class MainActivity : Activity() {
         tts = TextToSpeech(this) { code ->
             if (code == TextToSpeech.SUCCESS) {
                 ttsReady = true
-                tts?.language = Locale.forLanguageTag("es-BO")
+                configureResponseVoice()
                 tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onStart(utteranceId: String?) { handler.post { speaking = true } }
                     override fun onDone(utteranceId: String?) { handler.post { speaking = false; scheduleListen() } }
@@ -545,39 +731,125 @@ class MainActivity : Activity() {
         updateStatus(message)
     }
 
+    private fun normalizeVoiceCommand(raw: String): String {
+        val simplified = Normalizer.normalize(
+            raw.lowercase(Locale.ROOT), Normalizer.Form.NFD
+        ).replace(Regex("\\p{M}+"), "")
+            .replace(Regex("[^a-z0-9 ]+"), " ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+        var result = simplified
+        for (prefix in listOf("accessia ", "por favor ", "oye accessia ", "quiero ", "puedes ", "podrias ", "me puedes ")) {
+            if (result.startsWith(prefix)) result = result.removePrefix(prefix).trim()
+        }
+        return result
+    }
+
     private fun handleSpoken(raw: String) {
-        val command = raw.lowercase(Locale.ROOT).trim().trimEnd('.', '!', ',')
+        val command = normalizeVoiceCommand(raw)
         if (autoConsentPending) {
             autoConsentPending = false
-            if (command == "confirmar" || command == "sí, confirmar") sendWebCommand("activar estudio automatico")
-            else announce("Continuidad no autorizada.")
+            if (command in setOf("confirmar", "si confirmar", "si")) {
+                sendWebCommand("activar estudio automatico")
+            } else announce("Continuidad no autorizada.")
             return
         }
+        // Prioridad para las funciones locales: deben funcionar incluso en about:blank.
         when {
-            command in setOf("salir", "salir de accessia", "cerrar accessia", "cerrar aplicación", "cerrar aplicacion", "cerrar navegador", "terminar navegador") -> exitApp()
-            command in setOf("acerca de", "créditos", "creditos") -> showCredits()
-            command in setOf("cerrar página", "cerrar pagina", "cerrar pestaña") -> { contentPort = null; session.loadUri("about:blank"); updateStatus("Página cerrada.") }
-            command in setOf("volver", "atrás", "atras", "volver atrás", "volver atras") -> goBack()
-            command in setOf("adelante", "ir adelante") -> goForward()
-            command in setOf("recargar", "actualizar página", "actualizar pagina") -> session.reload()
-            command in setOf("historial", "mostrar historial", "ver historial") -> showLinks("historial", "Historial")
-            command in setOf("favoritos", "mostrar favoritos", "ver favoritos") -> showLinks("favoritos", "Favoritos")
-            command in setOf("guardar favorito", "guardar en favoritos", "agregar a favoritos") -> toggleFavorite()
-            command in setOf("descargas", "mostrar descargas", "ver descargas") -> showDownloads()
-            command in setOf("mostrar botones", "mostrar controles", "mostrar controles flotantes") -> {
+            command in setOf("ayuda", "comandos", "ver comandos", "mostrar comandos",
+                "abrir ayuda", "abrir comandos", "guia", "guia de comandos",
+                "lista de comandos", "que puedo decir", "que comandos puedo usar",
+                "informacion", "informacion de comandos", "manual") -> showCommandGuide()
+
+            command in setOf("salir", "salir de accessia", "cerrar accessia",
+                "cerrar aplicacion", "cerrar navegador", "terminar navegador",
+                "cerrar el navegador", "salir del navegador") -> exitApp()
+
+            command in setOf("desactivar voz", "apagar voz", "detener escucha",
+                "apagar microfono", "desactivar microfono") ->
+                stopVoice("Reconocimiento de voz desactivado.")
+
+            command in setOf("elegir voz", "cambiar voz", "voz femenina",
+                "voz de respuesta", "seleccionar voz", "probar voces") -> chooseResponseVoice()
+
+            command in setOf("idioma de voz", "cambiar idioma",
+                "idioma del reconocimiento") -> chooseVoiceLanguage()
+
+            command in setOf("acerca de", "creditos") -> showCredits()
+
+            command in setOf("cerrar pagina", "cerrar pestana") -> {
+                contentPort = null
+                currentUrl = "about:blank"
+                session.loadUri("about:blank")
+                welcomePanel.visibility = View.VISIBLE
+                updateStatus("Página cerrada. La guía está disponible.")
+            }
+
+            command in setOf("volver", "atras", "volver atras", "ir atras",
+                "pagina anterior", "retroceder") -> goBack()
+
+            command in setOf("adelante", "ir adelante", "pagina siguiente", "avanzar") -> goForward()
+
+            command in setOf("recargar", "recargar pagina", "actualizar pagina",
+                "actualizar", "refrescar pagina") -> session.reload()
+
+            command in setOf("historial", "mostrar historial", "ver historial",
+                "abrir historial", "muestrame el historial") ->
+                showLinks("historial", "Historial")
+
+            command in setOf("favoritos", "mostrar favoritos", "ver favoritos",
+                "abrir favoritos", "muestrame los favoritos") ->
+                showLinks("favoritos", "Favoritos")
+
+            command in setOf("guardar favorito", "guardar en favoritos",
+                "agregar a favoritos", "anadir a favoritos",
+                "marcar favorito", "guardar esta pagina") -> toggleFavorite()
+
+            command in setOf("descargas", "mostrar descargas", "ver descargas",
+                "abrir descargas", "abrir las descargas", "ver las descargas",
+                "mostrar las descargas", "muestrame las descargas",
+                "gestor de descargas") -> showDownloads()
+
+            command in setOf("mostrar botones", "mostrar controles",
+                "mostrar controles flotantes", "abrir botones",
+                "abrir controles flotantes", "activar botones flotantes") -> {
                 floatingButton.visibility = View.VISIBLE
                 prefs.edit().putBoolean("floating_enabled", true).apply()
                 setFloatingExpanded(true)
             }
-            command in setOf("ocultar botones", "ocultar controles", "ocultar controles flotantes") -> setFloatingExpanded(false)
-            command.startsWith("abrir ") -> navigate(raw.substringAfter(' '))
-            command.startsWith("buscar en google ") -> navigate(raw.substringAfter("google "))
-            command.startsWith("buscar ") -> navigate(raw.substringAfter(' '))
-            command in setOf("activar estudio automático", "activar estudio automatico", "activar continuidad") -> {
+
+            command in setOf("ocultar botones", "ocultar controles",
+                "ocultar controles flotantes", "cerrar botones",
+                "cerrar controles flotantes") -> setFloatingExpanded(false)
+
+            command in setOf("activar estudio automatico", "activar continuidad") -> {
                 autoConsentPending = true
-                announce("¿Continuar a la siguiente lección cuando termine el vídeo? Di confirmar o cancelar.")
+                announce("¿Activar continuidad educativa en esta página? Di confirmar o cancelar.")
             }
-            else -> sendWebCommand(command)
+
+            command in setOf("pausar video", "pausa el video") -> sendWebCommand("pausar")
+            command in setOf("continuar video", "reanudar video") -> sendWebCommand("continuar")
+
+            command.startsWith("buscar ") || command.startsWith("busca ") ||
+                command.startsWith("buscar en google ") || command.startsWith("buscame ") -> {
+                val match = Regex(
+                    "^(?:accessia[ ,]+)?(?:(?:quiero|puedes|podrias|por favor)\\s+)?" +
+                        "(?:buscar(?: en google)?|busca|buscame|búscame)\\s+",
+                    RegexOption.IGNORE_CASE
+                ).find(raw.trim())
+                if (match != null) navigate(raw.trim().substring(match.range.last + 1))
+                else navigate(command.substringAfter(' '))
+            }
+
+            command.startsWith("abrir ") || command.startsWith("abre ") -> {
+                val term = command.substringAfter(' ').trim()
+                if (term.isNotEmpty()) navigate(term)
+                else announce("Dime qué página quieres abrir.")
+            }
+
+            contentPort != null -> sendWebCommand(command)
+
+            else -> announce("No reconocí esa función. Di ayuda para conocer los comandos disponibles.")
         }
     }
 
