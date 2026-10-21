@@ -1,12 +1,32 @@
 # ACCESSIA — Navegador Inteligente de Accesibilidad Universal
 
+<p align="center">
+  <img src="docs/assets/accessia-logo-oficial.png" alt="Logotipo oficial aprobado de ACCESSIA, creado por GENAI INDUSTRIES" width="600" />
+</p>
+
+<p align="center"><sub><strong>Creado por GENAI INDUSTRIES</strong> · Luis Carlos Moreno Jiménez · Santa Cruz de la Sierra, Bolivia</sub></p>
+
 **Creado por GENAI INDUSTRIES**, de **Luis Carlos Moreno Jiménez**, Santa Cruz de la Sierra, Bolivia.
 
 **Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
 
-> **Estado: prototipo de desarrollo.** La publicación inicial del código se realizó, según el registro de Termux facilitado por el autor el 21/10/2026, en [luis171987/ACCESSIA](https://github.com/luis171987/ACCESSIA). Este documento NO acredita builds de APK/EXE, certificaciones, funcionamiento sin manos en dispositivos reales ni disponibilidad universal.
+> **Estado: prototipo de desarrollo.** La APK debug del commit `d74f8f0` compiló en GitHub Actions y fue instalada en un Honor Magic 7 Lite el 21/10/2026. La Beta v0.2 se desarrolla en la [rama de revisión](https://github.com/luis171987/ACCESSIA/pull/2) con una compilación de CI aprobada; su funcionamiento real requiere pruebas adicionales. No se certifica accesibilidad universal ni funcionamiento plenamente manos libres.
 
 ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
+
+## 🖼️ Interfaz de ACCESSIA en Android
+
+Las siguientes **vistas ilustrativas** reproducen los elementos de interfaz definidos en el código Kotlin de la Beta v0.2: inicio, controles flotantes y ayuda por voz. **No son capturas de pantalla tomadas de un teléfono**; la apariencia final puede variar según Android, la resolución y las voces instaladas.
+
+<p align="center">
+  <img src="docs/assets/accessia-v02-vista-inicio.svg" alt="Vista ilustrativa del inicio de ACCESSIA con barra de búsqueda y acceso al micrófono" width="270" />
+  <img src="docs/assets/accessia-v02-vista-controles.svg" alt="Vista ilustrativa del navegador ACCESSIA con panel de controles flotantes desplegado" width="270" />
+  <img src="docs/assets/accessia-v02-vista-guia.svg" alt="Vista ilustrativa de la guía integrada de comandos de voz y accesibilidad" width="270" />
+</p>
+
+<p align="center"><sub>Inicio · Panel flotante · Guía de comandos</sub></p>
+
+**[Ver implementación Android y avances de la Beta v0.2 (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2)** · **[Consultar las imágenes de interfaz](docs/assets/)**
 
 ## Acceso rápido y orden correlativo
 
