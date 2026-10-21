@@ -4,9 +4,9 @@
   <img src="docs/assets/accessia-logo-oficial.png" alt="Logotipo oficial aprobado de ACCESSIA, creado por GENAI INDUSTRIES" width="600" />
 </p>
 
-<p align="center"><sub><strong>Creado por GENAI INDUSTRIES</strong> · Luis Carlos Moreno Jiménez · Santa Cruz de la Sierra, Bolivia</sub></p>
+<p align="center"><sub><strong>Creado por GENAI INDUSTRIES</strong> · <strong>Creador y propietario único: Luis Carlos Moreno Jiménez</strong> · Santa Cruz de la Sierra, Bolivia</sub></p>
 
-**Creado por GENAI INDUSTRIES**, de **Luis Carlos Moreno Jiménez**, Santa Cruz de la Sierra, Bolivia.
+**Creado por GENAI INDUSTRIES. Creador y propietario único: Luis Carlos Moreno Jiménez.** Santa Cruz de la Sierra, Bolivia.
 
 **Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
 
@@ -74,6 +74,6 @@ NUNCA agregues `.env` real, `*.pem`, `*.key`, `id_rsa`, archivos de sesión, coo
 
 ## Créditos y licencia
 
-**ACCESSIA — creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.** Código fuente licenciado bajo **MIT**: ver [LICENSE](LICENSE). MIT permite modificar, redistribuir e incluso comercializar derivados; el repositorio oficial se ofrece gratuitamente. La licencia del código no confiere por sí misma derechos de uso sobre la marca **GENAI INDUSTRIES** ni garantiza registro marcario. Las dependencias de terceros conservan sus propias licencias.
+**ACCESSIA — creado por GENAI INDUSTRIES. Creador y propietario único: Luis Carlos Moreno Jiménez. Santa Cruz de la Sierra, Bolivia.** Código fuente licenciado bajo **MIT**: ver [LICENSE](LICENSE). MIT permite modificar, redistribuir e incluso comercializar derivados; el repositorio oficial se ofrece gratuitamente. La licencia del código no confiere por sí misma derechos de uso sobre la marca **GENAI INDUSTRIES** ni garantiza registro marcario. Las dependencias de terceros conservan sus propias licencias.
 
 **Contacto y reportes de seguridad:** ver [SECURITY.md](SECURITY.md). No envíes contraseñas, capturas de cuentas ni datos personales en incidencias públicas.
