@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "ACCESSIA native accessibility bridge",
+  "version": "0.1.0",
+  "description": "Comandos de accesibilidad autorizados por el usuario dentro de la página activa.",
+  "browser_specific_settings": {"gecko": {"id": "accessia-native@accessia.local"}},
+  "permissions": ["nativeMessaging", "nativeMessagingFromContent", "geckoViewAddons"],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["accessia.js", "bridge.js"],
+    "run_at": "document_idle",
+    "all_frames": false
+  }]
+}

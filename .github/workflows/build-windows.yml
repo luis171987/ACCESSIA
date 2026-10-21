@@ -1,0 +1,21 @@
+name: Windows build smoke test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    paths: ['windows/**', 'shared/**', '.github/workflows/build-windows.yml']
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet build windows/Accessia.Windows/Accessia.Windows.csproj -c Release
+      - run: dotnet publish windows/Accessia.Windows/Accessia.Windows.csproj -c Release -r win-x64 --self-contained false -o windows-publish
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ACCESSIA-Windows-portable-unverified
+          path: windows-publish/

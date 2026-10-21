@@ -1,0 +1,17 @@
+ACCESSIA | Validación local | 2026-10-21
+
+VERIFICADO:
+- 12 pruebas unitarias Node.js: 12 PASS, 0 FAIL.
+- node --check del motor JS y puente de extensión: OK.
+- JSON, XML, YAML y sintaxis de shell analizados correctamente.
+- Coincidencia byte a byte del motor JS compartido con copia de extensión Android: OK.
+
+NO VERIFICADO:
+- GitHub remoto / repositorio público (sin sesión autenticada para escritura).
+- Build Android APK (no hay Android SDK/Gradle en este entorno).
+- Build Windows EXE (no hay SDK .NET ni Windows en este entorno).
+- Prueba e2e Chromium: intentada con servidor local y recurso HTTPS simulado;
+  Chromium devolvió net::ERR_BLOCKED_BY_ADMINISTRATOR. Estado: BLOQUEADA.
+- Sin certificaciones ni auditoría de acceso real a LMS.
+
+Material exclusivo de desarrollo. No publicarlo como producto final certificado.
