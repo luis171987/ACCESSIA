@@ -15,7 +15,7 @@ android {
     }
 }
 dependencies {
-    // Nightly version matched to GeckoView's published 17-Oct-2026 API docs.
+    // GeckoView Nightly publicado el 13-Oct-2026; versión de prototipo.
     // PIN must be tested and updated to a reviewed stable release before distribution.
-    implementation("org.mozilla.geckoview:geckoview-nightly:160.0.20261017034010")
+    implementation("org.mozilla.geckoview:geckoview-nightly:160.0.20261013094244")
 }
