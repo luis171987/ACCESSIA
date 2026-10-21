@@ -37,7 +37,27 @@ Las carpetas técnicas conservan nombres estándar (`.github`, `android/app/src/
 - Windows: fuente C#/WinForms/WebView2, reconocimiento de voz según motores disponibles, perfil del navegador separado por cuenta de Windows.
 - Demo educativa y pruebas unitarias Node. **Los seis agentes especializados son roles de arquitectura, no seis modelos autónomos implementados.**
 
-Comandos: `pausar`, `continuar`, `cursor siguiente`, `cursor anterior`, `seleccionar`, `activar estudio automático`, `desactivar estudio automático`, `cerrar página`, `cerrar navegador`, `acerca de` (créditos).
+## 📖 Guía de comandos y funciones (ACCESSIA Android)
+
+**La guía se abre desde el botón «Ayuda» de la cabecera, desde «⋯ → Guía de comandos» o diciendo «ayuda» con el micrófono activado.** Está disponible incluso en la portada vacía, sin conexión con una página web.
+
+**[Consultar la guía de comandos completa, ejemplos y soluciones de problemas](docs/GUIA_COMANDOS_ACCESSIA.md)**
+
+| Categoría | Frases de ejemplo | Función |
+|---|---|---|
+| Búsqueda | «buscar universidades de Santa Cruz», «buscar en Google accesibilidad» | Consultas, incluso con frases largas |
+| Navegación | «abrir wikipedia.org», «atrás», «adelante», «recargar», «cerrar página» | Control local del navegador |
+| Cierre | «salir», «cerrar navegador» | Termina la actividad de ACCESSIA |
+| Guardados | «guardar en favoritos», «ver favoritos», «ver historial» | Favoritos e historial local |
+| Archivos | «abrir descargas», «ver descargas» | Abre el gestor de descargas Android |
+| Pantalla | «mostrar botones», «ocultar controles flotantes» | Panel flotante opcional |
+| Ayuda y voz | «ayuda», «mostrar comandos», «elegir voz», «idioma de voz», «desactivar voz» | Guía, selección de voz e idioma |
+| Accesibilidad web | «cursor siguiente», «cursor anterior», «seleccionar», «pausar vídeo», «continuar vídeo» | Requiere una página compatible con la extensión |
+| Educación | «activar estudio automático» | Necesita confirmación; no resuelve exámenes ni sortea restricciones |
+
+**Voz de respuesta:** puedes escuchar y seleccionar entre las voces españolas disponibles en tu Android, buscando una voz femenina latinoamericana agradable. ACCESSIA no puede garantizar un timbre o género determinado: eso depende del motor TTS y de las voces instaladas. La selección de la voz que **habla** es independiente del idioma del motor que **reconoce** tus órdenes. Evita gritar; dicta a volumen normal después de «Escuchando».
+
+**Aviso:** «Descargas» abre el administrador de Android, pero la gestión completa de descargas desde GeckoView sigue pendiente. Los comandos que controlan una página web no funcionan en `about:blank` sin contenido ni extensión conectada.
 
 ## Mejoras propuestas en ACCESSIA v0.2 (rama de revisión)
 
