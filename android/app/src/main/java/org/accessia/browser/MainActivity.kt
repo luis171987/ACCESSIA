@@ -37,6 +37,8 @@ import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoView
 import org.mozilla.geckoview.WebExtension
 import java.net.URLEncoder
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 import java.text.Normalizer
 import java.util.Locale
 import kotlin.math.min
@@ -267,6 +269,7 @@ class MainActivity : Activity() {
         setContentView(root)
 
         runtime = GeckoRuntime.create(this)
+        runtime.settings.setLocales(arrayOf(effectiveLanguage("site_language")))
         session = GeckoSession()
         session.setContentDelegate(object : GeckoSession.ContentDelegate {})
         session.setNavigationDelegate(object : GeckoSession.NavigationDelegate {
@@ -297,6 +300,7 @@ class MainActivity : Activity() {
         session.loadUri("about:blank")
         setupSpeech()
         setupTts()
+        handler.post { offerRegionLanguageSuggestion() }
     }
 
     private fun setFloatingExpanded(open: Boolean) {
@@ -307,7 +311,7 @@ class MainActivity : Activity() {
     }
 
     private fun showMenu() {
-        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta", "Dictado largo por fragmentos")
+        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta", "Dictado largo por fragmentos", "Idioma de páginas web", "Traducir página", "Sugerir idioma por IP")
         AlertDialog.Builder(this).setTitle("Menú ACCESSIA").setItems(items) { _, n ->
             when (n) {
                 0 -> {
@@ -326,6 +330,9 @@ class MainActivity : Activity() {
                 8 -> showCommandGuide()
                 9 -> chooseResponseVoice()
                 10 -> toggleLongDictation()
+                11 -> chooseSiteLanguage()
+                12 -> translateCurrentPage()
+                13 -> askIpRegionPermission()
             }
         }.show()
     }
@@ -389,16 +396,159 @@ class MainActivity : Activity() {
         }
     }
 
+    // Idiomas BCP 47: lista de acceso rápido + entrada libre para otros idiomas.
+    private val languageTags = arrayOf(
+        "es-BO", "es-MX", "es-ES", "en-US", "en-GB", "pt-BR",
+        "pt-PT", "fr-FR", "de-DE", "it-IT", "ar-SA", "hi-IN",
+        "zh-CN", "ja-JP", "ko-KR", "ru-RU", "tr-TR", "qu-BO"
+    )
+
+    private fun deviceLanguage(): String =
+        resources.configuration.locales.get(0)?.toLanguageTag() ?: Locale.getDefault().toLanguageTag()
+
+    private fun effectiveLanguage(key: String): String =
+        prefs.getString(key, null)?.takeIf { it.isNotBlank() } ?: deviceLanguage()
+
+    private fun pickLanguage(title: String, key: String, onSelected: (String) -> Unit) {
+        val available = (languageTags.toList() + listOf(effectiveLanguage(key))).distinct()
+        val options = (available.map {
+            val locale = Locale.forLanguageTag(it)
+            locale.getDisplayName(Locale.forLanguageTag("es")) + " (" + it + ")"
+        } + "Introducir otro idioma (BCP 47)…").toTypedArray()
+        AlertDialog.Builder(this).setTitle(title).setItems(options) { _, i ->
+            if (i < available.size) onSelected(available[i])
+            else {
+                val input = EditText(this).apply {
+                    hint = "es-BO, en-US, pt-BR, fr-FR…"
+                    setSingleLine(true)
+                }
+                AlertDialog.Builder(this).setTitle("Código de idioma BCP 47")
+                    .setView(input)
+                    .setPositiveButton("Aplicar") { _, _ ->
+                        val tag = input.text.toString().trim()
+                        val locale = Locale.forLanguageTag(tag)
+                        if (tag.matches(Regex("[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*")) &&
+                            locale.language.isNotEmpty()) onSelected(locale.toLanguageTag())
+                        else updateStatus("Código de idioma no válido.")
+                    }.setNegativeButton("Cancelar", null).show()
+            }
+        }.setNegativeButton("Cancelar", null).show()
+    }
+
     private fun chooseVoiceLanguage() {
-        val tags = arrayOf("es-BO", "es-ES", "es-MX", "es-US")
-        val names = arrayOf("Español de Bolivia", "Español general", "Español de México", "Español de Estados Unidos")
-        val selected = tags.indexOf(prefs.getString("voice_language", "es-BO"))
-        AlertDialog.Builder(this).setTitle("Idioma del reconocimiento")
-            .setSingleChoiceItems(names, if (selected < 0) 0 else selected) { dialog, index ->
-                prefs.edit().putString("voice_language", tags[index]).apply()
-                if (voiceEnabled) stopVoice("Idioma cambiado. Activa otra vez el micrófono.")
-                dialog.dismiss()
-            }.setNegativeButton("Cancelar", null).show()
+        pickLanguage("Idioma del reconocimiento", "voice_language") { tag ->
+            prefs.edit().putString("voice_language", tag).apply()
+            if (voiceEnabled) stopVoice("Idioma cambiado. Activa otra vez el micrófono.")
+            else updateStatus("Reconocimiento: " + tag)
+        }
+    }
+
+    private fun chooseSiteLanguage() {
+        pickLanguage("Idioma preferido de sitios web", "site_language") { tag ->
+            prefs.edit().putString("site_language", tag).apply()
+            runtime.settings.setLocales(arrayOf(tag))
+            updateStatus("Idioma preferido de páginas: " + tag + ". Algunas requieren recargar.")
+        }
+    }
+
+    private fun translateCurrentPage() {
+        if (!currentUrl.startsWith("https://")) {
+            updateStatus("Abre primero una página HTTPS para traducir.")
+            return
+        }
+        pickLanguage("Traducir esta página al idioma…", "translate_language") { tag ->
+            prefs.edit().putString("translate_language", tag).apply()
+            AlertDialog.Builder(this).setTitle("Traducción con servicio externo")
+                .setMessage("ACCESSIA enviará la dirección de esta página a Google Traductor. " +
+                    "Evita traducir páginas privadas, autenticadas o con datos sensibles. " +
+                    "La traducción no funciona en todas las páginas. ¿Continuar?")
+                .setPositiveButton("Continuar") { _, _ ->
+                    val link = "https://translate.google.com/translate?sl=auto&tl=" +
+                        URLEncoder.encode(tag.substringBefore('-'), "UTF-8") + "&u=" +
+                        URLEncoder.encode(currentUrl, "UTF-8")
+                    navigate(link)
+                }.setNegativeButton("Cancelar", null).show()
+        }
+    }
+
+    // Sin consentimiento se utiliza el idioma de Android; no se consulta la IP.
+    private fun offerRegionLanguageSuggestion() {
+        if (!prefs.contains("ip_region_consent")) askIpRegionPermission()
+    }
+
+    private fun askIpRegionPermission() {
+        AlertDialog.Builder(this).setTitle("Idioma sugerido según país")
+            .setMessage("Podemos sugerir un idioma usando el país aproximado de tu IP. " +
+                "Si aceptas, ipapi.co recibirá tu IP pública en una conexión HTTPS; " +
+                "ACCESSIA solo usará el código del país y no almacenará la IP. " +
+                "Una VPN, un viaje o un país multilingüe pueden dar una sugerencia incorrecta. " +
+                "También puedes usar simplemente el idioma de tu teléfono.")
+            .setPositiveButton("Consultar país") { _, _ ->
+                prefs.edit().putBoolean("ip_region_consent", true).apply()
+                suggestCountryLanguage()
+            }
+            .setNegativeButton("No consultar IP") { _, _ ->
+                prefs.edit().putBoolean("ip_region_consent", false).apply()
+                updateStatus("Idioma inicial: " + deviceLanguage())
+            }.show()
+    }
+
+    private fun languageForCountry(code: String): String? = when (code) {
+        "BO" -> "es-BO"
+        "MX" -> "es-MX"
+        "ES" -> "es-ES"
+        "AR", "CL", "CO", "PE", "EC", "UY", "PY", "VE",
+        "CR", "PA", "GT", "SV", "HN", "NI", "CU", "DO" -> "es-BO"
+        "BR" -> "pt-BR"
+        "PT" -> "pt-PT"
+        "US" -> "en-US"
+        "GB" -> "en-GB"
+        "FR" -> "fr-FR"
+        "DE" -> "de-DE"
+        "IT" -> "it-IT"
+        "CN" -> "zh-CN"
+        "JP" -> "ja-JP"
+        "KR" -> "ko-KR"
+        "IN" -> "hi-IN"
+        "SA" -> "ar-SA"
+        "RU" -> "ru-RU"
+        "TR" -> "tr-TR"
+        else -> null
+    }
+
+    private fun suggestCountryLanguage() {
+        updateStatus("Consultando país aproximado mediante IP…")
+        Thread {
+            val country = try {
+                val conn = URL("https://ipapi.co/country/").openConnection() as HttpsURLConnection
+                conn.connectTimeout = 3500
+                conn.readTimeout = 3500
+                try {
+                    if (conn.responseCode != 200) null
+                    else conn.inputStream.bufferedReader().use {
+                        it.readText().trim().uppercase(Locale.ROOT)
+                    }
+                } finally { conn.disconnect() }
+            } catch (_: Exception) { null }
+            handler.post {
+                if (destroyed) return@post
+                val suggested = country?.let { languageForCountry(it) }
+                if (suggested == null) {
+                    updateStatus("Sin sugerencia por IP. Se conserva el idioma del dispositivo.")
+                } else {
+                    AlertDialog.Builder(this).setTitle("Sugerencia de idioma")
+                        .setMessage("País aproximado: " + country + ". ¿Preferís usar " +
+                            suggested + "? Tu idioma personal puede ser diferente.")
+                        .setPositiveButton("Seleccionar idioma") { _, _ ->
+                            prefs.edit().putString("voice_language", suggested)
+                                .putString("site_language", suggested).apply()
+                            runtime.settings.setLocales(arrayOf(suggested))
+                            if (voiceEnabled) stopVoice("Idioma cambiado.")
+                            updateStatus("Idioma seleccionado: " + suggested)
+                        }.setNegativeButton("Conservar el actual", null).show()
+                }
+            }
+        }.start()
     }
 
     private fun showCommandGuide() {
