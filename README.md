@@ -28,6 +28,18 @@ Las siguientes **vistas ilustrativas** reproducen los elementos de interfaz defi
 
 **[Ver implementación Android y avances de la Beta v0.2 (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2)** · **[Consultar las imágenes de interfaz](docs/assets/)**
 
+## 🌍 Voz natural, idiomas y traducción — actualización v0.3 en desarrollo
+
+ACCESSIA está evolucionando para ser un navegador accesible **multilingüe** y admitir **dictado prolongado**. Las pruebas de campo evidencian que el reconocimiento por sesiones cortas puede truncar consultas y confundir palabras. La nueva rama de desarrollo incorpora un modo `Dictar +` para **acumular fragmentos en la barra de búsqueda y revisarlos antes de pulsar Ir**. Todavía requiere compilación y pruebas en el Honor.
+
+**Idioma y localización:** al iniciar, se toma el idioma del dispositivo. El usuario puede seleccionar el idioma del reconocimiento y el idioma preferido que GeckoView solicita a las páginas, de una lista o mediante una etiqueta BCP 47. **Opcionalmente**, se ofrece una sugerencia aproximada por país de la IP pública, previa autorización expresa para consultar `ipapi.co`; no se persiste la IP y siempre puede rechazarse o cambiarse manualmente. **La IP no determina el idioma de una persona.**
+
+**Traducción:** una opción permite elegir destino y, con confirmación, abrir la página mediante Google Traductor, que recibirá la URL. No usarla con páginas privadas o autenticadas; no todas las webs son traducibles. La traducción local e integrada, y la internacionalización **de todos los textos de la interfaz**, permanecen pendientes.
+
+**Voz femenina humana, español latino:** seguimos evaluando proveedores, no se garantiza todavía una voz neuronal incluida. Entre las candidatas documentadas figuran `es-BO-SofiaNeural` y `es-MX-DaliaNeural` (Azure), y voces españolas de Piper para uso local; la elección final deberá comprobar calidad, licencias, privacidad y coste. No se incorporarán claves de proveedores al APK ni a GitHub.
+
+**[Leer investigación, comparación de Vosk/sherpa-onnx/Piper, privacidad y plan de pruebas](https://github.com/luis171987/ACCESSIA/blob/feat/accessia-v02-ui-voice/docs/ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md)** · [Código en revisión (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2).
+
 ## Acceso rápido y orden correlativo
 
 | ID | Módulo | Carpeta técnica | Documentación/diagrama |
