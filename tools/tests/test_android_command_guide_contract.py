@@ -31,7 +31,7 @@ class AccessiaCommandGuideContract(unittest.TestCase):
     def test_voice_configuration_and_domain_input(self):
         source = ACTIVITY.read_text()
         for marker in (
-            'private fun spanishResponseVoices()',
+            'private fun availableResponseVoices()',
             'private fun configureResponseVoice()',
             'private fun chooseResponseVoice()',
             'prefs.getString("tts_voice_name", null)',
