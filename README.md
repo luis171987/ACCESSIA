@@ -10,7 +10,28 @@
 
 **Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
 
-> **Estado: prototipo de desarrollo.** La APK debug del commit `d74f8f0` compiló en GitHub Actions y fue instalada en un Honor Magic 7 Lite el 21/10/2026. La Beta v0.2 se desarrolla en la [rama de revisión](https://github.com/luis171987/ACCESSIA/pull/2) con una compilación de CI aprobada; su funcionamiento real requiere pruebas adicionales. No se certifica accesibilidad universal ni funcionamiento plenamente manos libres.
+
+## 📥 Descargar ACCESSIA — instalación fácil
+
+**No necesitas instalar GitHub, Termux ni herramientas de programación.** Abre el enlace de tu sistema operativo y descarga el archivo directamente desde la página oficial.
+
+| Tu dispositivo | Descargar | Qué obtendrás |
+|---|---|---|
+| 📱 **Android 9 o posterior** | **[⬇️ Descargar ACCESSIA Beta 0.3 (.apk)](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Android-Beta-0.3-DEBUG.apk)** | Aplicación experimental de 533 MB aprox.; abre el APK desde Descargas y sigue las instrucciones de Android. |
+| 🖥️ **Windows 10/11 x64** | **[⬇️ Descargar ACCESSIA Windows portable (.zip)](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Windows-Beta-portable.zip)** | Carpeta portable experimental: extrae **todo** el ZIP y abre `Accessia.Windows.exe`. No es instalador asistido. |
+
+**[📦 Ver todas las versiones y archivos disponibles](https://github.com/luis171987/ACCESSIA/releases)** · **[📖 Tutorial paso a paso para Android y Windows](docs/GUIA_DESCARGA_E_INSTALACION.md)**
+
+**Instalación en 3 pasos:** (1) descarga el APK de Android o ZIP de Windows; (2) en Android abre el APK y sigue el instalador; en Windows extrae el ZIP completo; (3) abre ACCESSIA. Si Android pide autorización para instalar desde el gestor de archivos, concédela solo para esta instalación y revócala después. En Windows podrías necesitar [**.NET 8 Desktop Runtime**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) y [**Microsoft Edge WebView2 Runtime**](https://developer.microsoft.com/en-us/microsoft-edge/webview2/consumer/).
+
+> **Importante:** son versiones preliminares, sin firma de distribución de producción ni certificación de accesibilidad. La APK Android usa firma debug, que puede impedir actualizar una instalación anterior firmada de otra forma; **no la desinstales sin conservar tus datos**. El ZIP de Windows incluye un ejecutable, pero todavía no existe un instalador firmado `.exe` o `.msi` con asistente. No hay instaladores para iOS, macOS o Linux. Nunca confundas **Source code (zip)** con un instalador.
+
+### 📣 Compartir ACCESSIA con su logotipo
+
+Comparte esta dirección: **https://github.com/luis171987/ACCESSIA**. Para que **WhatsApp o Facebook** muestren el logotipo en la vista previa, el propietario debe subir la imagen oficial desde **GitHub → Settings → Social preview → Edit → Upload an image**; la imagen del README **no se utiliza automáticamente**. **[Abrir el logotipo original](https://raw.githubusercontent.com/luis171987/ACCESSIA/main/docs/assets/accessia-logo-oficial.png)** · [Tutorial para configurar la vista previa](docs/GUIA_DESCARGA_E_INSTALACION.md#cómo-hacer-que-aparezca-el-logotipo-al-compartir-el-repositorio). Algunas plataformas guardan versiones antiguas en caché.
+
+
+> **Estado: prototipo experimental.** La Beta 0.3 de Android compiló en GitHub Actions y se publicó como [versión preliminar descargable](https://github.com/luis171987/ACCESSIA/releases/tag/v0.3.0-beta.3). Existe además un paquete portable experimental para Windows. El desarrollo de Android sigue en [revisión (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2), sin fusionarse aún con `main`; no se certifica accesibilidad universal, funcionamiento plenamente manos libres ni funcionamiento correcto en todos los dispositivos.
 
 ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
 
