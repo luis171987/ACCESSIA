@@ -66,6 +66,9 @@ class MainActivity : Activity() {
     private var canGoForward = false
     private var currentUrl = "about:blank"
     private var autoConsentPending = false
+    // Dictado acumulativo: solo texto editable, nunca grabaciones persistentes.
+    private var longDictationEnabled = false
+    private var lastPartialTranscript = ""
     private val restartListening = Runnable { if (voiceEnabled && !speaking) listenOnce() }
     private val navy = Color.rgb(7, 20, 48)
     private val cyan = Color.rgb(2, 195, 238)
@@ -150,7 +153,12 @@ class MainActivity : Activity() {
             }
         }
         addressBar.addView(address, LinearLayout.LayoutParams(0, dp(49), 1f))
-        addressBar.addView(actionButton("Ir") { navigate(address.text.toString()) }.apply {
+        addressBar.addView(actionButton("Dictar +") { toggleLongDictation() },
+            LinearLayout.LayoutParams(dp(87), dp(48)).apply { leftMargin = dp(5) })
+        addressBar.addView(actionButton("Ir") {
+            if (longDictationEnabled) finishLongDictation()
+            navigate(address.text.toString())
+        }.apply {
             setBackgroundColor(navy)
         }, LinearLayout.LayoutParams(dp(57), dp(48)).apply { leftMargin = dp(6) })
         main.addView(addressBar)
@@ -299,7 +307,7 @@ class MainActivity : Activity() {
     }
 
     private fun showMenu() {
-        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta")
+        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta", "Dictado largo por fragmentos")
         AlertDialog.Builder(this).setTitle("Menú ACCESSIA").setItems(items) { _, n ->
             when (n) {
                 0 -> {
@@ -317,6 +325,7 @@ class MainActivity : Activity() {
                 7 -> exitApp()
                 8 -> showCommandGuide()
                 9 -> chooseResponseVoice()
+                10 -> toggleLongDictation()
             }
         }.show()
     }
@@ -616,6 +625,28 @@ class MainActivity : Activity() {
             .setPositiveButton("Activar") { _, _ -> sendWebCommand("activar estudio automatico") }.show()
     }
 
+    private fun toggleLongDictation() {
+        if (longDictationEnabled) { finishLongDictation(); return }
+        longDictationEnabled = true
+        lastPartialTranscript = ""
+        updateStatus("Dictado largo activo: habla por partes. Pulsa Dictar + al terminar; luego Ir.")
+        if (!voiceEnabled) toggleVoice()
+    }
+
+    private fun finishLongDictation() {
+        longDictationEnabled = false
+        stopVoice("Dictado terminado. Revisa la consulta y pulsa Ir.")
+    }
+
+    private fun appendDictatedSegment(segment: String) {
+        val old = address.text.toString().trimEnd()
+        val fragment = segment.trim()
+        if (fragment.isEmpty()) return
+        address.setText(if (old.isEmpty()) fragment else old + " " + fragment)
+        address.setSelection(address.text.length)
+        updateStatus("Fragmento añadido. Continúa hablando o termina el dictado.")
+    }
+
     private fun setupSpeech() {
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
             updateStatus("No hay reconocedor de voz instalado.")
@@ -623,7 +654,7 @@ class MainActivity : Activity() {
         }
         recognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
             setRecognitionListener(object : RecognitionListener {
-                override fun onReadyForSpeech(params: Bundle?) { voiceActive = true; updateStatus("🎙 Escuchando · habla normalmente") }
+                override fun onReadyForSpeech(params: Bundle?) { voiceActive = true; lastPartialTranscript = ""; updateStatus("🎙 Escuchando · habla normalmente") }
                 override fun onBeginningOfSpeech() { updateStatus("🎙 Capturando tu voz…") }
                 override fun onRmsChanged(rmsdB: Float) {}
                 override fun onBufferReceived(buffer: ByteArray?) {}
@@ -641,7 +672,7 @@ class MainActivity : Activity() {
                         return
                     }
                     val cause = when (error) {
-                        SpeechRecognizer.ERROR_NO_MATCH -> "No se comprendió la frase"
+                        SpeechRecognizer.ERROR_NO_MATCH -> if (lastPartialTranscript.isNotBlank()) "Texto parcial: " + lastPartialTranscript.take(100) + ". No confirmado" else "No se comprendió la frase"
                         SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No se detectó voz"
                         SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Error de red del reconocedor"
                         SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Micrófono ocupado"
@@ -653,16 +684,21 @@ class MainActivity : Activity() {
                 override fun onResults(results: Bundle?) {
                     voiceActive = false
                     consecutiveErrors = 0
-                    val spoken = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?.firstOrNull { it.isNotBlank() }
+                    val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        ?.filter { it.isNotBlank() }.orEmpty()
+                    val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
+                        else alternatives.firstOrNull()
                     if (spoken.isNullOrBlank()) { scheduleListen(); return }
-                    updateStatus("Escuché: ${spoken.take(100)}")
-                    handleSpoken(spoken)
+                    if (longDictationEnabled) appendDictatedSegment(spoken)
+                    else {
+                        updateStatus("Escuché: " + spoken.take(160))
+                        handleSpoken(spoken)
+                    }
                     if (!speaking) scheduleListen()
                 }
                 override fun onPartialResults(partialResults: Bundle?) {
                     val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
-                    if (!phrase.isNullOrBlank()) updateStatus("🎙 ${phrase.take(80)}…")
+                    if (!phrase.isNullOrBlank()) { lastPartialTranscript = phrase; updateStatus("🎙 " + phrase.take(140) + "…") }
                 }
                 override fun onEvent(eventType: Int, params: Bundle?) {}
             })
@@ -707,9 +743,15 @@ class MainActivity : Activity() {
         voiceActive = true
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, prefs.getString("voice_language", "es-BO"))
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, prefs.getString("voice_language", null) ?: resources.configuration.locales.get(0)?.toLanguageTag() ?: "es-BO")
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            // Petición orientativa: algunos servicios ignoran los tiempos de silencio.
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 2100L)
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 1600L)
+            if (android.os.Build.VERSION.SDK_INT >= 34) {
+                putExtra(RecognizerIntent.EXTRA_ENABLE_LANGUAGE_DETECTION, true)
+            }
         }
         try { recognizer?.startListening(intent) }
         catch (_: Exception) { voiceActive = false; updateStatus("No fue posible iniciar el micrófono."); scheduleListen(2500) }
