@@ -498,7 +498,7 @@ class MainActivity : Activity() {
         "MX" -> "es-MX"
         "ES" -> "es-ES"
         "AR", "CL", "CO", "PE", "EC", "UY", "PY", "VE",
-        "CR", "PA", "GT", "SV", "HN", "NI", "CU", "DO" -> "es-BO"
+        "CR", "PA", "GT", "SV", "HN", "NI", "CU", "DO" -> "es-" + code
         "BR" -> "pt-BR"
         "PT" -> "pt-PT"
         "US" -> "en-US"
