@@ -45,6 +45,12 @@ class SpeechAndMultilingualContract(unittest.TestCase):
         self.assertIn('URL', source)
         self.assertNotIn('ACCESS_FINE_LOCATION', source)
 
+    def test_beta_isolated_from_previous_android_install(self):
+        gradle = (ROOT / "android/app/build.gradle.kts").read_text()
+        self.assertIn('applicationIdSuffix = ".beta03"', gradle)
+        self.assertIn('versionName = "0.3.0-dev"', gradle)
+        self.assertIn('manifestPlaceholders["appLabel"] = "ACCESSIA Beta 0.3"', gradle)
+
     def test_documentation_explicitly_limits_features(self):
         source = DOC.read_text()
         self.assertIn('reconocimiento streaming', source)
