@@ -438,6 +438,7 @@ class MainActivity : Activity() {
     private fun chooseVoiceLanguage() {
         pickLanguage("Idioma del reconocimiento", "voice_language") { tag ->
             prefs.edit().putString("voice_language", tag).apply()
+            configureResponseVoice()
             if (voiceEnabled) stopVoice("Idioma cambiado. Activa otra vez el micrófono.")
             else updateStatus("Reconocimiento: " + tag)
         }
@@ -635,9 +636,10 @@ class MainActivity : Activity() {
             .show()
     }
 
-    private fun spanishResponseVoices(): List<Voice> =
+    private fun availableResponseVoices(): List<Voice> =
         try {
-            tts?.voices?.filter { it.locale.language == "es" }
+            val language = effectiveLanguage("voice_language").substringBefore('-')
+            tts?.voices?.filter { it.locale.language == language }
                 ?.sortedWith(compareByDescending<Voice> { it.quality }.thenBy { it.name })
                 ?: emptyList()
         } catch (_: Exception) { emptyList() }
@@ -646,18 +648,18 @@ class MainActivity : Activity() {
         val engine = tts ?: return
         engine.setSpeechRate(0.96f)
         engine.setPitch(1.0f)
-        val available = spanishResponseVoices()
+        val available = availableResponseVoices()
         val saved = prefs.getString("tts_voice_name", null)
         val selected = available.firstOrNull { it.name == saved }
+            ?: available.firstOrNull { it.locale.toLanguageTag().equals(effectiveLanguage("voice_language"), true) }
             ?: available.firstOrNull { it.locale.toLanguageTag().equals("es-MX", true) }
-            ?: available.firstOrNull { it.locale.toLanguageTag().equals("es-US", true) }
             ?: available.firstOrNull()
         if (selected != null) {
             if (engine.setVoice(selected) != TextToSpeech.SUCCESS) {
-                engine.language = Locale.forLanguageTag("es-MX")
+                engine.language = Locale.forLanguageTag(effectiveLanguage("voice_language"))
             }
         } else {
-            engine.language = Locale.forLanguageTag("es-MX")
+            engine.language = Locale.forLanguageTag(effectiveLanguage("voice_language"))
         }
     }
 
@@ -667,11 +669,11 @@ class MainActivity : Activity() {
             updateStatus("La síntesis de voz todavía no está lista.")
             return
         }
-        val voices = spanishResponseVoices()
+        val voices = availableResponseVoices()
         if (voices.isEmpty()) {
             AlertDialog.Builder(this)
-                .setTitle("Voces en español")
-                .setMessage("No se encontraron voces en español instaladas. " +
+                .setTitle("Voces disponibles")
+                .setMessage("No hay voces instaladas para el idioma seleccionado. " +
                     "Revisa el motor de texto a voz y descarga voces desde los ajustes de Android.")
                 .setPositiveButton("Entendido", null).show()
             return
@@ -680,7 +682,7 @@ class MainActivity : Activity() {
             val quality = if (it.quality >= Voice.QUALITY_HIGH) "alta calidad" else "estándar"
             it.locale.toLanguageTag() + " · " + it.name + " · " + quality
         }.toTypedArray()
-        AlertDialog.Builder(this).setTitle("Elegir y probar voz en español")
+        AlertDialog.Builder(this).setTitle("Elegir y probar voz de respuesta")
             .setMessage("Escucha las opciones y selecciona la voz femenina que prefieras. " +
                 "Android no informa de forma fiable el género de cada voz.")
             .setItems(names) { _, index ->
@@ -690,9 +692,16 @@ class MainActivity : Activity() {
                     handler.removeCallbacks(restartListening)
                     if (voiceActive) { voiceActive = false; recognizer?.cancel() }
                     speaking = true
+                    val preview = when (chosen.locale.language) {
+                        "en" -> "Hello, I am ACCESSIA. I can help you browse."
+                        "pt" -> "Olá, sou a ACCESSIA. Posso ajudar você a navegar."
+                        "fr" -> "Bonjour, je suis ACCESSIA. Je peux vous aider."
+                        "de" -> "Hallo, ich bin ACCESSIA. Ich helfe dir beim Surfen."
+                        "it" -> "Ciao, sono ACCESSIA. Posso aiutarti a navigare."
+                        else -> "Hola, soy ACCESSIA. Estoy lista para ayudarte a navegar."
+                    }
                     val spoken = engine.speak(
-                        "Hola, soy ACCESSIA. Estoy lista para ayudarte a navegar.",
-                        TextToSpeech.QUEUE_FLUSH, null, "accessia-voice-preview"
+                        preview, TextToSpeech.QUEUE_FLUSH, null, "accessia-voice-preview"
                     )
                     if (spoken == TextToSpeech.ERROR) {
                         speaking = false
