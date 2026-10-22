@@ -11,14 +11,14 @@ android {
         manifestPlaceholders["appLabel"] = "ACCESSIA"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0-dev"
+        versionCode = 3
+        versionName = "0.3.0-dev"
     }
     // La APK debug es una app independiente para preservar la instalación previa.
     buildTypes {
         getByName("debug") {
-            applicationIdSuffix = ".beta"
-            manifestPlaceholders["appLabel"] = "ACCESSIA Beta"
+            applicationIdSuffix = ".beta03"
+            manifestPlaceholders["appLabel"] = "ACCESSIA Beta 0.3"
         }
     }
     compileOptions {
