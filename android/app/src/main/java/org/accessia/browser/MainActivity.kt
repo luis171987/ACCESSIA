@@ -1,5 +1,6 @@
 package org.accessia.browser
 
+import org.accessia.browser.agent.AgentController
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
@@ -57,6 +58,7 @@ class MainActivity : Activity() {
     private lateinit var welcomePanel: LinearLayout
     private val handler = Handler(Looper.getMainLooper())
     private val prefs by lazy { getSharedPreferences("accessia_v02", MODE_PRIVATE) }
+    private val localAgent by lazy { AgentController(this, ::announce, ::navigate, { message -> contentPort?.let { it.postMessage(message); true } ?: false }) }
     private var contentPort: WebExtension.Port? = null
     private var recognizer: SpeechRecognizer? = null
     private var tts: TextToSpeech? = null
@@ -128,12 +130,16 @@ class MainActivity : Activity() {
                 hasUserGesture: Boolean
             ) {
                 if (!url.isNullOrBlank()) {
+                    localAgent.cancel()
                     currentUrl = url
                     welcomePanel.visibility = if (url == "about:blank") View.VISIBLE else View.GONE
                     if (!address.hasFocus()) address.setText(if (url == "about:blank") "" else url)
                     if (url.startsWith("https://")) remember("historial", url, 120)
                 }
             }
+        })
+        session.setProgressDelegate(object : GeckoSession.ProgressDelegate {
+            override fun onPageStart(session: GeckoSession, url: String) { localAgent.cancel() }
         })
         session.open(runtime)
         webView.setSession(session)
@@ -215,7 +221,7 @@ class MainActivity : Activity() {
         listOf(
             "← Atrás" to { goBack() },
             "→ Adelante" to { goForward() },
-            "⟳" to { session.reload() },
+            "⟳" to { reloadPage() },
             "★ Favorito" to { toggleFavorite() },
             "Historial" to { showLinks("historial", "Historial") },
             "Descargas" to { showDownloads() }
@@ -350,7 +356,7 @@ class MainActivity : Activity() {
     }
 
     private fun showMenu() {
-        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta", "Dictado largo por fragmentos", "Idioma de páginas web", "Traducir página", "Sugerir idioma por IP")
+        val items = arrayOf("Mostrar/ocultar botón flotante", "Favoritos", "Historial", "Descargas", "Idioma para escuchar", "Estudio automático", "Acerca de ACCESSIA", "Salir", "Guía de comandos", "Elegir voz de respuesta", "Dictado largo por fragmentos", "Idioma de páginas web", "Traducir página", "Sugerir idioma por IP", "Asistente local")
         AlertDialog.Builder(this).setTitle("Menú ACCESSIA").setItems(items) { _, n ->
             when (n) {
                 0 -> {
@@ -372,6 +378,7 @@ class MainActivity : Activity() {
                 11 -> chooseSiteLanguage()
                 12 -> translateCurrentPage()
                 13 -> askIpRegionPermission()
+                14 -> localAgent.settings()
             }
         }.show()
     }
@@ -786,8 +793,10 @@ class MainActivity : Activity() {
     }
 
     private fun exitApp() { stopVoice("Cerrando ACCESSIA."); finishAndRemoveTask() }
-    private fun goBack() { if (canGoBack) session.goBack() else announce("No hay una página anterior.") }
-    private fun goForward() { if (canGoForward) session.goForward() else announce("No hay una página siguiente.") }
+    private fun reloadPage() { localAgent.cancel(); session.reload() }
+
+    private fun goBack() { localAgent.cancel(); if (canGoBack) session.goBack() else announce("No hay una página anterior.") }
+    private fun goForward() { localAgent.cancel(); if (canGoForward) session.goForward() else announce("No hay una página siguiente.") }
 
     private fun setupExtension() {
         runtime.webExtensionController.installBuiltIn("resource://android/assets/accessia_ext/").accept(
@@ -797,17 +806,21 @@ class MainActivity : Activity() {
                 } else {
                     session.webExtensionController.setMessageDelegate(extension, object : WebExtension.MessageDelegate {
                         override fun onConnect(port: WebExtension.Port) {
+                            if (!port.sender.isTopLevel) { port.disconnect(); return }
+                            localAgent.cancel()
                             contentPort = port
                             port.setDelegate(object : WebExtension.PortDelegate {
                                 override fun onPortMessage(message: Any, port: WebExtension.Port) {
+                                    if (contentPort !== port) return
                                     val obj = message as? JSONObject ?: return
+                                    if (obj.optString("type") == "agent_result") { runOnUiThread { if (contentPort === port) localAgent.result(obj) }; return }
                                     if (obj.optString("type") != "result") return
                                     val response = obj.optJSONObject("payload") ?: return
                                     val spoken = response.optString("text").ifBlank { response.optString("message") }
                                     runOnUiThread { announce(spoken.take(650)) }
                                 }
                                 override fun onDisconnect(port: WebExtension.Port) {
-                                    if (contentPort === port) contentPort = null
+                                    if (contentPort === port) { localAgent.cancel(); contentPort = null }
                                 }
                             })
                         }
@@ -827,6 +840,7 @@ class MainActivity : Activity() {
     }
 
     private fun navigate(value: String) {
+        localAgent.cancel()
         val input = value.trim()
         if (input.isEmpty()) return
         val destination = when {
@@ -1061,6 +1075,7 @@ class MainActivity : Activity() {
 
     private fun handleSpoken(raw: String) {
         val command = normalizeVoiceCommand(raw)
+        if (command in setOf("cancelar", "detener", "parar")) { localAgent.cancel(); tts?.stop(); announce("Petición cancelada"); return }
         if (autoConsentPending) {
             autoConsentPending = false
             if (command in setOf("confirmar", "si confirmar", "si")) {
@@ -1068,6 +1083,7 @@ class MainActivity : Activity() {
             } else announce("Continuidad no autorizada.")
             return
         }
+        if (localAgent.enabled && command == "confirmar") { localAgent.confirm(); return }
         // Prioridad para las funciones locales: deben funcionar incluso en about:blank.
         when {
             command in setOf("ayuda", "comandos", "ver comandos", "mostrar comandos",
@@ -1094,6 +1110,7 @@ class MainActivity : Activity() {
             command in setOf("acerca de", "creditos") -> showCredits(spoken = true)
 
             command in setOf("cerrar pagina", "cerrar pestana") -> {
+                localAgent.cancel()
                 contentPort = null
                 currentUrl = "about:blank"
                 canGoBack = false
@@ -1112,7 +1129,7 @@ class MainActivity : Activity() {
             command in setOf("adelante", "ir adelante", "pagina siguiente", "avanzar") -> goForward()
 
             command in setOf("recargar", "recargar pagina", "actualizar pagina",
-                "actualizar", "refrescar pagina") -> session.reload()
+                "actualizar", "refrescar pagina") -> reloadPage()
 
             command in setOf("historial", "mostrar historial", "ver historial",
                 "abrir historial", "abrir el historial", "muestrame el historial") ->
@@ -1172,6 +1189,16 @@ class MainActivity : Activity() {
                 else announce("Dime qué página quieres abrir.")
             }
 
+            command in setOf("pausar", "pausa", "detener video", "continuar", "reanudar", "reproducir",
+                "play", "resume", "seguir video", "cursor siguiente", "siguiente control", "siguiente opcion",
+                "siguiente", "cursor anterior", "cursor volver", "anterior", "control anterior", "seleccionar",
+                "activar", "hacer clic", "click", "abrir seleccionado", "bajar", "desplazar abajo", "subir",
+                "desplazar arriba", "siguiente leccion", "siguiente clase", "proximo video", "proxima leccion",
+                "desactivar estudio automatico", "detener automatizacion", "parar automatizacion",
+                "desactivar continuidad", "leer pagina", "leer esta pagina", "leer contenido", "estado") -> sendWebCommand(command)
+
+            localAgent.enabled -> localAgent.submit(raw)
+
             contentPort != null -> sendWebCommand(command)
 
             else -> announce("No reconocí esa función. Di ayuda para conocer los comandos disponibles.")
@@ -1209,10 +1236,12 @@ class MainActivity : Activity() {
     override fun onBackPressed() { if (canGoBack) goBack() else super.onBackPressed() }
 
     override fun onStop() {
+        localAgent.cancel()
         super.onStop()
         if (voiceEnabled || longDictationEnabled) stopVoice("Voz detenida en segundo plano.")
     }
     override fun onDestroy() {
+        localAgent.close()
         destroyed = true
         voiceEnabled = false
         handler.removeCallbacksAndMessages(null)

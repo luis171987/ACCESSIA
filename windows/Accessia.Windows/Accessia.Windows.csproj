@@ -14,7 +14,12 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="../../shared/THIRD_PARTY_NOTICES.txt" Link="assets/THIRD_PARTY_NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../shared/licenses/*" Link="assets/licenses/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+    <PackageReference Include="LLamaSharp" Version="0.30.0" />
+    <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.30.0" />
+    <Content Include="../../shared/agent-prompt.txt" Link="assets/agent-prompt.txt" CopyToOutputDirectory="PreserveNewest" />
     <PackageReference Include="System.Speech" Version="8.0.0" />
     <Content Include="../../shared/accessia.js" Link="assets/accessia.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

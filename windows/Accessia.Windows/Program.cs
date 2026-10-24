@@ -17,7 +17,7 @@ internal static class Program
     }
 }
 
-public sealed class MainWindow : Form
+public sealed partial class MainWindow : Form
 {
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill, AccessibleName = "Contenido del navegador" };
     private readonly TextBox address = new() { Dock = DockStyle.Fill, AccessibleName = "Dirección o búsqueda" };
@@ -65,6 +65,7 @@ public sealed class MainWindow : Form
         controls.Controls.Add(NewButton("Cerrar página", () => browser.CoreWebView2?.Navigate("about:blank")));
         voiceButton.Click += (_, _) => ToggleVoice();
         controls.Controls.Add(voiceButton);
+        AddAgentControls(controls);
         page.Controls.Add(controls, 0, 1);
         page.Controls.Add(status, 0, 2);
         page.Controls.Add(browser, 0, 3);
@@ -103,6 +104,7 @@ public sealed class MainWindow : Form
                     SetStatus("ACCESSIA abre solo páginas HTTPS en esta versión.");
                 }
                 autoConsentPending = false;
+                CancelAgent();
             };
             browser.CoreWebView2.NewWindowRequested += (_, e) =>
             {
@@ -249,6 +251,8 @@ public sealed class MainWindow : Form
     private void HandleSpeech(string spoken)
     {
         string command = spoken.ToLowerInvariant().Trim();
+        if(command is "cancelar" or "detener") { CancelAgent(); autoConsentPending=false; _ = Command("pausar"); SetStatus("Petición cancelada."); return; }
+        if(command=="confirmar" && pendingAgent!=null) {_ = ConfirmAgent();return;}
         if (autoConsentPending)
         {
             autoConsentPending = false;
@@ -268,7 +272,8 @@ public sealed class MainWindow : Form
                 SetStatus("¿Activar continuación al finalizar esta lección? Di confirmar o cancelar.");
                 break;
             default:
-                if (command.StartsWith("buscar ") || command.StartsWith("abrir ")) Navigate(spoken[(spoken.IndexOf(' ') + 1)..]);
+                if(agentEnabled && command is not ("pausar" or "continuar" or "reproducir" or "cursor siguiente" or "cursor anterior" or "seleccionar" or "siguiente lección" or "subir" or "bajar" or "leer página" or "desactivar estudio automático" or "ayuda")) _ = AskAgent(spoken);
+                else if (command.StartsWith("buscar ") || command.StartsWith("abrir ")) Navigate(spoken[(spoken.IndexOf(' ') + 1)..]);
                 else _ = Command(command);
                 break;
         }
@@ -289,6 +294,7 @@ public sealed class MainWindow : Form
 
     private void Cleanup()
     {
+        CancelAgent();
         disposed = true;
         voiceOn = false;
         recognition?.RecognizeAsyncCancel();

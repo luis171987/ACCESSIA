@@ -1,0 +1,25 @@
+ACCESSIA — optional local assistant dependencies
+
+ACCESSIA source remains MIT. Third-party libraries and model weights retain
+their own licenses. This feature does not include BrowserOS/AGPL code.
+
+Google AI Edge LiteRT-LM 0.18.0 — Apache License 2.0
+Copyright Google LLC. https://github.com/google-ai-edge/LiteRT-LM
+Android integration uses the published runtime API also used by AI Edge Gallery;
+it does not redistribute the Gallery application.
+
+LLamaSharp 0.30.0 and LLamaSharp.Backend.Cpu 0.30.0 — MIT
+Copyright (c) 2025 SciSharp STACK. https://github.com/SciSharp/LLamaSharp
+The CPU backend embeds llama.cpp/ggml — MIT
+Copyright (c) 2023-2026 The ggml authors. https://github.com/ggml-org/llama.cpp
+
+Qwen3 model family — Apache License 2.0
+https://huggingface.co/Qwen
+Model files are optional downloads from immutable, size-checked and SHA256-
+checked revisions declared in the platform model store. An experimental model
+is not certified for every request or device. Weights are not stored in Git.
+
+License texts are provided in the accompanying licenses directory. Package
+dependencies retain their own notices and licenses, including transitive
+dependencies. This file documents the added inference components, not a full
+SBOM or a complete legal audit of all browser/system dependencies.
