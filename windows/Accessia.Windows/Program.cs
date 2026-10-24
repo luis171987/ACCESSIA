@@ -20,7 +20,7 @@ internal static class Program
 public sealed partial class MainWindow : Form
 {
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill, AccessibleName = "Contenido del navegador" };
-    private readonly TextBox address = new() { Dock = DockStyle.Fill, AccessibleName = "Dirección o búsqueda" };
+    private readonly TextBox address = new() { Dock = DockStyle.Fill, Enabled = false, AccessibleName = "Dirección o búsqueda" };
     private readonly Label status = new() { Name = "AccessiaStatus", Dock = DockStyle.Fill, Text = "ACCESSIA: preparando navegador.", AutoSize = false, AccessibleName = "Estado" };
     private readonly Button voiceButton = new() { Text = "Activar voz", AutoSize = true, AccessibleName = "Activar o desactivar control por voz" };
     private SpeechRecognitionEngine? recognition;
@@ -132,6 +132,7 @@ public sealed partial class MainWindow : Form
             string script = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "assets", "accessia.js"));
             await browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(script);
             browserReady = true;
+            address.Enabled = true;
             Navigate(address.Text);
             SetupVoice();
         }

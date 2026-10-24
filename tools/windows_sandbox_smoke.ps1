@@ -13,20 +13,24 @@ try {
     if ($appProcess.MainWindowHandle -eq 0) { throw 'No Windows application window appeared.' }
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
     $statusCondition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'AccessiaStatus')
+    $addressCondition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::NameProperty, 'Dirección o búsqueda')
     $readyDeadline = [DateTime]::UtcNow.AddSeconds(90)
     $description = ''
+    $browserPrepared = $false
     do {
         $statusElement = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $statusCondition)
         if ($null -ne $statusElement) {
             $description = $statusElement.Current.Name
         }
         if ($description -like 'Estado: No se pudo preparar WebView2*') { throw $description }
-        if ($description -like 'Estado: Abriendo *') { break }
+        $addressElement = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $addressCondition)
+        $browserPrepared = $null -ne $addressElement -and $addressElement.Current.IsEnabled
+        if ($browserPrepared) { break }
         Start-Sleep -Milliseconds 500
         $appProcess.Refresh()
         if ($appProcess.HasExited) { throw 'ACCESSIA closed before WebView2 initialized.' }
     } while ([DateTime]::UtcNow -lt $readyDeadline)
-    if ($description -notlike 'Estado: Abriendo *') { throw 'The native window appeared, but WebView2 readiness was not verified.' }
+    if (!$browserPrepared) { throw "The native window appeared, but WebView2 readiness was not verified. Last native status: $description" }
     $condition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::NameProperty, 'Asistente local')
     $button = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
     if ($null -eq $button) { throw 'Assistant configuration control is absent from the real Windows UI.' }
