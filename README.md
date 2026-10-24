@@ -24,7 +24,7 @@
 | APK con las correcciones actuales | [Artefacto experimental de `b7a97fd`](https://github.com/luis171987/ACCESSIA/actions/runs/40056410475/artifacts/12546010778), generado por Actions. Es un ZIP que contiene el APK; puede requerir iniciar sesión y caduca según la retención de artefactos. |
 | Fusión y validación física | **Pendientes.** La [incidencia #1](https://github.com/luis171987/ACCESSIA/issues/1) y el PR exigen probar la APK actual en **Honor Magic 7 Lite** antes de fusionar. La instalación reportada de una APK anterior no valida esta revisión. |
 
-**[Informe de las correcciones y lista de pruebas físicas](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md)** · [Estado y deuda de trabajo actualizados](docs/ESTADO_ACTUAL.md) · [Pendientes priorizados](#deuda-de-trabajo-y-siguientes-entregas).
+**[Informe de las correcciones y lista de pruebas físicas](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md)** · [Estado y deuda de trabajo actualizados](docs/ESTADO_ACTUAL.md) · [Pendientes priorizados](#deuda-de-trabajo-y-siguientes-entregas). · [Guía de comandos de la revisión Android](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/GUIA_COMANDOS_ACCESSIA.md).
 
 ### Pausa de las pruebas en el Honor Magic 7 Lite
 
