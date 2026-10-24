@@ -62,6 +62,7 @@ class MainActivity : Activity() {
     private var tts: TextToSpeech? = null
     private var voiceEnabled = false
     private var voiceActive = false
+    private var speechGeneration = 0
     private var speaking = false
     private var ttsReady = false
     private var consecutiveErrors = 0
@@ -289,7 +290,7 @@ class MainActivity : Activity() {
             "Favoritos" to { showLinks("favoritos", "Favoritos") },
             "Salir de ACCESSIA" to { exitApp() }
         ).forEach { (name, task) ->
-            floatingActions.addView(actionButton(name, task), LinearLayout.LayoutParams(dp(190), dp(48)).apply {
+            floatingActions.addView(actionButton(name, task), LinearLayout.LayoutParams(dp(190), -2).apply {
                 bottomMargin = dp(3)
             })
         }
@@ -882,59 +883,63 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun createSpeechListener(): RecognitionListener = object : RecognitionListener {
-        override fun onReadyForSpeech(params: Bundle?) {
-            if (!voiceEnabled || destroyed) return
-            voiceActive = true; lastPartialTranscript = ""; updateStatus("🎙 Escuchando · habla normalmente")
-        }
-        override fun onBeginningOfSpeech() { if (voiceEnabled && !destroyed) updateStatus("🎙 Capturando tu voz…") }
-        override fun onRmsChanged(rmsdB: Float) {}
-        override fun onBufferReceived(buffer: ByteArray?) {}
-        override fun onEndOfSpeech() { if (voiceEnabled && !destroyed) updateStatus("Procesando frase…") }
-        override fun onError(error: Int) {
-            voiceActive = false
-            if (!voiceEnabled || destroyed) return
-            if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
-                stopVoice("Permiso de micrófono denegado.")
-                return
+    private fun createSpeechListener(): RecognitionListener {
+        val generation = speechGeneration
+        fun acceptsCallbacks() = voiceEnabled && !destroyed && generation == speechGeneration
+        return object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {
+                if (!acceptsCallbacks()) return
+                voiceActive = true; lastPartialTranscript = ""; updateStatus("🎙 Escuchando · habla normalmente")
             }
-            consecutiveErrors++
-            if (consecutiveErrors >= 8) {
-                stopVoice("Motor de voz detenido tras varios errores. Comprueba la red y el idioma.")
-                return
+            override fun onBeginningOfSpeech() { if (acceptsCallbacks()) updateStatus("🎙 Capturando tu voz…") }
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() { if (acceptsCallbacks()) updateStatus("Procesando frase…") }
+            override fun onError(error: Int) {
+                if (!acceptsCallbacks()) return
+                voiceActive = false
+                if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+                    stopVoice("Permiso de micrófono denegado.")
+                    return
+                }
+                consecutiveErrors++
+                if (consecutiveErrors >= 8) {
+                    stopVoice("Motor de voz detenido tras varios errores. Comprueba la red y el idioma.")
+                    return
+                }
+                val cause = when (error) {
+                    SpeechRecognizer.ERROR_NO_MATCH -> if (lastPartialTranscript.isNotBlank()) "Texto parcial: " + lastPartialTranscript.take(100) + ". No confirmado" else "No se comprendió la frase"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No se detectó voz"
+                    SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Error de red del reconocedor"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Micrófono ocupado"
+                    else -> "Error del reconocimiento ($error)"
+                }
+                updateStatus("$cause · reintentando")
+                scheduleListen(min(1000L * consecutiveErrors, 5500L))
             }
-            val cause = when (error) {
-                SpeechRecognizer.ERROR_NO_MATCH -> if (lastPartialTranscript.isNotBlank()) "Texto parcial: " + lastPartialTranscript.take(100) + ". No confirmado" else "No se comprendió la frase"
-                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No se detectó voz"
-                SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Error de red del reconocedor"
-                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Micrófono ocupado"
-                else -> "Error del reconocimiento ($error)"
+            override fun onResults(results: Bundle?) {
+                if (!acceptsCallbacks()) return
+                voiceActive = false
+                consecutiveErrors = 0
+                val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    ?.filter { it.isNotBlank() }.orEmpty()
+                val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
+                    else alternatives.firstOrNull()
+                if (spoken.isNullOrBlank()) { scheduleListen(); return }
+                if (longDictationEnabled) appendDictatedSegment(spoken)
+                else {
+                    updateStatus("Escuché: " + spoken.take(160))
+                    handleSpoken(spoken)
+                }
+                if (!speaking) scheduleListen()
             }
-            updateStatus("$cause · reintentando")
-            scheduleListen(min(1000L * consecutiveErrors, 5500L))
-        }
-        override fun onResults(results: Bundle?) {
-            if (!voiceEnabled || destroyed) return
-            voiceActive = false
-            consecutiveErrors = 0
-            val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                ?.filter { it.isNotBlank() }.orEmpty()
-            val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
-                else alternatives.firstOrNull()
-            if (spoken.isNullOrBlank()) { scheduleListen(); return }
-            if (longDictationEnabled) appendDictatedSegment(spoken)
-            else {
-                updateStatus("Escuché: " + spoken.take(160))
-                handleSpoken(spoken)
+            override fun onPartialResults(partialResults: Bundle?) {
+                if (!acceptsCallbacks()) return
+                val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+                if (!phrase.isNullOrBlank()) { lastPartialTranscript = phrase; updateStatus("🎙 " + phrase.take(140) + "…") }
             }
-            if (!speaking) scheduleListen()
+            override fun onEvent(eventType: Int, params: Bundle?) {}
         }
-        override fun onPartialResults(partialResults: Bundle?) {
-            if (!voiceEnabled || destroyed) return
-            val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
-            if (!phrase.isNullOrBlank()) { lastPartialTranscript = phrase; updateStatus("🎙 " + phrase.take(140) + "…") }
-        }
-        override fun onEvent(eventType: Int, params: Bundle?) {}
     }
 
     private fun setupTts() {
@@ -957,6 +962,7 @@ class MainActivity : Activity() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 42); return
         }
+        if (recognizer == null) setupSpeech()
         if (recognizer == null) { stopVoice("No hay motor de voz. Revisa servicios de voz de Android."); return }
         voiceEnabled = true
         consecutiveErrors = 0
@@ -1001,6 +1007,7 @@ class MainActivity : Activity() {
 
     private fun stopVoice(message: String) {
         voiceEnabled = false
+        speechGeneration++
         voiceActive = false
         speaking = false
         longDictationEnabled = false
@@ -1008,6 +1015,8 @@ class MainActivity : Activity() {
         handler.removeCallbacks(restartListening)
         updateVoiceButtons()
         recognizer?.cancel()
+        recognizer?.destroy()
+        recognizer = null
         tts?.stop()
         announce(message)
     }
@@ -1022,7 +1031,7 @@ class MainActivity : Activity() {
     // Strip only command prefixes; keep the original query/domain intact.
     private fun stripVoicePrefixes(raw: String): String {
         val prefix = Regex(
-            "^(?:(?:oye[\\s,]+)?accessia|por\\s+favor|quiero|puedes|podr[ií]as|me\\s+puedes)(?:[\\s,]+|$)",
+            "^(?:(?:oye[\\s\\p{Punct}¿¡]+)?accessia|por[\\s\\p{Punct}¿¡]+favor|quiero|puedes|podr[ií]as|me[\\s\\p{Punct}¿¡]+puedes)(?:[\\s\\p{Punct}¿¡]+|$)",
             RegexOption.IGNORE_CASE
         )
         var result = raw.trim()
@@ -1160,7 +1169,10 @@ class MainActivity : Activity() {
     }
 
     private fun updateStatus(message: String) {
-        if (::status.isInitialized && !destroyed) status.text = message
+        if (::status.isInitialized && !destroyed) {
+            status.text = message
+            status.contentDescription = message
+        }
     }
 
     private fun announce(message: String) {

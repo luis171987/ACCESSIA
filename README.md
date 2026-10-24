@@ -34,6 +34,8 @@ Comparte esta dirección: **https://github.com/luis171987/ACCESSIA**. Para que *
 
 > **Estado: prototipo experimental.** La Beta 0.3 de Android compiló en GitHub Actions y se publicó como [versión preliminar descargable](https://github.com/luis171987/ACCESSIA/releases/tag/v0.3.0-beta.3). Existe además un paquete portable experimental para Windows. El desarrollo de Android sigue en [revisión (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2), sin fusionarse aún con `main`; no se certifica accesibilidad universal, funcionamiento plenamente manos libres ni funcionamiento correcto en todos los dispositivos.
 
+**[Informe de correcciones del PR #2 y prueba pendiente en Honor Magic 7 Lite](docs/REVISION_PR2_2026-10-24.md)**.
+
 ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
 
 ## 🖼️ Interfaz de ACCESSIA en Android

@@ -36,6 +36,12 @@ Se revisan los 19 hilos de https://github.com/luis171987/ACCESSIA/pull/2. Este d
 | 4343301844 | Aceptar idioma sugerido reconfigura también la respuesta TTS. |
 | 4343301848 | Toda detención de voz limpia el modo de dictado acumulativo. |
 
+## Revisión independiente
+
+Una revisión de código independiente encontró tres casos adicionales: callbacks del reconocedor anterior después de reactivar voz, descripción TalkBack desactualizada al reiniciar y etiquetas recortadas con fuente al 200 %. Se añadieron cuatro pruebas que fallaron antes de corregirlos: resultados antiguos tras reinicio, liberación del reconocedor detenido, estado accesible al volver a escuchar y ajuste de etiquetas con fuente ampliada.
+
+La detención ahora invalida la generación del reconocedor y destruye su instancia; reactivar crea una nueva frontera de callbacks. Cada actualización de estado sincroniza texto y descripción accesible. Las acciones flotantes crecen con su contenido y el panel limita su altura disponible con desplazamiento.
+
 ## Puerta de fusión: prueba física aún requerida
 
 La incidencia #1 y el PR #2 exigen validar la nueva APK en Honor Magic 7 Lite antes de fusionar. Una APK anterior fue instalada el 21 de octubre, con problemas reportados; esto no valida las correcciones actuales.
@@ -52,3 +58,18 @@ Prueba pendiente con el dispositivo:
 8. Registrar commit/APK, versión Android, motor STT/TTS y resultados sin publicar datos personales.
 
 No se declara validación física, accesibilidad certificada, firma de producción ni funcionamiento universal a partir de las pruebas automatizadas.
+
+## Deuda de producto fuera de los comentarios revisados
+
+La documentación previa conserva pendientes de mayor alcance: internacionalización completa de la interfaz, memoria contextual segura, STT/VAD streaming, selección de proveedor para voz neuronal y descargas delegadas desde GeckoView. Esta corrección del PR no implementa ni declara resueltos esos proyectos. Ver `ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md` e incidencia #1.
+
+También se comprobó y corrigió la regresión de prefijos con puntuación, por ejemplo «ACCESSIA: por favor, abrir wikipedia.org», conservando el dominio original. Cada caso de apertura reinicia la URL de prueba para que una navegación anterior no oculte fallos.
+
+## Resultado local final
+
+- `gradle :app:testDebugUnitTest :app:assembleDebug`: BUILD SUCCESSFUL; 21 pruebas nativas, cero fallos, errores u omisiones. APK debug experimental compilada; no equivale a distribución firmada de producción.
+- `node --test shared/tests/*.test.js`: 12 aprobadas.
+- `python3 -m unittest discover -s tools/tests -p 'test_*.py'`: 24 aprobadas.
+- `python3 tools/check_public_secrets.py`: 71 archivos de texto examinados; cero hallazgos en el árbol de trabajo. No es una auditoría completa del historial.
+- Revisión independiente: tres observaciones corregidas y cubiertas con cuatro pruebas adicionales; sin observaciones menores aplazadas de esa revisión.
+- Las advertencias de compilación sobre APIs Android obsoletas y bibliotecas nativas no depuradas siguen siendo advertencias, sin impedir la compilación; no se certifica ausencia de toda deuda técnica.

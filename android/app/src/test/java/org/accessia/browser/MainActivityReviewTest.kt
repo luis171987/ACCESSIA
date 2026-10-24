@@ -2,6 +2,7 @@ package org.accessia.browser
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.speech.SpeechRecognizer
@@ -58,14 +59,16 @@ class MainActivityReviewTest {
         val cases = mapOf(
             "oye ACCESSIA por favor buscar bibliotecas" to "buscar bibliotecas",
             "por favor ACCESSIA buscar wikipedia" to "buscar wikipedia",
-            "me puedes por favor abrir wikipedia.org" to "abrir wikipedia org"
+            "me puedes por favor abrir wikipedia.org" to "abrir wikipedia org",
+            "ACCESSIA: por favor, abrir wikipedia.org" to "abrir wikipedia org"
         )
         for ((phrase, expected) in cases) assertEquals(expected, invoke("normalizeVoiceCommand", phrase))
     }
 
     @Test fun politeOpenPreservesDomainPunctuation() {
         for (phrase in listOf("Podrías abrir wikipedia.org", "me puedes abrir wikipedia.org",
-            "oye ACCESSIA por favor abre wikipedia.org")) {
+            "oye ACCESSIA por favor abre wikipedia.org", "ACCESSIA: por favor, abrir wikipedia.org")) {
+            field("currentUrl", "about:blank")
             invoke("handleSpoken", phrase)
             assertEquals("https://wikipedia.org", field("currentUrl"))
         }
@@ -233,5 +236,60 @@ class MainActivityReviewTest {
         assertEquals("texto conservado", address().text.toString())
         assertEquals("Detenido", status().text.toString())
         assertEquals(false, field("voiceActive"))
+    }
+
+    @Test fun callbacksFromStoppedRecognizerCannotAffectRestartedSession() {
+        val oldListener = invoke("createSpeechListener") as RecognitionListener
+        invoke("stopVoice", "Detenido")
+        field("voiceEnabled", true)
+        field("voiceActive", true)
+        address().setText("consulta nueva")
+        val results = Bundle().apply {
+            putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, arrayListOf("abrir wikipedia.org"))
+        }
+        oldListener.onResults(results)
+        oldListener.onPartialResults(results)
+        oldListener.onError(SpeechRecognizer.ERROR_NETWORK)
+        assertEquals("about:blank", field("currentUrl"))
+        assertEquals("consulta nueva", address().text.toString())
+        assertEquals(true, field("voiceActive"))
+        assertEquals(0, field("consecutiveErrors"))
+    }
+
+    @Test fun listeningStatusAfterRestartIsAlsoCurrentForTalkBack() {
+        invoke("stopVoice", "Reconocimiento desactivado.")
+        field("voiceEnabled", true)
+        val currentListener = invoke("createSpeechListener") as RecognitionListener
+        currentListener.onReadyForSpeech(null)
+        assertEquals("🎙 Escuchando · habla normalmente", status().contentDescription)
+    }
+
+    @Test fun stoppingDisposesTheOldRecognizerCallbackBoundary() {
+        val oldRecognizer = mock(SpeechRecognizer::class.java)
+        field("recognizer", oldRecognizer)
+        invoke("stopVoice", "Detenido")
+        verify(oldRecognizer).destroy()
+        assertNull(field("recognizer"))
+    }
+
+    @Test fun floatingActionLabelsFitAtDoubleFontScale() {
+        val configuration = Configuration(activity.resources.configuration).apply { fontScale = 2f }
+        @Suppress("DEPRECATION")
+        activity.resources.updateConfiguration(configuration, activity.resources.displayMetrics)
+        invoke("buildInterface")
+        invoke("setFloatingExpanded", true)
+        val root = activity.findViewById<FrameLayout>(android.R.id.content).getChildAt(0)
+        repeat(2) {
+            root.measure(View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY))
+            root.layout(0, 0, 640, 320)
+        }
+        val panel = field("floatingPanel") as ScrollView
+        val actions = panel.getChildAt(0) as LinearLayout
+        for (i in 0 until actions.childCount) {
+            val action = actions.getChildAt(i) as Button
+            assertTrue("Label clipped: ${action.text}",
+                action.layout.height + action.compoundPaddingTop + action.compoundPaddingBottom <= action.height)
+        }
     }
 }

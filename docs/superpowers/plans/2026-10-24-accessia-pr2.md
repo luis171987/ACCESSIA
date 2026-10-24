@@ -22,9 +22,9 @@
 
 ## Tasks
 1. [x] Inspect 19 threads and baseline (12 JS and 24 Python tests); merge current main into the review branch, preserving download documentation.
-2. [ ] Add meaningful failing native tests for microphone/dictation transitions, submission, voice parsing, accessible controls, downloaded documents and language changes. Configure CI to run them.
-3. [ ] Correct reviewed behavior in MainActivity.kt; verify native tests red then green, full existing suites, APK compilation and secret scan.
-4. [ ] Independent code review and any required regression fixes; update D09/D11 and the review/physical-check report.
+2. [x] Add meaningful failing native tests for microphone/dictation transitions, submission, voice parsing, accessible controls, downloaded documents and language changes. Configure CI to run them.
+3. [x] Correct reviewed behavior in MainActivity.kt; verify native tests red then green, full existing suites, APK compilation and secret scan.
+4. [x] Independent code review and any required regression fixes; update D09/D11 and the review/physical-check report.
 5. [ ] Commit and push without rewriting history; inspect CI; reply in all 19 threads with evidence and resolve only addressed findings.
 6. [ ] Assess merge gate, record remaining physical checks honestly, post PR report and send a final report to the connected Gmail account.
 
@@ -32,3 +32,13 @@
 - Baseline passed: Node 12/12, Python 24/24.
 - Merge conflict limited to README; current main download instructions preserved.
 - Inline execution follows user's instruction to complete the work autonomously.
+
+- Regression evidence: 17 native tests failed on the old behavior and pass after corrections (17/17, no skipped tests). All 12 JS and 24 Python tests still pass.
+- Review decision: preserve the explicit Honor-device merge gate; no newer physical verification was found in issue #1 or PR #2.
+
+- Independent review: three findings (old callbacks after restart, stale accessible status, clipped enlarged labels). All entered one regression fix pass; no findings deferred.
+- Final review scope: session-history purge follows Gecko API; actual Gecko navigation awaits device testing. Prefix parsing, returned document grants, TTS choices, bounded retries and hidden panel reset reviewed without additional findings.
+
+- Additional parser check: punctuated wake/polite prefixes reproduced a normalization regression; separator handling corrected while preserving domain punctuation.
+
+- Final local gate: native 21/21, JS12/12, Python24/24, secret scan71 files/0 findings, APK BUILD SUCCESSFUL. Reviewer findings fixed; no deferred minor findings.
