@@ -328,4 +328,17 @@ class MainActivityReviewTest {
         invoke("appendDictatedSegment", "estudiantes")
         assertEquals("becas para estudiantes", address().text.toString())
     }
+
+    @Test fun dictationUsesTheHighestRankedHypothesisRatherThanTheLongest() {
+        field("voiceEnabled", true)
+        field("longDictationEnabled", true)
+        val listener = invoke("createSpeechListener") as RecognitionListener
+        listener.onResults(Bundle().apply {
+            putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION,
+                arrayListOf("becas universitarias", "becas universitarias gratis"))
+        })
+        assertEquals("becas universitarias", address().text.toString())
+        invoke("submitAddress")
+        assertEquals("https://www.google.com/search?q=becas+universitarias", field("currentUrl"))
+    }
 }

@@ -933,8 +933,8 @@ class MainActivity : Activity() {
                 consecutiveErrors = 0
                 val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     ?.filter { it.isNotBlank() }.orEmpty()
-                val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
-                    else alternatives.firstOrNull()
+                // Android ranks these hypotheses; longer alternatives are not extra fragments.
+                val spoken = alternatives.firstOrNull()
                 if (spoken.isNullOrBlank()) { scheduleListen(); return }
                 if (longDictationEnabled) appendDictatedSegment(spoken)
                 else {

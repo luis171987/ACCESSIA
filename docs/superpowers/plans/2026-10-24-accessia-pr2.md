@@ -44,3 +44,5 @@
 - Final local gate: native 21/21, JS12/12, Python24/24, secret scan71 files/0 findings, APK BUILD SUCCESSFUL. Reviewer findings fixed; no deferred minor findings.
 
 - Publication milestone: 0221857 pushed; original19 threads individually answered and resolved; GitHub Android and shared checks succeeded. Automatic review added two findings (spoken help and fresh dictation buffer); both reproduced and corrected with three tests, final native24/24 and APK built. Updated publication/review results are recorded in PR #2.
+
+- Third automatic finding: preserve recognizer ranking for dictation. Reproduced with a lower-ranked longer hypothesis; corrected to choose the first nonblank candidate. Final native25/25 and APK successful, JS12/12, Python24/24. Total public review findings addressed:22.

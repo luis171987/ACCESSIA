@@ -2,7 +2,7 @@
 
 ACCESSIA · Creado por GENAI INDUSTRIES · Luis Carlos Moreno Jiménez.
 
-Se revisan los 19 hilos originales y dos observaciones adicionales de https://github.com/luis171987/ACCESSIA/pull/2. Este documento separa correcciones verificables por software de pruebas que requieren un dispositivo físico.
+Se revisan los 19 hilos originales y tres observaciones adicionales de https://github.com/luis171987/ACCESSIA/pull/2. Este documento separa correcciones verificables por software de pruebas que requieren un dispositivo físico.
 
 ## Alcance y comprobaciones
 
@@ -37,6 +37,7 @@ Se revisan los 19 hilos originales y dos observaciones adicionales de https://gi
 | 4343301848 | Toda detención de voz limpia el modo de dictado acumulativo. |
 | 4365738963 | La ayuda solicitada por voz anuncia comandos sin abrir un diálogo silencioso. |
 | 4365738968 | Un dictado nuevo excluye la URL mostrada y conserva fragmentos escritos deliberadamente. |
+| 4365751741 | El dictado conserva la primera hipótesis del reconocedor, en lugar de elegir la alternativa más larga. |
 
 ## Revisión independiente
 
@@ -73,7 +74,7 @@ También se comprobó y corrigió la regresión de prefijos con puntuación, por
 
 ## Resultado local final
 
-- `gradle :app:testDebugUnitTest :app:assembleDebug`: BUILD SUCCESSFUL; 24 pruebas nativas, cero fallos, errores u omisiones. APK debug experimental compilada; no equivale a distribución firmada de producción.
+- `gradle :app:testDebugUnitTest :app:assembleDebug`: BUILD SUCCESSFUL; 25 pruebas nativas, cero fallos, errores u omisiones. APK debug experimental compilada; no equivale a distribución firmada de producción.
 - `node --test shared/tests/*.test.js`: 12 aprobadas.
 - `python3 -m unittest discover -s tools/tests -p 'test_*.py'`: 24 aprobadas.
 - `python3 tools/check_public_secrets.py`: 71 archivos de texto examinados; cero hallazgos en el árbol de trabajo. No es una auditoría completa del historial.
@@ -81,3 +82,5 @@ También se comprobó y corrigió la regresión de prefijos con puntuación, por
 - Las advertencias de compilación sobre APIs Android obsoletas y bibliotecas nativas no depuradas siguen siendo advertencias, sin impedir la compilación; no se certifica ausencia de toda deuda técnica.
 
 - Última verificación tras los dos comentarios automáticos adicionales: 24/24 pruebas nativas y APK compilada; se mantienen aprobadas las 12 pruebas JS y 24 Python y el escaneo de secretos.
+
+La siguiente revisión automática señaló el orden de las hipótesis de reconocimiento: se elimina la elección por longitud y se conserva la primera alternativa no vacía del motor. La prueba de regresión falló antes de la corrección y ahora la verificación final aprueba 25/25 pruebas nativas, 12/12 JS y 24/24 Python, con APK compilada y escaneo sin hallazgos. El inventario incluye los 22 comentarios atendidos.
