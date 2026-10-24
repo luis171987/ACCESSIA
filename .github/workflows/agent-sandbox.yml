@@ -2,10 +2,23 @@ name: Local agent virtual OS smoke tests
 on:
   workflow_dispatch:
   pull_request:
-    paths: ['android/**', 'windows/**', 'shared/**', 'tools/windows_sandbox_smoke.ps1', '.github/workflows/agent-sandbox.yml']
+    paths: ['android/**', 'windows/**', 'shared/**', 'tools/test_agent_*.py', 'tools/windows_sandbox_smoke.ps1', '.github/workflows/agent-sandbox.yml']
 permissions:
   contents: read
+env:
+  ACCESSIA_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 jobs:
+  browser-dom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'playwright==1.62.0'
+      - run: python -m playwright install --with-deps chromium
+      - run: python tools/test_agent_dom.py
   android-emulator:
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -38,12 +51,14 @@ jobs:
           script: |
             gradle -p android :app:connectedDebugAndroidTest --no-daemon
             mkdir -p sandbox-evidence
-            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-menu.png > sandbox-evidence/android-${{ matrix.api }}-menu.png
+            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-01-inicio.png > sandbox-evidence/android-${{ matrix.api }}-01-inicio.png
+            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-02-menu.png > sandbox-evidence/android-${{ matrix.api }}-02-menu.png
+            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-03-asistente.png > sandbox-evidence/android-${{ matrix.api }}-03-asistente.png
       - name: Save real emulator screenshot if available
         if: always()
         run: |
           mkdir -p sandbox-evidence
-          printf 'commit=%s\nplatform=Android API %s x86_64 emulator\nphysical_device=false\n' "$GITHUB_SHA" '${{ matrix.api }}' > sandbox-evidence/provenance.txt
+          printf 'commit=%s\nhead_commit=%s\nplatform=Android API %s x86_64 emulator\nphysical_device=false\n' "$GITHUB_SHA" "$ACCESSIA_HEAD_SHA" '${{ matrix.api }}' > sandbox-evidence/provenance.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

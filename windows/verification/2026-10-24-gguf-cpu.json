@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-24",
+  "environment": "Linux cloud x64, 2 CPU quota; not Windows UI/device testing",
+  "engine": "LLamaSharp 0.27.0 + LLamaSharp.Backend.Cpu 0.27.0 (.NET8)",
+  "model": "Qwen3-0.6B-Q8_0.gguf",
+  "bytes": 639446688,
+  "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+  "prompt": "Exact short shared instruction; explicit pinned Qwen3 closed-empty-think prefill, full 10 shared tools",
+  "contextTokens": 8192,
+  "maxOutputTokens": 256,
+  "passed": 4,
+  "cases": [
+    {
+      "request": "Lee la página",
+      "proposal": {
+        "action": "read",
+        "snapshot": "probe"
+      },
+      "elapsedSeconds": 22.8869015
+    },
+    {
+      "request": "Encuentra horarios de bibliotecas en Sucre",
+      "proposal": {
+        "action": "search",
+        "snapshot": "probe",
+        "value": "horarios de bibliotecas en Sucre"
+      },
+      "elapsedSeconds": 25.8379032
+    },
+    {
+      "request": "Abre el enlace Horario de biblioteca",
+      "proposal": {
+        "action": "open",
+        "snapshot": "probe",
+        "target": "c1",
+        "value": "https://example.org/horario"
+      },
+      "elapsedSeconds": 23.1303631
+    },
+    {
+      "request": "Baja un poco",
+      "proposal": {
+        "action": "scroll_down",
+        "snapshot": "probe"
+      },
+      "elapsedSeconds": 14.2709322
+    }
+  ],
+  "limits": "Synthetic single-turn fixture only. No browser effect, Windows UI, microphone or phone verified."
+}

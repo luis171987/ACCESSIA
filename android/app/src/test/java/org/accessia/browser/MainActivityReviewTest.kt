@@ -353,4 +353,17 @@ class MainActivityReviewTest {
         assertEquals(listOf("pausar","desactivar estudio automatico"),messages.allValues.map { it.optString("command") })
     }
 
+    @Test fun cancellingStudyConsentPreventsALaterConfirmation() {
+        val port = mock(org.mozilla.geckoview.WebExtension.Port::class.java)
+        field("contentPort", port)
+        invoke("handleSpoken", "activar estudio automatico")
+        assertEquals(true, field("autoConsentPending"))
+        invoke("handleSpoken", "cancelar")
+        assertEquals(false, field("autoConsentPending"))
+        invoke("handleSpoken", "confirmar")
+        val messages = org.mockito.ArgumentCaptor.forClass(org.json.JSONObject::class.java)
+        verify(port, atLeast(0)).postMessage(messages.capture())
+        assertFalse(messages.allValues.any { it.optString("command") == "activar estudio automatico" })
+    }
+
 }

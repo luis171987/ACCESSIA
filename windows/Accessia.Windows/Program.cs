@@ -40,9 +40,10 @@ public sealed partial class MainWindow : Form
         Font = new System.Drawing.Font("Segoe UI", 12);
         KeyPreview = true;
 
-        var page = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 4, ColumnCount = 1 };
+        var page = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 5, ColumnCount = 1 };
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+        page.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
         page.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         var top = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 1, ColumnCount = 2 };
@@ -65,10 +66,12 @@ public sealed partial class MainWindow : Form
         controls.Controls.Add(NewButton("Cerrar página", () => browser.CoreWebView2?.Navigate("about:blank")));
         voiceButton.Click += (_, _) => ToggleVoice();
         controls.Controls.Add(voiceButton);
-        AddAgentControls(controls);
         page.Controls.Add(controls, 0, 1);
-        page.Controls.Add(status, 0, 2);
-        page.Controls.Add(browser, 0, 3);
+        var assistantControls = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoScroll = true, WrapContents = true };
+        AddAgentControls(assistantControls);
+        page.Controls.Add(assistantControls, 0, 2);
+        page.Controls.Add(status, 0, 3);
+        page.Controls.Add(browser, 0, 4);
         Controls.Add(page);
 
         Shown += async (_, _) => await InitializeBrowser();

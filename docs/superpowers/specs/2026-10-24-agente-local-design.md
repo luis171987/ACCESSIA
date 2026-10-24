@@ -24,6 +24,8 @@ Incluir los motores como dependencias de cada aplicación y guardar los modelos 
 
 La inferencia se ejecuta dentro de la aplicación; no abrir un servidor HTTP innecesario. Esto satisface ejecución local sin exponer puertos ni exigir Termux, Python, Docker, cuentas externas o un servicio privilegiado. La primera carga del modelo y su descarga pueden ser lentas; no prometer velocidad o memoria del Honor sin mediciones.
 
+Decisión verificada durante implementación: usar llamadas estructuradas a herramientas con ejecución automática desactivada, no pedir JSON como texto libre. La ruta inicial falló la selección de acciones; las herramientas reales del runtime aprobaron las cuatro pruebas de humo en cada motor. Windows fija LLamaSharp/CPU 0.27.0 porque la prueba real de 0.30.0 detectó incompatibilidad con .NET8 pese a compilar. El navegador conserva la autoridad de validar y ejecutar una sola propuesta.
+
 ## Verificación y distribución
 
 Pruebas de instantáneas obsoletas, campos privados, acciones desconocidas, confirmación, cancelación y citas. Pruebas nativas con modelo simulado para el flujo y compilación de ambos clientes. Cuando sea viable, probar inferencia real en este entorno, indicando que no representa un teléfono. Publicar rama/PR independiente del PR #2, sin fusionar ni cambiar las descargas beta actuales. Actualizar README con estado experimental y limitaciones; no fabricar capturas. Validación física y versión completa quedan pendientes hasta que el usuario confirme el fin de la transferencia.

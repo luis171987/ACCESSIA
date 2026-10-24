@@ -48,7 +48,7 @@ public sealed partial class MainWindow
         request=request.Trim();if(request.Length==0 || request.Length>1000) {SetStatus("Escribe una petición de hasta 1000 caracteres.");return;}
         CancelAgent();agentBusy=true;agentCancel=new CancellationTokenSource(TimeSpan.FromSeconds(90));var ticket=agentEpoch.Current;
         try {
-            var observation=await AgentRpc("window.Accessia?.agentObserve() ?? {ok:false}");
+            var observation=Agent.AgentPolicy.CanonicalObservation(await AgentRpc("window.Accessia?.agentObserve() ?? {ok:false}"),browser.CoreWebView2.Source);
             if(observation["ok"]?.GetValue<bool>()!=true || observation["snapshot"] is not JsonValue) throw new InvalidOperationException("No se puede observar esta página.");
             var snapshot=observation["snapshot"]!.GetValue<string>();
             var data=observation.ToJsonString();if(data.Length>30000) throw new InvalidOperationException("Observación demasiado grande.");
@@ -60,7 +60,7 @@ public sealed partial class MainWindow
                 foreach(var item in items.OfType<JsonObject>()) foreach(var field in new[]{"name","href"}) if(item[field] is JsonValue fieldValue) {var text=fieldValue.GetValue<string>();item[field]=text[..Math.Min(text.Length,field=="href"?300:80)];}
             }
             if(modelObservation.ToJsonString().Length>12000) throw new InvalidOperationException("Observación excede el contexto local.");
-            var output=await localModel.Infer(JsonSerializer.Serialize(new {request,observation=modelObservation}),agentCancel.Token);
+            var output=await localModel.Infer(JsonSerializer.Serialize(new {request,observation=modelObservation},Agent.AgentTools.ModelJson),agentCancel.Token);
             if(!agentEpoch.IsCurrent(ticket)) return;
             agentCancel.Token.ThrowIfCancellationRequested();
             var proposal=Agent.AgentPolicy.CanonicalizeOpen(Agent.AgentPolicy.Normalize(output,snapshot),observation);
@@ -94,15 +94,20 @@ public sealed partial class MainWindow
     }
     private async Task ExecuteAgent(JsonObject proposal,bool confirmed,long ticket) {
         if(!agentEpoch.IsCurrent(ticket)) return;
+        // Text-only replies stay in the host: the page never receives private
+        // dictated text through a replaceable window.Accessia function.
+        if(proposal["action"]?.GetValue<string>()=="answer") {SetStatus(Agent.AgentPolicy.AnswerOutput(proposal,browser.CoreWebView2.Source));return;}
+        if(proposal["action"]?.GetValue<string>()=="clarify") {SetStatus(proposal["text"]?.GetValue<string>()??"Describe tu petición con más detalle.");return;}
         var result=await AgentRpc("window.Accessia.agentExecute("+proposal.ToJsonString()+","+(confirmed?"true":"false")+")");
         if(!agentEpoch.IsCurrent(ticket)) return;
         if(result["ok"]?.GetValue<bool>()==true && confirmed && Agent.AgentPolicy.Navigation(proposal) is string destination) {
             if(!Agent.AgentPolicy.MatchesNavigation(destination,result["navigation"]?["url"]?.GetValue<string>())) throw new InvalidOperationException("El destino validado por la página no coincide con la propuesta confirmada.");
             Navigate(destination);return;
         }
+        if(result["ok"]?.GetValue<bool>()==true && proposal["action"]?.GetValue<string>() is "click" or "fill") {SetStatus("Se envió la solicitud confirmada a la página. No se ha verificado ningún resultado externo.");return;}
         var message=result["message"]?.GetValue<string>()??"Sin resultado verificable.";
         if(result["text"] is JsonValue text) message+=" "+text.GetValue<string>();
-        if(result["sources"] is JsonArray sources) foreach(var source in sources.OfType<JsonObject>()) message+=" "+source["url"]?.ToString();
+
         SetStatus(message[..Math.Min(message.Length,6000)]);
     }
 }

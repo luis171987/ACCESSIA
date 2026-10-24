@@ -29,18 +29,24 @@ public sealed class LocalModel
             ct.ThrowIfCancellationRequested();File.Move(partial,ModelPath,true);
         } finally {if(File.Exists(partial)) File.Delete(partial);}
     }
-    public async Task<string> Infer(string input,CancellationToken ct) {
+    public async Task<string> Infer(string input,CancellationToken ct)=>AgentTools.Proposal(await InferRaw(input,ct));
+    internal async Task<string> InferRaw(string input,CancellationToken ct) {
         if(!await Verified(ModelPath,ct)) throw new IOException("Descarga o verifica el modelo desde Asistente local.");
         var system=await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory,"assets","agent-prompt.txt"),ct);
+        var descriptors=await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory,"assets","agent-tools.json"),ct);
+        system=AgentTools.SystemPrompt(system,descriptors);
         return await Task.Run(async ()=>{
-            var parameters=new ModelParams(ModelPath) {ContextSize=4096,GpuLayerCount=0};
+            var parameters=new ModelParams(ModelPath) {ContextSize=8192,GpuLayerCount=0};
             using var weights=LLamaWeights.LoadFromFile(parameters);
             ct.ThrowIfCancellationRequested();
-            var executor=new StatelessExecutor(weights,parameters) {ApplyTemplate=true,SystemMessage=system};
-            var inference=new InferenceParams {MaxTokens=256,SamplingPipeline=new DefaultSamplingPipeline {Temperature=0f}};
+            var executor=new StatelessExecutor(weights,parameters) {ApplyTemplate=false};
+            // JSON page data must not inject tokenizer role/control tokens.
+            input=input.Replace("<",@"\u003C");
+            var prompt="<|im_start|>system\n"+system+"<|im_end|>\n<|im_start|>user\n"+input+"\n/no_think<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n";
+            var inference=new InferenceParams {MaxTokens=256,AntiPrompts=new List<string>{"<|im_end|>"},DecodeSpecialTokens=true,SamplingPipeline=new DefaultSamplingPipeline {Temperature=0f}};
             var result=new StringBuilder();
-            await foreach(var token in executor.InferAsync(input+"\n/no_think",inference,ct)) {result.Append(token);if(result.Length>8192) throw new InvalidOperationException("Respuesta demasiado larga.");}
-            return result.ToString().Trim();
+            await foreach(var token in executor.InferAsync(prompt,inference,ct)) {result.Append(token);if(result.Length>8192) throw new InvalidOperationException("Respuesta demasiado larga.");}
+            return result.ToString();
         },ct);
     }
 }

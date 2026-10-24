@@ -12,6 +12,22 @@ try {
     } while ($appProcess.MainWindowHandle -eq 0 -and [DateTime]::UtcNow -lt $deadline)
     if ($appProcess.MainWindowHandle -eq 0) { throw 'No Windows application window appeared.' }
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    $statusCondition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::NameProperty, 'Estado')
+    $readyDeadline = [DateTime]::UtcNow.AddSeconds(90)
+    $description = ''
+    do {
+        $statusElement = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $statusCondition)
+        if ($null -ne $statusElement) {
+            $statusPattern = $statusElement.GetCurrentPattern([System.Windows.Automation.LegacyIAccessiblePattern]::Pattern)
+            $description = $statusPattern.Current.Description
+        }
+        if ($description -like 'No se pudo preparar WebView2*') { throw $description }
+        if ($description -like 'Abriendo *') { break }
+        Start-Sleep -Milliseconds 500
+        $appProcess.Refresh()
+        if ($appProcess.HasExited) { throw 'ACCESSIA closed before WebView2 initialized.' }
+    } while ([DateTime]::UtcNow -lt $readyDeadline)
+    if ($description -notlike 'Abriendo *') { throw 'The native window appeared, but WebView2 readiness was not verified.' }
     $condition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::NameProperty, 'Asistente local')
     $button = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
     if ($null -eq $button) { throw 'Assistant configuration control is absent from the real Windows UI.' }
@@ -22,5 +38,5 @@ try {
         $graphics.CopyFromScreen([int]$rectangle.X, [int]$rectangle.Y, 0, 0, $bitmap.Size)
         $bitmap.Save((Join-Path (Resolve-Path $OutputDirectory) 'windows-start.png'), [System.Drawing.Imaging.ImageFormat]::Png)
     } finally { $graphics.Dispose(); $bitmap.Dispose() }
-    @{ commit = $env:GITHUB_SHA; platform = 'Windows GitHub runner VM'; physical_device = $false; app_window = $window.Current.Name; assertions = @('process stayed alive', 'native window created', 'assistant control accessible'); limitations = @('no physical microphone', 'no local model inference in this smoke test', 'no Honor validation') } | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $OutputDirectory 'provenance.json')
+    @{ commit = $env:GITHUB_SHA; head_commit = $env:ACCESSIA_HEAD_SHA; platform = 'Windows GitHub runner VM'; physical_device = $false; app_window = $window.Current.Name; status = $description; assertions = @('process stayed alive', 'native window created', 'WebView2 initialized', 'assistant control accessible'); limitations = @('no physical microphone', 'no local model inference in this smoke test', 'no Honor validation') } | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $OutputDirectory 'provenance.json')
 } finally { if (!$appProcess.HasExited) { $appProcess.Kill(); $appProcess.WaitForExit() } }

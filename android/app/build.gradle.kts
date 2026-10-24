@@ -44,6 +44,7 @@ dependencies {
 
 val copyAgentPrompt by tasks.registering(Copy::class) {
     from("../../shared/agent-prompt.txt")
+    from("../../shared/agent-tools.json")
     from("../../shared/THIRD_PARTY_NOTICES.txt")
     from("../../shared/licenses") { into("licenses") }
     into(layout.buildDirectory.dir("generated/agentAssets"))

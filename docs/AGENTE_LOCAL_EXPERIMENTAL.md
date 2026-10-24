@@ -4,7 +4,7 @@ Estado: implementación en desarrollo, sin publicación de una versión completa
 
 ## Uso y alcance
 
-Android: menú ⋯ → Asistente local. Windows: botón Asistente local. El asistente está apagado al iniciar; la descarga del modelo requiere aceptación explícita. No se abre un servidor HTTP ni se necesitan Python, Docker o una cuenta de un proveedor de IA en el dispositivo. Se reutilizan motores abiertos existentes: LiteRT-LM 0.18.0 y LLamaSharp/CPU 0.30.0. Las pruebas de desarrollo pueden usar herramientas adicionales solo en el entorno aislado.
+Android: menú ⋯ → Asistente local. Windows: botón Asistente local. El asistente está apagado al iniciar; la descarga del modelo requiere aceptación explícita. No se abre un servidor HTTP ni se necesitan Python, Docker o una cuenta de un proveedor de IA en el dispositivo. Se reutilizan motores abiertos existentes: LiteRT-LM 0.18.0 y LLamaSharp/CPU 0.27.0, compatible con .NET8. Las pruebas de desarrollo pueden usar herramientas adicionales solo en el entorno aislado.
 
 Se puede escribir una petición o usar el reconocimiento de voz del sistema. Cada turno admite una acción sobre la página actual. Clic, escritura, búsqueda y apertura requieren confirmación por botón o voz; cancelar o navegar invalida el pedido. Solo se ejecutan herramientas permitidas: ningún código generado, shell o selector arbitrario. Las observaciones caducan y no incluyen valores de campos editables.
 
@@ -24,9 +24,13 @@ El flujo se comprueba con pruebas del motor compartido, políticas de las dos pl
 
 Los smoke tests virtuales comprueban arranque e interfaz accesible sin descargar un modelo en el emulador. La inferencia real se evalúa aparte, en CPU Linux aislada, con solicitudes de prueba y sin acciones externas. Ninguna de esas pruebas sustituye micrófono, TalkBack, rendimiento o batería en un teléfono físico.
 
-Evaluación inicial: Qwen3-0.6B produjo propuestas erróneas para búsquedas, entre ellas copiar un marcador o responder sobre la página en vez de buscar. Es una limitación funcional comprobada, aunque los filtros impidan ejecutar salidas inválidas. Se evalúa Qwen3-1.7B INT4 antes de fijar el modelo recomendado. No declarar aprobado el asistente por pasar solo sus validadores.
+Evaluación inicial: pedir JSON como texto libre a Qwen3-0.6B produjo propuestas erróneas. Cambiar solo el texto de instrucciones o aumentar a 1.7B no resolvió ese conjunto. Se sustituyó por las herramientas nativas de LiteRT-LM con ejecución automática desactivada y por el formato de herramientas Qwen3 en Windows, con validación estricta. Ambos motores pasaron cuatro peticiones reales en CPU Linux: leer, buscar el tema solicitado, abrir un control observado y desplazar. El formato, los argumentos y el destino se comprobaron; no se ejecutaron acciones externas. [Evidencia GGUF](../windows/verification/2026-10-24-gguf-cpu.json). Este conjunto pequeño no mide precisión general y no permite prometer ausencia de errores.
+
+Verificaciones locales del código: 42 pruebas Android, 25 JS, 24 Python, cuatro pruebas de DOM en Chromium real y 30 comprobaciones de políticas/integridad/procedencia Windows aprobadas; APK y paquete de pruebas compilados. La compilación Windows aprobó con un aviso existente de WebView2. Los resultados de Actions deben consultarse para el SHA exacto: una ejecución anterior de los emuladores falló al localizar la opción del menú; la prueba se corrigió para usar desplazamiento accesible y omitir la consulta opcional de IP en datos de prueba.
 
 Los artefactos de las pruebas virtuales deben indicar SHA, plataforma y ausencia de validación física. Las imágenes de emulador/VM son capturas de preview, no imágenes de una versión estable. La galería histórica y los instaladores publicados permanecen separados.
+
+Para reproducir la prueba LiteRT en un entorno de desarrollo aislado con Python y `litert-lm==0.18.0`, usar `python tools/test_agent_inference.py --model /ruta/Qwen3-0.6B.litertlm --report resultado.json`. El script comprueba el modelo fijado por tamaño/SHA256, no descarga archivos ni ejecuta acciones del navegador. [Resultados de las cuatro llamadas LiteRT](verificacion/2026-10-24-litert-cpu.json).
 
 ## Pendientes de aceptación
 

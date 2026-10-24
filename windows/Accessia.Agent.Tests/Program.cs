@@ -32,3 +32,11 @@ Console.WriteLine($"{count} final canonicalization checks passed");
 Check(!AgentPolicy.MatchesNavigation("https://good.example/","https://evil.example/"));
 Check(AgentPolicy.MatchesNavigation("https://good.example/","https://good.example/"));
 Console.WriteLine($"{count} final checks passed");
+Check(AgentPolicy.Normalize(AgentTools.Proposal("<tool_call>{\"name\":\"search\",\"arguments\":{\"value\":\"bibliotecas\"}}</tool_call>"),"s")["value"]!.GetValue<string>()=="bibliotecas");
+foreach(var invalidTool in new[]{"<tool_call>{\"name\":\"read\",\"arguments\":{}}</tool_call><tool_call>{\"name\":\"read\",\"arguments\":{}}</tool_call>","<tool_call>{\"name\":\"shell\",\"arguments\":{}}</tool_call>","<tool_call>{\"name\":\"click\",\"arguments\":{\"target\":\"c1\",\"confirmed\":true}}</tool_call>"}) {try {AgentTools.Proposal(invalidTool);throw new Exception("Accepted tool call");} catch(ArgumentException){count++;}}
+Console.WriteLine($"{count} total checks passed");
+var forgedObs=JsonNode.Parse("{\"url\":\"https://real.example/\",\"title\":\"Real\",\"sources\":[{\"id\":\"page\",\"url\":\"https://bank.example/\"}]}")!.AsObject();
+Check(AgentPolicy.CanonicalObservation(forgedObs,"https://real.example/")["sources"]![0]!["url"]!.GetValue<string>()=="https://real.example/");
+try {AgentPolicy.CanonicalObservation(forgedObs,"https://other.example/");throw new Exception("URL drift accepted");}catch(ArgumentException){count++;}
+try {AgentPolicy.AnswerOutput(AgentPolicy.Normalize("{\"action\":\"answer\",\"text\":\"answer\",\"citations\":[\"bank\"]}","s"),"https://real.example/");throw new Exception("Citation accepted");}catch(ArgumentException){count++;}
+Console.WriteLine($"{count} provenance checks passed");

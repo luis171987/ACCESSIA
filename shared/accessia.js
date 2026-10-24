@@ -180,26 +180,30 @@
       const editable = ['INPUT', 'TEXTAREA', 'SELECT'].includes(String(el.tagName).toUpperCase()) ||
         el.isContentEditable || el.getAttribute('contenteditable') === 'true' || el.getAttribute('role') === 'textbox';
       const name = editable ? String(el.getAttribute('aria-label') || el.getAttribute('title') ||
-        Array.from(el.labels || []).map(label => label.textContent || '').join(' ') || el.getAttribute('placeholder') || '') : getAccessibleName(el);
+        Array.from(el.labels || []).map(label => readableText(label, 160)).join(' ') || el.getAttribute('placeholder') || '') : getAccessibleName(el);
       return { id: `c${index + 1}`, name: name.slice(0, 160),
         role: String(el.getAttribute('role') || el.tagName || '').toLowerCase().slice(0, 30),
         href: el.getAttribute('href') ? httpsUrl(el.getAttribute('href')) : '' };
     }
 
-    function pageText() {
-      if (doc.body && typeof doc.createTreeWalker === 'function') {
-        const walker = doc.createTreeWalker(doc.body, 4); // SHOW_TEXT
+    function readableText(root, limit) {
+      if (root && typeof doc.createTreeWalker === 'function') {
+        const walker = doc.createTreeWalker(root, 4); // SHOW_TEXT
         const parts = []; let length = 0; let node;
-        while (length < 4500 && (node = walker.nextNode())) {
+        while (length < limit && (node = walker.nextNode())) {
           const parent = node.parentElement;
           if (!parent || !visible(parent) || parent.closest('input,textarea,select,option,[contenteditable]:not([contenteditable="false"]),[role="textbox"],script,style,noscript')) continue;
           if (typeof parent.getClientRects === 'function' && parent.getClientRects().length === 0) continue;
           const value = String(node.textContent || '').replace(/\s+/g, ' ').trim();
           if (value) { parts.push(value); length += value.length + 1; }
         }
-        return parts.join(' ').slice(0, 4500);
+        return parts.join(' ').slice(0, limit);
       }
-      return String(doc.body && (doc.body.innerText || doc.body.textContent) || '').trim().slice(0, 4500);
+      return String(root && (root.innerText || root.textContent) || '').trim().slice(0, limit);
+    }
+
+    function pageText() {
+      return readableText(doc.body, 4500);
     }
 
     function actionFingerprint(el) {

@@ -26,6 +26,18 @@ public static class AgentPolicy
         return result;
     }
     public static bool NeedsConfirmation(string action)=>action is "click" or "fill" or "search" or "open";
+    public static JsonObject CanonicalObservation(JsonObject observation,string nativeUrl) {
+        if(!Uri.TryCreate(nativeUrl,UriKind.Absolute,out var native) || native.Scheme!="https" || native.UserInfo.Length!=0 || !MatchesNavigation(native.AbsoluteUri,observation["url"]?.GetValue<string>())) throw new ArgumentException("La observación no corresponde a la página actual.");
+        var result=(JsonObject)observation.DeepClone();
+        result["url"]=native.AbsoluteUri;
+        result["sources"]=new JsonArray(new JsonObject {["id"]="page",["url"]=native.AbsoluteUri,["title"]=observation["title"]?.DeepClone()});
+        return result;
+    }
+    public static string AnswerOutput(JsonObject proposal,string nativeUrl) {
+        if(proposal["citations"] is not JsonArray citations || citations.Count==0 || citations.Any(c=>c?.GetValue<string>()!="page")) throw new ArgumentException("La respuesta necesita una cita de la página observada.");
+        if(!Uri.TryCreate(nativeUrl,UriKind.Absolute,out var native) || native.Scheme!="https" || native.UserInfo.Length!=0) throw new ArgumentException("Fuente actual inválida.");
+        return (proposal["text"]?.GetValue<string>()??throw new ArgumentException("Falta la respuesta."))+" Fuente: "+native.AbsoluteUri+". Resumen experimental; puede contener errores.";
+    }
     public static JsonObject CanonicalizeOpen(JsonObject proposal,JsonObject observation) {
         if(proposal["action"]?.GetValue<string>()!="open") return proposal;
         var controls=(observation["controls"] as JsonArray)?.OfType<JsonObject>().ToArray()??Array.Empty<JsonObject>();

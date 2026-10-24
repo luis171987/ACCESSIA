@@ -1075,7 +1075,7 @@ class MainActivity : Activity() {
 
     private fun handleSpoken(raw: String) {
         val command = normalizeVoiceCommand(raw)
-        if (command in setOf("cancelar", "detener", "parar")) { localAgent.cancel(); tts?.stop(); announce("Petición cancelada"); return }
+        if (command in setOf("cancelar", "detener", "parar")) { autoConsentPending = false; localAgent.cancel(); tts?.stop(); announce("Petición cancelada"); return }
         if (autoConsentPending) {
             autoConsentPending = false
             if (command in setOf("confirmar", "si confirmar", "si")) {

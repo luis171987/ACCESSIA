@@ -9,7 +9,7 @@ import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
-class AgentController(private val activity:Activity,private val announce:(String)->Unit,private val navigate:(String)->Unit,private val send:(JSONObject)->Boolean,private val runtime:AgentRuntime=LiteRuntime()) {
+class AgentController(private val activity:Activity,private val announce:(String)->Unit,private val navigate:(String)->Unit,private val send:(JSONObject)->Boolean,private val runtime:AgentRuntime=LiteRuntime { activity.assets.open("agent-tools.json").bufferedReader().use { it.readText() } }) {
  private val handler=Handler(Looper.getMainLooper())
  private val worker=Executors.newSingleThreadExecutor()
  private val gate=AgentGeneration()
