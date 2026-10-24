@@ -2,7 +2,7 @@ name: Local agent virtual OS smoke tests
 on:
   workflow_dispatch:
   pull_request:
-    paths: ['android/**', 'windows/**', 'shared/**', 'tools/test_agent_*.py', 'tools/windows_sandbox_smoke.ps1', '.github/workflows/agent-sandbox.yml']
+    paths: ['android/**', 'windows/**', 'shared/**', 'tools/test_agent_*.py', 'tools/android_sandbox_smoke.sh', 'tools/windows_sandbox_smoke.ps1', '.github/workflows/agent-sandbox.yml']
 permissions:
   contents: read
 env:
@@ -47,14 +47,10 @@ jobs:
           api-level: ${{ matrix.api }}
           arch: x86_64
           target: google_apis
+          ram-size: 4096M
+          disk-size: 8192M
           disable-animations: true
-          script: |
-            gradle -p android :app:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true --no-daemon
-            mkdir -p sandbox-evidence
-            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-01-inicio.png > sandbox-evidence/android-${{ matrix.api }}-01-inicio.png
-            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-02-menu.png > sandbox-evidence/android-${{ matrix.api }}-02-menu.png
-            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-03-asistente.png > sandbox-evidence/android-${{ matrix.api }}-03-asistente.png
-            python -c "from pathlib import Path; files=list(Path('sandbox-evidence').glob('*.png')); assert len(files)==3; assert all(p.stat().st_size>100 and p.read_bytes().startswith(bytes([137,80,78,71,13,10,26,10])) for p in files), 'Invalid emulator PNG capture'"
+          script: bash tools/android_sandbox_smoke.sh '${{ matrix.api }}'
       - name: Save real emulator screenshot if available
         if: always()
         run: |
@@ -77,6 +73,12 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - run: dotnet run --project windows/Accessia.Agent.Tests/Accessia.Agent.Tests.csproj -c Release
+      - name: Run the actual local model in this Windows VM (no browser effects)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force sandbox-evidence | Out-Null
+          dotnet run --project windows/Accessia.Agent.Integration/Accessia.Agent.Integration.csproj -c Release -- --download-consented | Tee-Object -FilePath sandbox-evidence/windows-inference.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - run: dotnet publish windows/Accessia.Windows/Accessia.Windows.csproj -c Release -r win-x64 --self-contained false -o windows-publish
       - name: Launch actual Windows application on the runner desktop
         shell: pwsh

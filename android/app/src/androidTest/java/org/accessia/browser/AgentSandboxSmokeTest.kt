@@ -7,6 +7,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.*
 import org.junit.Test
+import org.junit.Assume
+import org.accessia.browser.agent.LiteRuntime
+import org.json.JSONObject
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -22,7 +25,12 @@ class AgentSandboxSmokeTest {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
         try {
             instrumentation.waitForIdleSync()
-            assertFalse("No model may download on launch", File(context.filesDir, "local-agent/qwen3-0.6b.litertlm").exists())
+            val model = File(context.filesDir, "local-agent/qwen3-0.6b.litertlm")
+            if (InstrumentationRegistry.getArguments().getString("realModelSmoke") == "true") {
+                assertTrue("The explicit real-model job must prestage its private model", model.isFile)
+            } else {
+                assertFalse("No model may download on launch", model.exists())
+            }
             fun capture(name: String) {
                 instrumentation.uiAutomation.takeScreenshot()?.let { bitmap ->
                     File(context.filesDir, name).outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
@@ -61,4 +69,35 @@ class AgentSandboxSmokeTest {
             capture("sandbox-03-asistente.png")
         } finally { instrumentation.runOnMainSync { activity.finish() } }
     }
+
+    @Test(timeout = 180000) fun optionalRealModelProposesReadWithoutExecutingActions() {
+        Assume.assumeTrue("Real inference is opt-in for the cloud emulator job",
+            InstrumentationRegistry.getArguments().getString("realModelSmoke") == "true")
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val model = File(context.filesDir, "local-agent/qwen3-0.6b.litertlm")
+        assertTrue("Explicit real-model smoke requires a prestaged private model", model.isFile)
+        assertNotEquals("Inference must run outside the Android UI thread",
+            android.os.Looper.getMainLooper(), android.os.Looper.myLooper())
+        val prompt = context.assets.open("agent-prompt.txt").bufferedReader().use { it.readText() }
+        val runtime = LiteRuntime {
+            context.assets.open("agent-tools.json").bufferedReader().use { it.readText() }
+        }
+        val request = """{
+          "request":"Lee la página",
+          "observation":{
+            "url":"https://example.org/guia",
+            "title":"Guía accesible",
+            "text":"Esta guía explica navegación por voz y lectura de páginas.",
+            "controls":[],
+            "sources":[{"id":"page","url":"https://example.org/guia","title":"Guía accesible"}]
+          }
+        }"""
+        // This calls the packaged Android JNI runtime and only inspects proposal data.
+        // It never passes the proposal to AgentController, a browser bridge or navigation.
+        val proposal = JSONObject(runtime.infer(model.path, prompt, request))
+        assertEquals("read", proposal.getString("action"))
+        assertFalse(proposal.has("confirmed"))
+        assertFalse(proposal.has("snapshot"))
+    }
+
 }
