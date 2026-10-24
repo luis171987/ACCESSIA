@@ -1,0 +1,93 @@
+name: Publicar beta descargable de ACCESSIA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publicar-beta-accessia.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  android:
+    name: Publicar APK Android beta
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar APK ya compilada y validada en CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p beta-android
+          test "$(gh api repos/luis171987/ACCESSIA/actions/runs/39698155070 --jq .head_sha)" = "e94791053ef43b61e09e3d07dee7ffc68b69dc2f"
+          test "$(gh api repos/luis171987/ACCESSIA/actions/runs/39698155070 --jq .conclusion)" = "success"
+          gh run download 39698155070 --repo luis171987/ACCESSIA --name ACCESSIA-Android-debug-unverified --dir beta-android
+          test -s beta-android/app-debug.apk
+          echo '95a0c164a58159978700ee6146f9ce0eaa77c5de664b496387f03ac6d1063a96  beta-android/app-debug.apk' | sha256sum -c -
+          unzip -t beta-android/app-debug.apk > /dev/null
+          cp beta-android/app-debug.apk ACCESSIA-Android-Beta-0.3-DEBUG.apk
+
+      - name: Crear version preliminar con APK publica
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG='v0.3.0-beta.3'
+          REPO='luis171987/ACCESSIA'
+          cat > release-notes.md <<'EOF'
+          ## ACCESSIA — Versiones experimentales
+
+          **Android Beta 0.3:** APK de prueba (debug) para Android 9 o posterior. Esta compilacion procede del commit e94791053ef43b61e09e3d07dee7ffc68b69dc2f y corresponde al artefacto de GitHub Actions 39698155070. No esta firmada para publicacion de produccion y la firma debug puede ser distinta en otras betas. No reemplaces ni desinstales una version anterior sin realizar copia de seguridad.
+
+          **Windows:** cuando el segundo trabajo finalice correctamente se agregara `ACCESSIA-Windows-Beta-portable.zip`. Es una aplicacion portable experimental, **no un instalador asistido**. Requiere Windows x64, .NET 8 Desktop Runtime y Microsoft Edge WebView2 Runtime. Puede necesitar pruebas adicionales.
+
+          No existe todavia un instalador oficial firmado para Windows, ni versiones para macOS, iOS o Linux. No se garantiza voz humana natural, navegacion completamente manos libres ni accesibilidad universal certificada. No uses esta beta para informacion sensible.
+
+          **Origen:** repositorio oficial luis171987/ACCESSIA. El codigo fuente esta bajo licencia MIT; las dependencias conservan sus propias licencias.
+          EOF
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release upload "$TAG" ACCESSIA-Android-Beta-0.3-DEBUG.apk --repo "$REPO" --clobber
+          else
+            gh release create "$TAG" ACCESSIA-Android-Beta-0.3-DEBUG.apk \
+              --repo "$REPO" \
+              --target e94791053ef43b61e09e3d07dee7ffc68b69dc2f \
+              --title 'ACCESSIA Beta 0.3 (Android) / Windows experimental' \
+              --notes-file release-notes.md \
+              --prerelease \
+              --latest=false
+          fi
+
+  windows:
+    name: Publicar Windows portable experimental
+    needs: android
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: e94791053ef43b61e09e3d07dee7ffc68b69dc2f
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Compilar, publicar y comprimir Windows x64
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          dotnet publish windows/Accessia.Windows/Accessia.Windows.csproj -c Release -r win-x64 --self-contained false -o windows-publish
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path 'windows-publish/Accessia.Windows.exe')) { throw 'Ejecutable no encontrado' }
+          Compress-Archive -Path windows-publish/* -DestinationPath ACCESSIA-Windows-Beta-portable.zip -CompressionLevel Optimal
+
+      - name: Publicar ZIP portable en la misma version preliminar
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload v0.3.0-beta.3 ACCESSIA-Windows-Beta-portable.zip \
+            --repo luis171987/ACCESSIA --clobber
