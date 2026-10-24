@@ -58,7 +58,7 @@ class MainActivity : Activity() {
     private lateinit var welcomePanel: LinearLayout
     private val handler = Handler(Looper.getMainLooper())
     private val prefs by lazy { getSharedPreferences("accessia_v02", MODE_PRIVATE) }
-    private val localAgent by lazy { AgentController(this, ::announce, ::navigate, { message -> contentPort?.let { it.postMessage(message); true } ?: false }) }
+    private val localAgent by lazy { AgentController(this, ::announce, ::navigate, { message -> contentPort?.let { it.postMessage(message); true } ?: false }, isBlankPage = { currentUrl == "about:blank" }) }
     private var contentPort: WebExtension.Port? = null
     private var recognizer: SpeechRecognizer? = null
     private var tts: TextToSpeech? = null

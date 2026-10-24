@@ -55,4 +55,30 @@ class AgentControllerTest {
   c.result(reply(sent[1],JSONObject().put("requiresConfirmation",true).put("message","Search cats?"))); assertEquals(2,sent.size); c.confirm(); assertTrue(sent[2].getBoolean("confirmed")); assertEquals(proposal,sent[2].getJSONObject("proposal").toString()); c.cancel(); c.confirm(); assertEquals(3,sent.size); c.close()
  }
 
+ private fun welcome(proposal:String,nav:MutableList<String>,messages:MutableList<String>):AgentController {
+  val a=Robolectric.buildActivity(Activity::class.java).setup().get()
+  return AgentController(a,messages::add,nav::add,{error("Welcome must not use a page port")},AgentRuntime { _,_,request ->
+   val observed=JSONObject(request).getJSONObject("observation"); assertEquals("about:blank",observed.getString("url")); assertEquals(0,observed.getJSONArray("controls").length()); proposal
+  },isBlankPage={true}).also { activate(it) }
+ }
+ private fun settle() { repeat(100) { shadowOf(Looper.getMainLooper()).idle(); Thread.sleep(5) } }
+ @Test fun welcomeSearchRequiresConfirmationAndEncodesQuery() {
+  val nav=mutableListOf<String>(); val messages=mutableListOf<String>(); val c=welcome("""{"action":"search","value":"becas educación"}""",nav,messages)
+  c.submit("Encuentra becas"); settle(); assertTrue(nav.isEmpty()); assertTrue(messages.any { it.contains("becas educación") }); c.confirm()
+  assertEquals(listOf("https://www.google.com/search?q=becas+educaci%C3%B3n"),nav); c.close()
+ }
+ @Test fun welcomeCancellationInvalidatesPendingConfirmation() {
+  val nav=mutableListOf<String>(); val c=welcome("""{"action":"search","value":"becas"}""",nav,mutableListOf())
+  c.submit("Encuentra becas"); settle(); c.cancel(); c.confirm(); assertTrue(nav.isEmpty()); c.close()
+ }
+ @Test fun welcomeRejectsOpenAndFillWithoutInventingPageControls() {
+  for(proposal in listOf("""{"action":"open","value":"https://example.org"}""", """{"action":"fill","target":"c1","value":"text"}""")) {
+   val nav=mutableListOf<String>(); val messages=mutableListOf<String>(); val c=welcome(proposal,nav,messages); c.submit("hazlo"); settle(); c.confirm(); assertTrue(nav.isEmpty()); assertTrue(messages.any { it.contains("Abre una página") }); c.close()
+  }
+ }
+ @Test fun welcomeRejectsExpiredConfirmation() {
+  val nav=mutableListOf<String>(); val messages=mutableListOf<String>(); val c=welcome("""{"action":"search","value":"becas"}""",nav,messages)
+  c.submit("Encuentra becas"); settle(); org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(121)); c.confirm(); assertTrue(nav.isEmpty()); assertTrue(messages.any { it.contains("caducada") }); c.close()
+ }
+
 }

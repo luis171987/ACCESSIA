@@ -21,7 +21,7 @@ public sealed partial class MainWindow : Form
 {
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill, AccessibleName = "Contenido del navegador" };
     private readonly TextBox address = new() { Dock = DockStyle.Fill, AccessibleName = "Dirección o búsqueda" };
-    private readonly Label status = new() { Dock = DockStyle.Fill, Text = "ACCESSIA: preparando navegador.", AutoSize = false, AccessibleName = "Estado" };
+    private readonly Label status = new() { Name = "AccessiaStatus", Dock = DockStyle.Fill, Text = "ACCESSIA: preparando navegador.", AutoSize = false, AccessibleName = "Estado" };
     private readonly Button voiceButton = new() { Text = "Activar voz", AutoSize = true, AccessibleName = "Activar o desactivar control por voz" };
     private SpeechRecognitionEngine? recognition;
     private SpeechSynthesizer? speech;
@@ -286,6 +286,7 @@ public sealed partial class MainWindow : Form
     {
         if (disposed || IsDisposed) return;
         status.Text = text;
+        status.AccessibleName = "Estado: " + text;
         status.AccessibleDescription = text;
         if (!voiceOn || speech is null) return;
         // Prevent speech recognizer from interpreting synthesized speech as user commands.

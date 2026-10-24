@@ -9,7 +9,7 @@ import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
-class AgentController(private val activity:Activity,private val announce:(String)->Unit,private val navigate:(String)->Unit,private val send:(JSONObject)->Boolean,private val runtime:AgentRuntime=LiteRuntime { activity.assets.open("agent-tools.json").bufferedReader().use { it.readText() } }) {
+class AgentController(private val activity:Activity,private val announce:(String)->Unit,private val navigate:(String)->Unit,private val send:(JSONObject)->Boolean,private val runtime:AgentRuntime=LiteRuntime { activity.assets.open("agent-tools.json").bufferedReader().use { it.readText() } },private val isBlankPage:()->Boolean={false}) {
  private val handler=Handler(Looper.getMainLooper())
  private val worker=Executors.newSingleThreadExecutor()
  private val gate=AgentGeneration()
@@ -20,9 +20,11 @@ class AgentController(private val activity:Activity,private val announce:(String
  @Volatile private var workerBusy=false
  private var pending:JSONObject?=null
  private var dialog:AlertDialog?=null
+ private var blankSnapshot:String?=null
+ private var blankObservedAt=0L
  private var rpcId:String?=null
  private var callback:((JSONObject)->Unit)?=null
- fun cancel() { gate.cancel(); stop.set(true); busy=false; pending=null; dialog?.dismiss(); dialog=null; rpcId=null; callback=null; handler.removeCallbacksAndMessages(null) }
+ fun cancel() { blankSnapshot=null; blankObservedAt=0L; gate.cancel(); stop.set(true); busy=false; pending=null; dialog?.dismiss(); dialog=null; rpcId=null; callback=null; handler.removeCallbacksAndMessages(null) }
  fun close() { cancel(); worker.shutdownNow() }
  fun settings() {
   AlertDialog.Builder(activity).setTitle("Asistente local experimental")
@@ -83,7 +85,36 @@ class AgentController(private val activity:Activity,private val announce:(String
    }
   }
  }
+ private fun blankResult(type:String,payload:JSONObject):JSONObject {
+  fun failure(message:String)=JSONObject().put("ok",false).put("message",message)
+  if(!isBlankPage()) return failure("La observación de bienvenida está caducada; vuelve a pedir la acción.")
+  if(type=="agent_observe") {
+   blankSnapshot=UUID.randomUUID().toString(); blankObservedAt=SystemClock.elapsedRealtime()
+   return JSONObject().put("ok",true).put("snapshot",blankSnapshot).put("url","about:blank").put("title","Bienvenida ACCESSIA").put("text","").put("controls",org.json.JSONArray()).put("sources",org.json.JSONArray())
+  }
+  val proposal=payload.optJSONObject("proposal") ?: return failure("Propuesta no válida")
+  if(blankSnapshot==null || proposal.optString("snapshot")!=blankSnapshot || SystemClock.elapsedRealtime()-blankObservedAt>120000) return failure("Observación caducada; vuelve a pedir la acción.")
+  return when(proposal.optString("action")) {
+   "search" -> {
+    val value=proposal.opt("value")
+    if(value !is String || value.trim().length !in 1..500) failure("La búsqueda debe tener entre 1 y 500 caracteres.")
+    else if(!payload.optBoolean("confirmed")) JSONObject().put("ok",false).put("requiresConfirmation",true).put("message","¿Buscar «${value.trim()}» en Google?")
+    else {
+     blankSnapshot=null
+     val url="https://www.google.com/search?q="+java.net.URLEncoder.encode(value.trim(),"UTF-8")
+     JSONObject().put("ok",true).put("message","Búsqueda autorizada; resultado de carga pendiente.").put("navigation",JSONObject().put("url",url))
+    }
+   }
+   "clarify" -> {
+    val text=proposal.opt("text")
+    if(text !is String || text.isBlank() || text.length>4000) failure("Aclaración no válida") else JSONObject().put("ok",true).put("message",text).put("text",text)
+   }
+   else -> failure("Abre una página antes de usar esta acción. Desde la bienvenida puedes buscar información.")
+  }
+ }
  private fun rpc(type:String,payload:JSONObject,done:(JSONObject)->Unit) {
+  if(isBlankPage() || (type=="agent_execute" && blankSnapshot!=null)) { done(blankResult(type,payload)); return }
+
   val id=UUID.randomUUID().toString(); rpcId=id; callback=done
   handler.postDelayed({ if(rpcId==id) { cancel(); announce("Tiempo de espera de la página agotado") } },15000)
   try { if(!send(payload.put("type",type).put("id",id))) { cancel(); announce("No hay conexión con esta página") } } catch(e:Exception) { cancel(); announce("Puente: ${e.message}") }

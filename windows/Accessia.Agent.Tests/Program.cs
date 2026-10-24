@@ -40,3 +40,6 @@ Check(AgentPolicy.CanonicalObservation(forgedObs,"https://real.example/")["sourc
 try {AgentPolicy.CanonicalObservation(forgedObs,"https://other.example/");throw new Exception("URL drift accepted");}catch(ArgumentException){count++;}
 try {AgentPolicy.AnswerOutput(AgentPolicy.Normalize("{\"action\":\"answer\",\"text\":\"answer\",\"citations\":[\"bank\"]}","s"),"https://real.example/");throw new Exception("Citation accepted");}catch(ArgumentException){count++;}
 Console.WriteLine($"{count} provenance checks passed");
+var blankObservation=AgentPolicy.CanonicalObservation(JsonNode.Parse("{\"url\":\"about:blank\",\"snapshot\":\"s\",\"text\":\"invented\",\"controls\":[{\"id\":\"evil\"}],\"sources\":[{\"id\":\"page\",\"url\":\"https://fake.invalid\"}]}")!.AsObject(),"about:blank");
+Check(blankObservation["sources"]!.AsArray().Count==0 && blankObservation["controls"]!.AsArray().Count==0 && blankObservation["text"]!.ToString()=="");
+Console.WriteLine($"{count} checks passed including empty-page context");

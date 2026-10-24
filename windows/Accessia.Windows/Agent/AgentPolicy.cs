@@ -27,6 +27,11 @@ public static class AgentPolicy
     }
     public static bool NeedsConfirmation(string action)=>action is "click" or "fill" or "search" or "open";
     public static JsonObject CanonicalObservation(JsonObject observation,string nativeUrl) {
+        if(nativeUrl=="about:blank" && observation["url"]?.GetValue<string>()=="about:blank") {
+            var blank=(JsonObject)observation.DeepClone();
+            blank["sources"]=new JsonArray();blank["controls"]=new JsonArray();blank["text"]="";blank["title"]="";
+            return blank;
+        }
         if(!Uri.TryCreate(nativeUrl,UriKind.Absolute,out var native) || native.Scheme!="https" || native.UserInfo.Length!=0 || !MatchesNavigation(native.AbsoluteUri,observation["url"]?.GetValue<string>())) throw new ArgumentException("La observación no corresponde a la página actual.");
         var result=(JsonObject)observation.DeepClone();
         result["url"]=native.AbsoluteUri;
