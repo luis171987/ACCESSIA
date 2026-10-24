@@ -59,6 +59,17 @@ Comparte esta dirección: **https://github.com/luis171987/ACCESSIA**. Para que *
 
 ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
 
+## Versiones, instaladores y archivo visual
+
+Cada entrega conserva sus descargas, código, documentación y recursos visuales en el [archivo cronológico de versiones](docs/versiones/README.md).
+
+| Publicación | Estado | Descargas e imágenes | Todos los archivos |
+|---|---|---|---|
+| [v0.3.0-beta.3 · 2026-10-22](docs/versiones/2026-10-22_v0.3.0-beta.3/README.md) | Beta experimental: Android debug y Windows portable; capturas reales pendientes. | [Instaladores por plataforma y galería de referencia](docs/versiones/2026-10-22_v0.3.0-beta.3/README.md) | [Índice de 69 archivos, assets y procedencia visual](docs/versiones/2026-10-22_v0.3.0-beta.3/archivos.json) |
+
+Al publicarse una versión completa verificada, el seguimiento actualizará los enlaces de descarga y las vistas reales de la interfaz que estén disponibles. Las imágenes anteriores se conservan por fecha y versión con nombres correlativos; los instaladores grandes permanecen en Releases. Las ilustraciones se mantienen identificadas como tales. Las capturas del Honor siguen sujetas a la pausa de pruebas descrita arriba.
+
+
 ## 🖼️ Interfaz de ACCESSIA en Android
 
 Las siguientes **vistas ilustrativas** reproducen los elementos de interfaz definidos en el código Kotlin de la Beta v0.2: inicio, controles flotantes y ayuda por voz. **No son capturas de pantalla tomadas de un teléfono**; la apariencia final puede variar según Android, la resolución y las voces instaladas.

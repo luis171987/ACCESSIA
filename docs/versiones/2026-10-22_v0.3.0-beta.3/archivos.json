@@ -1,0 +1,572 @@
+{
+  "schema_version": 1,
+  "project": "ACCESSIA",
+  "version": "v0.3.0-beta.3",
+  "release_published_at": "2026-10-22T19:22:26Z",
+  "archived_on": "2026-10-24",
+  "status": "prerelease_debug_android_and_windows_portable",
+  "release_url": "https://github.com/luis171987/ACCESSIA/releases/tag/v0.3.0-beta.3",
+  "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+  "source_git_tree_sha": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+  "source_files_complete": true,
+  "source_file_count": 69,
+  "source_archives": {
+    "zip": "https://github.com/luis171987/ACCESSIA/archive/e94791053ef43b61e09e3d07dee7ffc68b69dc2f.zip",
+    "tar_gz": "https://github.com/luis171987/ACCESSIA/archive/e94791053ef43b61e09e3d07dee7ffc68b69dc2f.tar.gz",
+    "tree": "https://github.com/luis171987/ACCESSIA/tree/e94791053ef43b61e09e3d07dee7ffc68b69dc2f"
+  },
+  "release_assets": [
+    {
+      "name": "ACCESSIA-Android-Beta-0.3-DEBUG.apk",
+      "size_bytes": 558200237,
+      "url": "https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Android-Beta-0.3-DEBUG.apk",
+      "digest": "sha256:95a0c164a58159978700ee6146f9ce0eaa77c5de664b496387f03ac6d1063a96",
+      "kind": "android_debug_apk"
+    },
+    {
+      "name": "ACCESSIA-Windows-Beta-portable.zip",
+      "size_bytes": 888482,
+      "url": "https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Windows-Beta-portable.zip",
+      "digest": "sha256:fb94559cffc402108132bbcff0cda103d9090c4091d4838b75233be7b6c61f92",
+      "kind": "windows_portable_zip"
+    }
+  ],
+  "source_files": [
+    {
+      "path": ".github/workflows/build-android.yml",
+      "size_bytes": 867,
+      "git_blob_sha": "dafe44f1d457c9551de8880f68c8e2cb544c2785",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/.github/workflows/build-android.yml"
+    },
+    {
+      "path": ".github/workflows/build-windows.yml",
+      "size_bytes": 751,
+      "git_blob_sha": "6cadb8d184357d53c857b435395c3c54183b6806",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/.github/workflows/build-windows.yml"
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "size_bytes": 524,
+      "git_blob_sha": "5c98fc6e11841f54903cc346967624df7849e15e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/.github/workflows/tests.yml"
+    },
+    {
+      "path": ".gitignore",
+      "size_bytes": 459,
+      "git_blob_sha": "6a07e930540ea0642bf4ba3093cf1cf6240f9865",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/.gitignore"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size_bytes": 933,
+      "git_blob_sha": "3d5c44897bb68e6b32e0e49c075045b66348245e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/CHANGELOG.md"
+    },
+    {
+      "path": "COMO_PUBLICAR_EN_GITHUB.md",
+      "size_bytes": 672,
+      "git_blob_sha": "540ae7370f42abe72db1a31fd76604025fac2649",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/COMO_PUBLICAR_EN_GITHUB.md"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size_bytes": 622,
+      "git_blob_sha": "1643d68c56376abe640dd0928c1c40c37dc71852",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/CONTRIBUTING.md"
+    },
+    {
+      "path": "LICENSE",
+      "size_bytes": 1131,
+      "git_blob_sha": "49142cac29269bebeccba60d5d42bce836f24182",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/LICENSE"
+    },
+    {
+      "path": "PUBLICAR_GITHUB_TERMUX.sh",
+      "size_bytes": 1525,
+      "git_blob_sha": "31443c51acee219b3cd89af317badb3e6ea319f7",
+      "mode": "100755",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/PUBLICAR_GITHUB_TERMUX.sh"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 11726,
+      "git_blob_sha": "3df41768fdbfc76d77a0188a26e39c7c340e65fe",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/README.md"
+    },
+    {
+      "path": "SECURITY.md",
+      "size_bytes": 1247,
+      "git_blob_sha": "90edcb7cf7fbdf08478409392d9045a6e7227d11",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/SECURITY.md"
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "size_bytes": 3358,
+      "git_blob_sha": "c4daa9ffc85e548f5511f8ed66ecb024417c9dfb",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/SHA256SUMS.txt"
+    },
+    {
+      "path": "VALIDACION_LOCAL.txt",
+      "size_bytes": 833,
+      "git_blob_sha": "d6e2fdc642f1ee0e2b994cda53df6fee94396d0e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/VALIDACION_LOCAL.txt"
+    },
+    {
+      "path": "android/README.md",
+      "size_bytes": 1140,
+      "git_blob_sha": "fc84ab436f5d360e9ad6572f17bc301e4ebe15ea",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/README.md"
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "size_bytes": 1068,
+      "git_blob_sha": "67f1a7c4a5812863de53bb2f39f2142599902c58",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/build.gradle.kts"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "size_bytes": 1081,
+      "git_blob_sha": "274a77499616a1ff2aeac0bcaf357dceae68ac1a",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/AndroidManifest.xml"
+    },
+    {
+      "path": "android/app/src/main/assets/accessia_ext/accessia.js",
+      "size_bytes": 10841,
+      "git_blob_sha": "b8e386c7cf324298bf90fb34317d017ae11b1acc",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/assets/accessia_ext/accessia.js"
+    },
+    {
+      "path": "android/app/src/main/assets/accessia_ext/bridge.js",
+      "size_bytes": 828,
+      "git_blob_sha": "2a2aa47901af5a772bc961df38bea64d01b0a63a",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/assets/accessia_ext/bridge.js"
+    },
+    {
+      "path": "android/app/src/main/assets/accessia_ext/manifest.json",
+      "size_bytes": 529,
+      "git_blob_sha": "bc8a4f896373d56253280443e7d01bc00cbb446e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/assets/accessia_ext/manifest.json"
+    },
+    {
+      "path": "android/app/src/main/java/org/accessia/browser/MainActivity.kt",
+      "size_bytes": 53183,
+      "git_blob_sha": "b4dd393395d5c77cca1c4eeb433e568fdafc8954",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/java/org/accessia/browser/MainActivity.kt"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/accessia_icon.webp",
+      "size_bytes": 31430,
+      "git_blob_sha": "20a1ef39dfd4797745788258512214a694a4da10",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/app/src/main/res/drawable-nodpi/accessia_icon.webp"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "size_bytes": 360,
+      "git_blob_sha": "3b78f7e2634dc73a3e3a58816bc4a82cd49c8714",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/build.gradle.kts"
+    },
+    {
+      "path": "android/gradle.properties",
+      "size_bytes": 76,
+      "git_blob_sha": "3c5e11311bd5f328c2ef0eef1cf06eda2eaf7eae",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/gradle.properties"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "size_bytes": 325,
+      "git_blob_sha": "1a09fc6821b02f04e5ca63d4a212ba8739846a15",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/android/settings.gradle.kts"
+    },
+    {
+      "path": "docs/00-INDICE-MAESTRO.md",
+      "size_bytes": 2585,
+      "git_blob_sha": "0dfb5fe56b172f12c843b4c608904dd1357404c1",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/00-INDICE-MAESTRO.md"
+    },
+    {
+      "path": "docs/01-gobierno/01-identidad-y-licencia.md",
+      "size_bytes": 969,
+      "git_blob_sha": "afb1fe1f0ea1943c2101aa99d3ec2e0e0845eec3",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/01-gobierno/01-identidad-y-licencia.md"
+    },
+    {
+      "path": "docs/01-gobierno/02-estructura-correlativa.md",
+      "size_bytes": 1982,
+      "git_blob_sha": "35eadfb7ef579727eb05b74dae35c6a7ae18b40b",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/01-gobierno/02-estructura-correlativa.md"
+    },
+    {
+      "path": "docs/01-gobierno/03-matriz-trazabilidad.md",
+      "size_bytes": 1198,
+      "git_blob_sha": "acef57a14ab8a3ec21c524402ee4ee9927a70df5",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/01-gobierno/03-matriz-trazabilidad.md"
+    },
+    {
+      "path": "docs/02-diagramas/01-mapa-general.md",
+      "size_bytes": 912,
+      "git_blob_sha": "953ea301e1bd24031b72b1d0fbdb6e4fd6e06e08",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/01-mapa-general.md"
+    },
+    {
+      "path": "docs/02-diagramas/02-sesion-educativa.md",
+      "size_bytes": 1113,
+      "git_blob_sha": "f4f35cdab51415b4014141bf11cffe3502d6e4cc",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/02-sesion-educativa.md"
+    },
+    {
+      "path": "docs/02-diagramas/03-navegacion-dom.md",
+      "size_bytes": 930,
+      "git_blob_sha": "47e105e6aaa39c6b77f4d3c22dbf802487f240d2",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/03-navegacion-dom.md"
+    },
+    {
+      "path": "docs/02-diagramas/04-video-y-continuidad.md",
+      "size_bytes": 1029,
+      "git_blob_sha": "d8e44f2b1675eba69bc37504cb162c0641bb1d9b",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/04-video-y-continuidad.md"
+    },
+    {
+      "path": "docs/02-diagramas/05-bloqueos-academicos.md",
+      "size_bytes": 941,
+      "git_blob_sha": "a5a777c3992c3e9d3f1e205c38b319cca78b2e29",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/05-bloqueos-academicos.md"
+    },
+    {
+      "path": "docs/02-diagramas/06-credenciales-y-privacidad.md",
+      "size_bytes": 1129,
+      "git_blob_sha": "5deb8a69255984c9fe0e27f95aed27853c66f84f",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/06-credenciales-y-privacidad.md"
+    },
+    {
+      "path": "docs/02-diagramas/07-plataformas-y-datos.md",
+      "size_bytes": 950,
+      "git_blob_sha": "1564f2162b412a9346ca35e53917ae0a458319af",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/07-plataformas-y-datos.md"
+    },
+    {
+      "path": "docs/02-diagramas/08-ci-cd-y-distribucion.md",
+      "size_bytes": 1170,
+      "git_blob_sha": "56b6b6af4b4e950b872a91b3ee923a1a12f9215f",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/08-ci-cd-y-distribucion.md"
+    },
+    {
+      "path": "docs/02-diagramas/09-recuperacion-de-errores.md",
+      "size_bytes": 1001,
+      "git_blob_sha": "4b8ba88e5c9c008ff833238a64e40c218fab1e86",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/09-recuperacion-de-errores.md"
+    },
+    {
+      "path": "docs/02-diagramas/10-orquestacion-de-agentes.md",
+      "size_bytes": 1034,
+      "git_blob_sha": "9514b2b4c16e23ab3a17b3e51ae85e3c9b9eea66",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/10-orquestacion-de-agentes.md"
+    },
+    {
+      "path": "docs/02-diagramas/11-onboarding-sin-manos.md",
+      "size_bytes": 1132,
+      "git_blob_sha": "1bb1c27b9af88d7c80fbda3f9c2aac1525cae73b",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/11-onboarding-sin-manos.md"
+    },
+    {
+      "path": "docs/02-diagramas/12-roadmap-y-gates.md",
+      "size_bytes": 992,
+      "git_blob_sha": "3843f769430afa797a5c31826c2da1a540b6659d",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/02-diagramas/12-roadmap-y-gates.md"
+    },
+    {
+      "path": "docs/03-seguridad/01-credenciales-por-usuario.md",
+      "size_bytes": 2565,
+      "git_blob_sha": "e09d99820497b20195d66b0ce7082eb2c3eee325",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/03-seguridad/01-credenciales-por-usuario.md"
+    },
+    {
+      "path": "docs/03-seguridad/02-auditoria-y-respuesta.md",
+      "size_bytes": 1603,
+      "git_blob_sha": "281d4c88a790903d828a596210440431f5f11871",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/03-seguridad/02-auditoria-y-respuesta.md"
+    },
+    {
+      "path": "docs/04-operaciones/01-validacion-y-publicacion.md",
+      "size_bytes": 965,
+      "git_blob_sha": "b04cec52b44668d30dc76e391f9060e41106cc8c",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/04-operaciones/01-validacion-y-publicacion.md"
+    },
+    {
+      "path": "docs/ACCESSIA_V02_PRUEBAS.md",
+      "size_bytes": 2528,
+      "git_blob_sha": "421ab991c9c6183c079805f3f28f16b1e972364c",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/ACCESSIA_V02_PRUEBAS.md"
+    },
+    {
+      "path": "docs/ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md",
+      "size_bytes": 8069,
+      "git_blob_sha": "628d49c0528ee829ea2d96cdd7b84bb23eed7b09",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md"
+    },
+    {
+      "path": "docs/ESTADO_ACTUAL.md",
+      "size_bytes": 1382,
+      "git_blob_sha": "742f487743157a5a7e8d12dd1b79d456e1da3419",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/ESTADO_ACTUAL.md"
+    },
+    {
+      "path": "docs/GUIA_COMANDOS_ACCESSIA.md",
+      "size_bytes": 7690,
+      "git_blob_sha": "cca767919e6b8a5365b4dd841547222aa13ff69e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/GUIA_COMANDOS_ACCESSIA.md"
+    },
+    {
+      "path": "docs/assets/accessia-logo-oficial.png",
+      "size_bytes": 974249,
+      "git_blob_sha": "83c13f1c1c6cc7c3165cc4ed63bba43bc97db53e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/assets/accessia-logo-oficial.png"
+    },
+    {
+      "path": "docs/assets/accessia-v02-vista-controles.svg",
+      "size_bytes": 7873,
+      "git_blob_sha": "46c6bdfccc0846d030f7ea5bb37adc22807d37d6",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/assets/accessia-v02-vista-controles.svg"
+    },
+    {
+      "path": "docs/assets/accessia-v02-vista-guia.svg",
+      "size_bytes": 7601,
+      "git_blob_sha": "42bbd4004dec9e2ceeb413ee4dcaa81855d1cabd",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/assets/accessia-v02-vista-guia.svg"
+    },
+    {
+      "path": "docs/assets/accessia-v02-vista-inicio.svg",
+      "size_bytes": 6404,
+      "git_blob_sha": "8a61bc76107a4469b1e360173b600c22cbdb6725",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/assets/accessia-v02-vista-inicio.svg"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-21-accessia-mvp.md",
+      "size_bytes": 3751,
+      "git_blob_sha": "be62cf1ffc562940430316a8e2b22140acf39116",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/superpowers/plans/2026-10-21-accessia-mvp.md"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-21-accessia-design.md",
+      "size_bytes": 4501,
+      "git_blob_sha": "15e2bddedfe8d3c5a32ba8aebc0a7e2e672bbb4c",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/docs/superpowers/specs/2026-10-21-accessia-design.md"
+    },
+    {
+      "path": "shared/accessia.js",
+      "size_bytes": 10841,
+      "git_blob_sha": "b8e386c7cf324298bf90fb34317d017ae11b1acc",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/accessia.js"
+    },
+    {
+      "path": "shared/demo/assessment.html",
+      "size_bytes": 408,
+      "git_blob_sha": "2237b922880617c934b3d1feecb2a95be11c5fd8",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/demo/assessment.html"
+    },
+    {
+      "path": "shared/demo/lesson1.html",
+      "size_bytes": 694,
+      "git_blob_sha": "9f5ec4f0c7cc7e27daf3698311f88a5ef5772f0d",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/demo/lesson1.html"
+    },
+    {
+      "path": "shared/demo/lesson2.html",
+      "size_bytes": 641,
+      "git_blob_sha": "f0f7194cefa5517aa7a19fc4262e9bd9b095c8b7",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/demo/lesson2.html"
+    },
+    {
+      "path": "shared/demo/media/lesson.mp4",
+      "size_bytes": 4644,
+      "git_blob_sha": "897e4c92a103c79ae00fb3d527b3bebe2e3049d2",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/demo/media/lesson.mp4"
+    },
+    {
+      "path": "shared/tests/accessia.test.js",
+      "size_bytes": 6644,
+      "git_blob_sha": "0affd08a0374f58c0089bd5f11582520d0425438",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/tests/accessia.test.js"
+    },
+    {
+      "path": "shared/tests/e2e_playwright.py",
+      "size_bytes": 1832,
+      "git_blob_sha": "2031d87e3a5c1a8bd93097d46e26f7aebb353d7c",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/shared/tests/e2e_playwright.py"
+    },
+    {
+      "path": "tools/check_public_secrets.py",
+      "size_bytes": 2561,
+      "git_blob_sha": "2b8b6cbcc3f3f295537bf70f0295e85c284473c1",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/check_public_secrets.py"
+    },
+    {
+      "path": "tools/tests/test_android_command_guide_contract.py",
+      "size_bytes": 2498,
+      "git_blob_sha": "7f537001d4d63d912e2f4830dcce71e901480195",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/tests/test_android_command_guide_contract.py"
+    },
+    {
+      "path": "tools/tests/test_android_sdk_geckoview_contract.py",
+      "size_bytes": 1030,
+      "git_blob_sha": "6ad0d628748b1d5c2378008a22456a648c1d4f8e",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/tests/test_android_sdk_geckoview_contract.py"
+    },
+    {
+      "path": "tools/tests/test_android_v02_ui_contract.py",
+      "size_bytes": 1327,
+      "git_blob_sha": "2729a5860197ff34fd3b5bd12100cf4e3e4fec29",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/tests/test_android_v02_ui_contract.py"
+    },
+    {
+      "path": "tools/tests/test_android_v03_speech_language_contract.py",
+      "size_bytes": 3343,
+      "git_blob_sha": "3014d7c31ed04182eaac9af177f021e887966800",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/tests/test_android_v03_speech_language_contract.py"
+    },
+    {
+      "path": "tools/tests/test_scanner_and_structure.py",
+      "size_bytes": 2228,
+      "git_blob_sha": "f8c80cfa65858c864f995a5809396761bf7d5d71",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/tools/tests/test_scanner_and_structure.py"
+    },
+    {
+      "path": "windows/Accessia.Windows/Accessia.Windows.csproj",
+      "size_bytes": 1018,
+      "git_blob_sha": "d2a7c81b7018d2d65dbdea667be2666ae0c7be00",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/windows/Accessia.Windows/Accessia.Windows.csproj"
+    },
+    {
+      "path": "windows/Accessia.Windows/Program.cs",
+      "size_bytes": 14755,
+      "git_blob_sha": "187a553394d8cf6f485fa4b87c7a29fb34c48732",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/windows/Accessia.Windows/Program.cs"
+    },
+    {
+      "path": "windows/README.md",
+      "size_bytes": 1084,
+      "git_blob_sha": "85c88bbae9f3c61ab46f77a1c070007bcee5a01f",
+      "mode": "100644",
+      "url": "https://github.com/luis171987/ACCESSIA/blob/e94791053ef43b61e09e3d07dee7ffc68b69dc2f/windows/README.md"
+    }
+  ],
+  "archived_visuals": [
+    {
+      "source_path": "docs/assets/accessia-logo-oficial.png",
+      "path": "imagenes/identidad/00-logo-oficial.png",
+      "kind": "logo",
+      "git_blob_sha": "83c13f1c1c6cc7c3165cc4ed63bba43bc97db53e",
+      "size_bytes": 974249,
+      "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+      "is_runtime_screenshot": false
+    },
+    {
+      "source_path": "android/app/src/main/res/drawable-nodpi/accessia_icon.webp",
+      "path": "imagenes/identidad/01-icono-android.webp",
+      "kind": "launcher_icon",
+      "git_blob_sha": "20a1ef39dfd4797745788258512214a694a4da10",
+      "size_bytes": 31430,
+      "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+      "is_runtime_screenshot": false
+    },
+    {
+      "source_path": "docs/assets/accessia-v02-vista-inicio.svg",
+      "path": "imagenes/ilustraciones/01-inicio.svg",
+      "kind": "illustration",
+      "git_blob_sha": "8a61bc76107a4469b1e360173b600c22cbdb6725",
+      "size_bytes": 6404,
+      "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+      "is_runtime_screenshot": false
+    },
+    {
+      "source_path": "docs/assets/accessia-v02-vista-controles.svg",
+      "path": "imagenes/ilustraciones/02-controles.svg",
+      "kind": "illustration",
+      "git_blob_sha": "46c6bdfccc0846d030f7ea5bb37adc22807d37d6",
+      "size_bytes": 7873,
+      "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+      "is_runtime_screenshot": false
+    },
+    {
+      "source_path": "docs/assets/accessia-v02-vista-guia.svg",
+      "path": "imagenes/ilustraciones/03-guia.svg",
+      "kind": "illustration",
+      "git_blob_sha": "42bbd4004dec9e2ceeb413ee4dcaa81855d1cabd",
+      "size_bytes": 7601,
+      "source_commit": "e94791053ef43b61e09e3d07dee7ffc68b69dc2f",
+      "is_runtime_screenshot": false
+    }
+  ],
+  "runtime_screenshots": {
+    "status": "pending",
+    "count": 0,
+    "notes": "No se encontraron capturas reales verificadas de esta versión. Las ilustraciones SVG de referencia v0.2 y los recursos de identidad no son capturas. Las pruebas y capturas del Honor siguen pausadas."
+  },
+  "integrity_notes": "git_blob_sha identifica el blob Git; no es un checksum SHA-256 del instalador. No se declara verificación de firma de producción ni aceptación física."
+}
