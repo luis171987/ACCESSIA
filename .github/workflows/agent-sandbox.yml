@@ -49,11 +49,12 @@ jobs:
           target: google_apis
           disable-animations: true
           script: |
-            gradle -p android :app:connectedDebugAndroidTest --no-daemon
+            gradle -p android :app:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true --no-daemon
             mkdir -p sandbox-evidence
             "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-01-inicio.png > sandbox-evidence/android-${{ matrix.api }}-01-inicio.png
             "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-02-menu.png > sandbox-evidence/android-${{ matrix.api }}-02-menu.png
             "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 exec-out run-as org.accessia.browser.beta03 cat files/sandbox-03-asistente.png > sandbox-evidence/android-${{ matrix.api }}-03-asistente.png
+            python -c "from pathlib import Path; files=list(Path('sandbox-evidence').glob('*.png')); assert len(files)==3; assert all(p.stat().st_size>100 and p.read_bytes().startswith(bytes([137,80,78,71,13,10,26,10])) for p in files), 'Invalid emulator PNG capture'"
       - name: Save real emulator screenshot if available
         if: always()
         run: |
