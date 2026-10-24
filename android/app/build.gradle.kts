@@ -25,9 +25,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 dependencies {
     // GeckoView Nightly publicado el 13-Oct-2026; versión de prototipo.
     // PIN must be tested and updated to a reviewed stable release before distribution.
     implementation("org.mozilla.geckoview:geckoview-nightly:160.0.20261013094244")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("org.mockito:mockito-core:5.20.0")
 }

@@ -21,7 +21,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.0'
-      - run: cd android && gradle :app:assembleDebug --no-daemon
+      - run: cd android && gradle :app:testDebugUnitTest :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ACCESSIA-Android-unit-test-results
+          path: android/app/build/test-results/testDebugUnitTest/
       - uses: actions/upload-artifact@v4
         with:
           name: ACCESSIA-Android-debug-unverified

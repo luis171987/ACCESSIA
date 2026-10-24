@@ -29,6 +29,7 @@ import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import org.json.JSONArray
 import org.json.JSONObject
@@ -50,8 +51,9 @@ class MainActivity : Activity() {
     private lateinit var address: EditText
     private lateinit var status: TextView
     private lateinit var voiceButton: Button
+    private lateinit var welcomeVoiceButton: Button
     private lateinit var floatingButton: Button
-    private lateinit var floatingPanel: LinearLayout
+    private lateinit var floatingPanel: ScrollView
     private lateinit var welcomePanel: LinearLayout
     private val handler = Handler(Looper.getMainLooper())
     private val prefs by lazy { getSharedPreferences("accessia_v02", MODE_PRIVATE) }
@@ -92,7 +94,11 @@ class MainActivity : Activity() {
         background = surface(Color.rgb(20, 48, 88), 12, Color.rgb(45, 91, 143))
         minHeight = dp(48)
         minimumHeight = dp(48)
-        contentDescription = label
+        contentDescription = when (label) {
+            "⋯" -> "Abrir menú ACCESSIA"
+            "⟳" -> "Recargar página"
+            else -> label
+        }
         setOnClickListener { task() }
     }
 
@@ -101,6 +107,44 @@ class MainActivity : Activity() {
         window.statusBarColor = navy
         window.navigationBarColor = navy
 
+        val webView = buildInterface()
+
+        runtime = GeckoRuntime.create(this)
+        runtime.settings.setLocales(arrayOf(effectiveLanguage("site_language")))
+        session = GeckoSession()
+        session.setContentDelegate(object : GeckoSession.ContentDelegate {})
+        session.setNavigationDelegate(object : GeckoSession.NavigationDelegate {
+            override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
+                this@MainActivity.canGoBack = canGoBack
+            }
+            override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
+                this@MainActivity.canGoForward = canGoForward
+            }
+            override fun onLocationChange(
+                session: GeckoSession,
+                url: String?,
+                perms: List<GeckoSession.PermissionDelegate.ContentPermission>,
+                hasUserGesture: Boolean
+            ) {
+                if (!url.isNullOrBlank()) {
+                    currentUrl = url
+                    welcomePanel.visibility = if (url == "about:blank") View.VISIBLE else View.GONE
+                    if (!address.hasFocus()) address.setText(if (url == "about:blank") "" else url)
+                    if (url.startsWith("https://")) remember("historial", url, 120)
+                }
+            }
+        })
+        session.open(runtime)
+        webView.setSession(session)
+        setupExtension()
+        // Inicio rápido: página local vacía; no fuerza red ni descargas de Wikipedia.
+        session.loadUri("about:blank")
+        setupSpeech()
+        setupTts()
+        handler.post { offerRegionLanguageSuggestion() }
+    }
+
+    private fun buildInterface(): GeckoView {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.WHITE) }
         val main = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(main, FrameLayout.LayoutParams(-1, -1))
@@ -150,17 +194,14 @@ class MainActivity : Activity() {
             setPadding(dp(12), dp(8), dp(12), dp(8))
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    navigate(text.toString()); true
+                    submitAddress(); true
                 } else false
             }
         }
         addressBar.addView(address, LinearLayout.LayoutParams(0, dp(49), 1f))
         addressBar.addView(actionButton("Dictar +") { toggleLongDictation() },
             LinearLayout.LayoutParams(dp(87), dp(48)).apply { leftMargin = dp(5) })
-        addressBar.addView(actionButton("Ir") {
-            if (longDictationEnabled) finishLongDictation()
-            navigate(address.text.toString())
-        }.apply {
+        addressBar.addView(actionButton("Ir") { submitAddress() }.apply {
             setBackgroundColor(navy)
         }, LinearLayout.LayoutParams(dp(57), dp(48)).apply { leftMargin = dp(6) })
         main.addView(addressBar)
@@ -211,7 +252,8 @@ class MainActivity : Activity() {
                 setPadding(0, dp(18), 0, dp(18))
             })
             addView(actionButton("📖 Guía de comandos") { showCommandGuide() })
-            addView(actionButton("🎙 Activar micrófono") { toggleVoice() })
+            welcomeVoiceButton = actionButton("🎙 Activar micrófono") { toggleVoice() }
+            addView(welcomeVoiceButton)
         }
         pageHolder.addView(welcomePanel, FrameLayout.LayoutParams(-1, -1))
         main.addView(pageHolder, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -232,12 +274,11 @@ class MainActivity : Activity() {
         bottom.addView(voiceButton, LinearLayout.LayoutParams(-2, dp(48)))
         main.addView(bottom)
 
-        floatingPanel = LinearLayout(this).apply {
+        val floatingActions = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(8), dp(8), dp(8), dp(8))
             background = surface(navy, 18, cyan)
             elevation = dp(12).toFloat()
-            visibility = View.GONE
         }
         listOf(
             "Control siguiente" to { sendWebCommand("cursor siguiente") },
@@ -248,12 +289,17 @@ class MainActivity : Activity() {
             "Favoritos" to { showLinks("favoritos", "Favoritos") },
             "Salir de ACCESSIA" to { exitApp() }
         ).forEach { (name, task) ->
-            floatingPanel.addView(actionButton(name, task), LinearLayout.LayoutParams(dp(190), dp(48)).apply {
+            floatingActions.addView(actionButton(name, task), LinearLayout.LayoutParams(dp(190), dp(48)).apply {
                 bottomMargin = dp(3)
             })
         }
-        root.addView(floatingPanel, FrameLayout.LayoutParams(-2, -2, Gravity.RIGHT or Gravity.BOTTOM).apply {
-            rightMargin = dp(14); bottomMargin = dp(74)
+        floatingPanel = ScrollView(this).apply {
+            addView(floatingActions)
+            visibility = View.GONE
+            elevation = dp(12).toFloat()
+        }
+        root.addView(floatingPanel, FrameLayout.LayoutParams(dp(206), -2, Gravity.RIGHT or Gravity.BOTTOM).apply {
+            rightMargin = dp(14); bottomMargin = dp(136)
         })
         floatingButton = actionButton("☰") { setFloatingExpanded(floatingPanel.visibility != View.VISIBLE) }.apply {
             contentDescription = "Mostrar controles flotantes"
@@ -263,48 +309,40 @@ class MainActivity : Activity() {
             elevation = dp(10).toFloat()
         }
         root.addView(floatingButton, FrameLayout.LayoutParams(dp(54), dp(54), Gravity.RIGHT or Gravity.BOTTOM).apply {
-            rightMargin = dp(16); bottomMargin = dp(16)
+            rightMargin = dp(16); bottomMargin = dp(70)
         })
         floatingButton.visibility = if (prefs.getBoolean("floating_enabled", true)) View.VISIBLE else View.GONE
+        // Measure the actual voice bar, including font scaling, instead of covering its controls.
+        val positionFloatingControls = {
+            val buttonParams = floatingButton.layoutParams as FrameLayout.LayoutParams
+            val buttonMargin = bottom.height + dp(12)
+            if (buttonParams.bottomMargin != buttonMargin) {
+                buttonParams.bottomMargin = buttonMargin
+                floatingButton.layoutParams = buttonParams
+            }
+            val panelParams = floatingPanel.layoutParams as FrameLayout.LayoutParams
+            val panelMargin = buttonMargin + dp(54 + 12)
+            floatingActions.measure(
+                View.MeasureSpec.makeMeasureSpec(dp(206), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            val panelHeight = min(floatingActions.measuredHeight,
+                (root.height - panelMargin - dp(12)).coerceAtLeast(1))
+            if (panelParams.bottomMargin != panelMargin || panelParams.height != panelHeight) {
+                panelParams.bottomMargin = panelMargin
+                panelParams.height = panelHeight
+                floatingPanel.layoutParams = panelParams
+            }
+        }
+        root.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> positionFloatingControls() }
+        bottom.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> positionFloatingControls() }
         setContentView(root)
 
-        runtime = GeckoRuntime.create(this)
-        runtime.settings.setLocales(arrayOf(effectiveLanguage("site_language")))
-        session = GeckoSession()
-        session.setContentDelegate(object : GeckoSession.ContentDelegate {})
-        session.setNavigationDelegate(object : GeckoSession.NavigationDelegate {
-            override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
-                this@MainActivity.canGoBack = canGoBack
-            }
-            override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
-                this@MainActivity.canGoForward = canGoForward
-            }
-            override fun onLocationChange(
-                session: GeckoSession,
-                url: String?,
-                perms: List<GeckoSession.PermissionDelegate.ContentPermission>,
-                hasUserGesture: Boolean
-            ) {
-                if (!url.isNullOrBlank()) {
-                    currentUrl = url
-                    welcomePanel.visibility = if (url == "about:blank") View.VISIBLE else View.GONE
-                    if (!address.hasFocus()) address.setText(if (url == "about:blank") "" else url)
-                    if (url.startsWith("https://")) remember("historial", url, 120)
-                }
-            }
-        })
-        session.open(runtime)
-        webView.setSession(session)
-        setupExtension()
-        // Inicio rápido: página local vacía; no fuerza red ni descargas de Wikipedia.
-        session.loadUri("about:blank")
-        setupSpeech()
-        setupTts()
-        handler.post { offerRegionLanguageSuggestion() }
+        return webView
     }
 
     private fun setFloatingExpanded(open: Boolean) {
-        if (floatingButton.visibility != View.VISIBLE) return
+        if (open && floatingButton.visibility != View.VISIBLE) return
         floatingPanel.visibility = if (open) View.VISIBLE else View.GONE
         floatingButton.text = if (open) "×" else "☰"
         floatingButton.contentDescription = if (open) "Ocultar controles flotantes" else "Mostrar controles flotantes"
@@ -317,8 +355,8 @@ class MainActivity : Activity() {
                 0 -> {
                     val newValue = floatingButton.visibility != View.VISIBLE
                     prefs.edit().putBoolean("floating_enabled", newValue).apply()
+                    setFloatingExpanded(false)
                     floatingButton.visibility = if (newValue) View.VISIBLE else View.GONE
-                    if (!newValue) floatingPanel.visibility = View.GONE
                 }
                 1 -> showLinks("favoritos", "Favoritos")
                 2 -> showLinks("historial", "Historial")
@@ -389,11 +427,25 @@ class MainActivity : Activity() {
         try { startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)) }
         catch (_: Exception) {
             try {
-                startActivity(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE); type = "*/*"
-                })
+                }, 43)
             } catch (_: Exception) { announce("No se encontró un administrador de archivos.") }
         }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != 43 || resultCode != RESULT_OK) return
+        val uri = data?.data ?: return
+        if (uri.scheme != "content") { announce("Documento no válido."); return }
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, contentResolver.getType(uri) ?: "*/*")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            })
+        } catch (_: Exception) { announce("No se pudo abrir el documento con una aplicación compatible.") }
     }
 
     // Idiomas BCP 47: lista de acceso rápido + entrada libre para otros idiomas.
@@ -437,11 +489,15 @@ class MainActivity : Activity() {
 
     private fun chooseVoiceLanguage() {
         pickLanguage("Idioma del reconocimiento", "voice_language") { tag ->
-            prefs.edit().putString("voice_language", tag).apply()
-            configureResponseVoice()
-            if (voiceEnabled) stopVoice("Idioma cambiado. Activa otra vez el micrófono.")
-            else updateStatus("Reconocimiento: " + tag)
+            applyVoiceLanguage(tag)
         }
+    }
+
+    private fun applyVoiceLanguage(tag: String) {
+        if (voiceEnabled || longDictationEnabled) stopVoice("Idioma cambiado. Activa otra vez el micrófono.")
+        prefs.edit().putString("voice_language", tag).apply()
+        configureResponseVoice()
+        updateStatus("Reconocimiento: " + tag)
     }
 
     private fun chooseSiteLanguage() {
@@ -541,10 +597,9 @@ class MainActivity : Activity() {
                         .setMessage("País aproximado: " + country + ". ¿Preferís usar " +
                             suggested + "? Tu idioma personal puede ser diferente.")
                         .setPositiveButton("Seleccionar idioma") { _, _ ->
-                            prefs.edit().putString("voice_language", suggested)
-                                .putString("site_language", suggested).apply()
+                            applyVoiceLanguage(suggested)
+                            prefs.edit().putString("site_language", suggested).apply()
                             runtime.settings.setLocales(arrayOf(suggested))
-                            if (voiceEnabled) stopVoice("Idioma cambiado.")
                             updateStatus("Idioma seleccionado: " + suggested)
                         }.setNegativeButton("Conservar el actual", null).show()
                 }
@@ -683,8 +738,11 @@ class MainActivity : Activity() {
             it.locale.toLanguageTag() + " · " + it.name + " · " + quality
         }.toTypedArray()
         AlertDialog.Builder(this).setTitle("Elegir y probar voz de respuesta")
-            .setMessage("Escucha las opciones y selecciona la voz femenina que prefieras. " +
-                "Android no informa de forma fiable el género de cada voz.")
+            .setView(TextView(this).apply {
+                text = "Escucha las opciones y selecciona la voz femenina que prefieras. " +
+                    "Android no informa de forma fiable el género de cada voz."
+                setPadding(dp(24), dp(12), dp(24), dp(12))
+            })
             .setItems(names) { _, index ->
                 val chosen = voices[index]
                 if (engine.setVoice(chosen) == TextToSpeech.SUCCESS) {
@@ -712,9 +770,11 @@ class MainActivity : Activity() {
             }.setNegativeButton("Cancelar", null).show()
     }
 
-    private fun showCredits() {
+    private fun showCredits(spoken: Boolean = false) {
+        val credits = "Navegador accesible. Creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. Proyecto gratuito, código MIT. Versión de pruebas: la compatibilidad de voz y las descargas deben validarse en cada dispositivo."
+        if (spoken) { announce(credits); return }
         AlertDialog.Builder(this).setTitle("ACCESSIA")
-            .setMessage("Navegador accesible. Creado por GENAI INDUSTRIES, de Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia. Proyecto gratuito, código MIT. Versión de pruebas: la compatibilidad de voz y las descargas deben validarse en cada dispositivo.")
+            .setMessage(credits)
             .setPositiveButton("Cerrar", null).show()
     }
 
@@ -777,6 +837,12 @@ class MainActivity : Activity() {
         updateStatus("Abriendo ${parsed.host}…")
     }
 
+    private fun submitAddress() {
+        if (longDictationEnabled) finishLongDictation()
+        address.clearFocus()
+        navigate(address.text.toString())
+    }
+
     private fun askAutoStudy() {
         AlertDialog.Builder(this).setTitle("Continuidad educativa")
             .setMessage("Solo en esta página, ACCESSIA podrá pulsar un botón 'Siguiente' al finalizar el vídeo. No responde exámenes ni elude controles. ¿Activar?")
@@ -812,56 +878,63 @@ class MainActivity : Activity() {
             return
         }
         recognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
-            setRecognitionListener(object : RecognitionListener {
-                override fun onReadyForSpeech(params: Bundle?) { voiceActive = true; lastPartialTranscript = ""; updateStatus("🎙 Escuchando · habla normalmente") }
-                override fun onBeginningOfSpeech() { updateStatus("🎙 Capturando tu voz…") }
-                override fun onRmsChanged(rmsdB: Float) {}
-                override fun onBufferReceived(buffer: ByteArray?) {}
-                override fun onEndOfSpeech() { updateStatus("Procesando frase…") }
-                override fun onError(error: Int) {
-                    voiceActive = false
-                    if (!voiceEnabled || destroyed) return
-                    if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
-                        stopVoice("Permiso de micrófono denegado.")
-                        return
-                    }
-                    consecutiveErrors++
-                    if (consecutiveErrors >= 8) {
-                        stopVoice("Motor de voz detenido tras varios errores. Comprueba la red y el idioma.")
-                        return
-                    }
-                    val cause = when (error) {
-                        SpeechRecognizer.ERROR_NO_MATCH -> if (lastPartialTranscript.isNotBlank()) "Texto parcial: " + lastPartialTranscript.take(100) + ". No confirmado" else "No se comprendió la frase"
-                        SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No se detectó voz"
-                        SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Error de red del reconocedor"
-                        SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Micrófono ocupado"
-                        else -> "Error del reconocimiento ($error)"
-                    }
-                    updateStatus("$cause · reintentando")
-                    scheduleListen(min(1000L * consecutiveErrors, 5500L))
-                }
-                override fun onResults(results: Bundle?) {
-                    voiceActive = false
-                    consecutiveErrors = 0
-                    val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        ?.filter { it.isNotBlank() }.orEmpty()
-                    val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
-                        else alternatives.firstOrNull()
-                    if (spoken.isNullOrBlank()) { scheduleListen(); return }
-                    if (longDictationEnabled) appendDictatedSegment(spoken)
-                    else {
-                        updateStatus("Escuché: " + spoken.take(160))
-                        handleSpoken(spoken)
-                    }
-                    if (!speaking) scheduleListen()
-                }
-                override fun onPartialResults(partialResults: Bundle?) {
-                    val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
-                    if (!phrase.isNullOrBlank()) { lastPartialTranscript = phrase; updateStatus("🎙 " + phrase.take(140) + "…") }
-                }
-                override fun onEvent(eventType: Int, params: Bundle?) {}
-            })
+            setRecognitionListener(createSpeechListener())
         }
+    }
+
+    private fun createSpeechListener(): RecognitionListener = object : RecognitionListener {
+        override fun onReadyForSpeech(params: Bundle?) {
+            if (!voiceEnabled || destroyed) return
+            voiceActive = true; lastPartialTranscript = ""; updateStatus("🎙 Escuchando · habla normalmente")
+        }
+        override fun onBeginningOfSpeech() { if (voiceEnabled && !destroyed) updateStatus("🎙 Capturando tu voz…") }
+        override fun onRmsChanged(rmsdB: Float) {}
+        override fun onBufferReceived(buffer: ByteArray?) {}
+        override fun onEndOfSpeech() { if (voiceEnabled && !destroyed) updateStatus("Procesando frase…") }
+        override fun onError(error: Int) {
+            voiceActive = false
+            if (!voiceEnabled || destroyed) return
+            if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+                stopVoice("Permiso de micrófono denegado.")
+                return
+            }
+            consecutiveErrors++
+            if (consecutiveErrors >= 8) {
+                stopVoice("Motor de voz detenido tras varios errores. Comprueba la red y el idioma.")
+                return
+            }
+            val cause = when (error) {
+                SpeechRecognizer.ERROR_NO_MATCH -> if (lastPartialTranscript.isNotBlank()) "Texto parcial: " + lastPartialTranscript.take(100) + ". No confirmado" else "No se comprendió la frase"
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No se detectó voz"
+                SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Error de red del reconocedor"
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Micrófono ocupado"
+                else -> "Error del reconocimiento ($error)"
+            }
+            updateStatus("$cause · reintentando")
+            scheduleListen(min(1000L * consecutiveErrors, 5500L))
+        }
+        override fun onResults(results: Bundle?) {
+            if (!voiceEnabled || destroyed) return
+            voiceActive = false
+            consecutiveErrors = 0
+            val alternatives = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                ?.filter { it.isNotBlank() }.orEmpty()
+            val spoken = if (longDictationEnabled) alternatives.maxByOrNull { it.length }
+                else alternatives.firstOrNull()
+            if (spoken.isNullOrBlank()) { scheduleListen(); return }
+            if (longDictationEnabled) appendDictatedSegment(spoken)
+            else {
+                updateStatus("Escuché: " + spoken.take(160))
+                handleSpoken(spoken)
+            }
+            if (!speaking) scheduleListen()
+        }
+        override fun onPartialResults(partialResults: Bundle?) {
+            if (!voiceEnabled || destroyed) return
+            val phrase = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+            if (!phrase.isNullOrBlank()) { lastPartialTranscript = phrase; updateStatus("🎙 " + phrase.take(140) + "…") }
+        }
+        override fun onEvent(eventType: Int, params: Bundle?) {}
     }
 
     private fun setupTts() {
@@ -884,17 +957,17 @@ class MainActivity : Activity() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 42); return
         }
-        if (recognizer == null) { updateStatus("No hay motor de voz. Revisa servicios de voz de Android."); return }
+        if (recognizer == null) { stopVoice("No hay motor de voz. Revisa servicios de voz de Android."); return }
         voiceEnabled = true
         consecutiveErrors = 0
-        voiceButton.text = "🎙 Desactivar voz"
+        updateVoiceButtons()
         listenOnce()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 42 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) toggleVoice()
-        else if (requestCode == 42) updateStatus("Permiso de micrófono no concedido.")
+        else if (requestCode == 42) stopVoice("Permiso de micrófono no concedido.")
     }
 
     private fun listenOnce() {
@@ -913,7 +986,12 @@ class MainActivity : Activity() {
             }
         }
         try { recognizer?.startListening(intent) }
-        catch (_: Exception) { voiceActive = false; updateStatus("No fue posible iniciar el micrófono."); scheduleListen(2500) }
+        catch (_: Exception) {
+            voiceActive = false
+            consecutiveErrors++
+            if (consecutiveErrors >= 8) stopVoice("Motor de voz detenido tras varios errores. Comprueba la red y el idioma.")
+            else { updateStatus("No fue posible iniciar el micrófono."); scheduleListen(2500) }
+        }
     }
 
     private fun scheduleListen(delay: Long = 1050L) {
@@ -925,26 +1003,42 @@ class MainActivity : Activity() {
         voiceEnabled = false
         voiceActive = false
         speaking = false
+        longDictationEnabled = false
+        lastPartialTranscript = ""
         handler.removeCallbacks(restartListening)
-        voiceButton.text = "🎙 Activar voz"
+        updateVoiceButtons()
         recognizer?.cancel()
         tts?.stop()
-        updateStatus(message)
+        announce(message)
     }
 
-    private fun normalizeVoiceCommand(raw: String): String {
-        val simplified = Normalizer.normalize(
-            raw.lowercase(Locale.ROOT), Normalizer.Form.NFD
-        ).replace(Regex("\\p{M}+"), "")
-            .replace(Regex("[^a-z0-9 ]+"), " ")
-            .replace(Regex("\\s+"), " ")
-            .trim()
-        var result = simplified
-        for (prefix in listOf("accessia ", "por favor ", "oye accessia ", "quiero ", "puedes ", "podrias ", "me puedes ")) {
-            if (result.startsWith(prefix)) result = result.removePrefix(prefix).trim()
-        }
-        return result
+    private fun updateVoiceButtons() {
+        voiceButton.text = if (voiceEnabled) "🎙 Desactivar voz" else "🎙 Activar voz"
+        voiceButton.contentDescription = voiceButton.text
+        welcomeVoiceButton.text = if (voiceEnabled) "🎙 Desactivar micrófono" else "🎙 Activar micrófono"
+        welcomeVoiceButton.contentDescription = welcomeVoiceButton.text
     }
+
+    // Strip only command prefixes; keep the original query/domain intact.
+    private fun stripVoicePrefixes(raw: String): String {
+        val prefix = Regex(
+            "^(?:(?:oye[\\s,]+)?accessia|por\\s+favor|quiero|puedes|podr[ií]as|me\\s+puedes)(?:[\\s,]+|$)",
+            RegexOption.IGNORE_CASE
+        )
+        var result = raw.trim()
+        while (true) {
+            val next = result.replaceFirst(prefix, "").trim()
+            if (next == result) return result
+            result = next
+        }
+    }
+
+    private fun normalizeVoiceCommand(raw: String): String = Normalizer.normalize(
+        stripVoicePrefixes(raw).lowercase(Locale.ROOT), Normalizer.Form.NFD
+    ).replace(Regex("\\p{M}+"), "")
+        .replace(Regex("[^a-z0-9 ]+"), " ")
+        .replace(Regex("\\s+"), " ")
+        .trim()
 
     private fun handleSpoken(raw: String) {
         val command = normalizeVoiceCommand(raw)
@@ -978,12 +1072,17 @@ class MainActivity : Activity() {
             command in setOf("idioma de voz", "cambiar idioma",
                 "idioma del reconocimiento") -> chooseVoiceLanguage()
 
-            command in setOf("acerca de", "creditos") -> showCredits()
+            command in setOf("acerca de", "creditos") -> showCredits(spoken = true)
 
             command in setOf("cerrar pagina", "cerrar pestana") -> {
                 contentPort = null
                 currentUrl = "about:blank"
-                session.loadUri("about:blank")
+                canGoBack = false
+                canGoForward = false
+                session.purgeHistory()
+                session.load(GeckoSession.Loader().uri("about:blank").flags(GeckoSession.LOAD_FLAGS_REPLACE_HISTORY))
+                address.setText("")
+                address.clearFocus()
                 welcomePanel.visibility = View.VISIBLE
                 updateStatus("Página cerrada. La guía está disponible.")
             }
@@ -1036,23 +1135,20 @@ class MainActivity : Activity() {
 
             command.startsWith("buscar ") || command.startsWith("busca ") ||
                 command.startsWith("buscar en google ") || command.startsWith("buscame ") -> {
+                val original = stripVoicePrefixes(raw)
                 val match = Regex(
-                    "^(?:accessia[ ,]+)?(?:(?:quiero|puedes|podrias|por favor)\\s+)?" +
-                        "(?:buscar(?: en google)?|busca|buscame|búscame)\\s+",
+                    "^(?:buscar(?:\\s+en\\s+google)?|busca|b[uú]scame)\\s+",
                     RegexOption.IGNORE_CASE
-                ).find(raw.trim())
-                if (match != null) navigate(raw.trim().substring(match.range.last + 1))
-                else navigate(command.substringAfter(' '))
+                ).find(original)
+                if (match != null) navigate(original.substring(match.range.last + 1))
+                else announce("Dime qué quieres buscar.")
             }
 
             command.startsWith("abrir ") || command.startsWith("abre ") -> {
                 // Conservar puntos, guiones y acentos en dominios como wikipedia.org.
-                val stripped = raw.trim().replace(
-                    Regex("^(?:(?:oye )?accessia[ ,]+)?(?:(?:quiero|puedes|podrias|por favor)\\s+)?" +
-                        "(?:abrir|abre)\\s+", RegexOption.IGNORE_CASE), ""
+                val term = stripVoicePrefixes(raw).replaceFirst(
+                    Regex("^(?:abrir|abre)\\s+", RegexOption.IGNORE_CASE), ""
                 ).trim()
-                val term = if (stripped != raw.trim()) stripped
-                    else command.substringAfter(' ').trim()
                 if (term.isNotEmpty()) navigate(term)
                 else announce("Dime qué página quieres abrir.")
             }
@@ -1092,7 +1188,7 @@ class MainActivity : Activity() {
 
     override fun onStop() {
         super.onStop()
-        if (voiceEnabled) stopVoice("Voz detenida en segundo plano.")
+        if (voiceEnabled || longDictationEnabled) stopVoice("Voz detenida en segundo plano.")
     }
     override fun onDestroy() {
         destroyed = true
