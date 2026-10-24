@@ -2,7 +2,7 @@
 
 ACCESSIA · Creado por GENAI INDUSTRIES · Luis Carlos Moreno Jiménez.
 
-Se revisan los 19 hilos de https://github.com/luis171987/ACCESSIA/pull/2. Este documento separa correcciones verificables por software de pruebas que requieren un dispositivo físico.
+Se revisan los 19 hilos originales y dos observaciones adicionales de https://github.com/luis171987/ACCESSIA/pull/2. Este documento separa correcciones verificables por software de pruebas que requieren un dispositivo físico.
 
 ## Alcance y comprobaciones
 
@@ -35,12 +35,18 @@ Se revisan los 19 hilos de https://github.com/luis171987/ACCESSIA/pull/2. Este d
 | 4343301839 | Enviar con el teclado finaliza el dictado igual que Ir. |
 | 4343301844 | Aceptar idioma sugerido reconfigura también la respuesta TTS. |
 | 4343301848 | Toda detención de voz limpia el modo de dictado acumulativo. |
+| 4365738963 | La ayuda solicitada por voz anuncia comandos sin abrir un diálogo silencioso. |
+| 4365738968 | Un dictado nuevo excluye la URL mostrada y conserva fragmentos escritos deliberadamente. |
 
 ## Revisión independiente
 
 Una revisión de código independiente encontró tres casos adicionales: callbacks del reconocedor anterior después de reactivar voz, descripción TalkBack desactualizada al reiniciar y etiquetas recortadas con fuente al 200 %. Se añadieron cuatro pruebas que fallaron antes de corregirlos: resultados antiguos tras reinicio, liberación del reconocedor detenido, estado accesible al volver a escuchar y ajuste de etiquetas con fuente ampliada.
 
 La detención ahora invalida la generación del reconocedor y destruye su instancia; reactivar crea una nueva frontera de callbacks. Cada actualización de estado sincroniza texto y descripción accesible. Las acciones flotantes crecen con su contenido y el panel limita su altura disponible con desplazamiento.
+
+## Segunda revisión automática
+
+La revisión automática del commit `0221857` añadió dos observaciones. Se reprodujeron con pruebas: la ayuda por voz abría un diálogo silencioso y un dictado nuevo incorporaba la dirección de la página actual. La ayuda por voz ahora lee una guía breve sin diálogo; la guía visual se conserva en los botones. El inicio del dictado limpia únicamente el campo que coincide con la URL mostrada y conserva las consultas editadas. Las pruebas incluyen la búsqueda final resultante, la preservación de fragmentos y la emisión real de la llamada TTS de ayuda.
 
 ## Puerta de fusión: prueba física aún requerida
 
@@ -67,9 +73,11 @@ También se comprobó y corrigió la regresión de prefijos con puntuación, por
 
 ## Resultado local final
 
-- `gradle :app:testDebugUnitTest :app:assembleDebug`: BUILD SUCCESSFUL; 21 pruebas nativas, cero fallos, errores u omisiones. APK debug experimental compilada; no equivale a distribución firmada de producción.
+- `gradle :app:testDebugUnitTest :app:assembleDebug`: BUILD SUCCESSFUL; 24 pruebas nativas, cero fallos, errores u omisiones. APK debug experimental compilada; no equivale a distribución firmada de producción.
 - `node --test shared/tests/*.test.js`: 12 aprobadas.
 - `python3 -m unittest discover -s tools/tests -p 'test_*.py'`: 24 aprobadas.
 - `python3 tools/check_public_secrets.py`: 71 archivos de texto examinados; cero hallazgos en el árbol de trabajo. No es una auditoría completa del historial.
 - Revisión independiente: tres observaciones corregidas y cubiertas con cuatro pruebas adicionales; sin observaciones menores aplazadas de esa revisión.
 - Las advertencias de compilación sobre APIs Android obsoletas y bibliotecas nativas no depuradas siguen siendo advertencias, sin impedir la compilación; no se certifica ausencia de toda deuda técnica.
+
+- Última verificación tras los dos comentarios automáticos adicionales: 24/24 pruebas nativas y APK compilada; se mantienen aprobadas las 12 pruebas JS y 24 Python y el escaneo de secretos.

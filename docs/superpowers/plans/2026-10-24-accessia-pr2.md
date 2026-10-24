@@ -25,7 +25,7 @@
 2. [x] Add meaningful failing native tests for microphone/dictation transitions, submission, voice parsing, accessible controls, downloaded documents and language changes. Configure CI to run them.
 3. [x] Correct reviewed behavior in MainActivity.kt; verify native tests red then green, full existing suites, APK compilation and secret scan.
 4. [x] Independent code review and any required regression fixes; update D09/D11 and the review/physical-check report.
-5. [ ] Commit and push without rewriting history; inspect CI; reply in all 19 threads with evidence and resolve only addressed findings.
+5. [x] Commit and push without rewriting history; inspect CI; reply in all 19 threads with evidence and resolve only addressed findings.
 6. [ ] Assess merge gate, record remaining physical checks honestly, post PR report and send a final report to the connected Gmail account.
 
 ## Progress
@@ -42,3 +42,5 @@
 - Additional parser check: punctuated wake/polite prefixes reproduced a normalization regression; separator handling corrected while preserving domain punctuation.
 
 - Final local gate: native 21/21, JS12/12, Python24/24, secret scan71 files/0 findings, APK BUILD SUCCESSFUL. Reviewer findings fixed; no deferred minor findings.
+
+- Publication milestone: 0221857 pushed; original19 threads individually answered and resolved; GitHub Android and shared checks succeeded. Automatic review added two findings (spoken help and fresh dictation buffer); both reproduced and corrected with three tests, final native24/24 and APK built. Updated publication/review results are recorded in PR #2.

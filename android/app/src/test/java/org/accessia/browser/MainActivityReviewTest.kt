@@ -292,4 +292,40 @@ class MainActivityReviewTest {
                 action.layout.height + action.compoundPaddingTop + action.compoundPaddingBottom <= action.height)
         }
     }
+
+    @Test fun voiceInvokedHelpSpeaksCommandsWithoutOpeningASilentModal() {
+        val tts = mock(TextToSpeech::class.java)
+        field("tts", tts)
+        field("ttsReady", true)
+        field("voiceEnabled", true)
+        invoke("handleSpoken", "ayuda")
+        assertNull(ShadowAlertDialog.getLatestAlertDialog())
+        val spoken = org.mockito.ArgumentCaptor.forClass(String::class.java)
+        verify(tts).speak(spoken.capture(), eq(TextToSpeech.QUEUE_FLUSH), isNull(), eq("accessia-message"))
+        assertTrue(spoken.value.contains("buscar becas"))
+        assertTrue(spoken.value.contains("salir de ACCESSIA"))
+        assertTrue("Help must fit the utterance limit", spoken.value.length <= 280)
+    }
+
+    @Test fun newDictationAfterBrowsingSearchesWithoutTheDisplayedUrl() {
+        shadowOf(activity.application).grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        field("recognizer", mock(SpeechRecognizer::class.java))
+        field("currentUrl", "https://www.wikipedia.org/")
+        address().setText("https://www.wikipedia.org/")
+        invoke("toggleLongDictation")
+        invoke("appendDictatedSegment", "becas universitarias")
+        assertEquals("becas universitarias", address().text.toString())
+        invoke("submitAddress")
+        assertEquals("https://www.google.com/search?q=becas+universitarias", field("currentUrl"))
+    }
+
+    @Test fun newDictationPreservesDeliberatelyEnteredQueryFragments() {
+        shadowOf(activity.application).grantPermissions(android.Manifest.permission.RECORD_AUDIO)
+        field("recognizer", mock(SpeechRecognizer::class.java))
+        field("currentUrl", "https://www.wikipedia.org/")
+        address().setText("becas para")
+        invoke("toggleLongDictation")
+        invoke("appendDictatedSegment", "estudiantes")
+        assertEquals("becas para estudiantes", address().text.toString())
+    }
 }

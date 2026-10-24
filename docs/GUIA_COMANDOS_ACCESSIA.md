@@ -3,14 +3,16 @@
 **Proyecto gratuito de accesibilidad, creado por GENAI INDUSTRIES.**  
 Autor: Luis Carlos Moreno Jiménez, Santa Cruz de la Sierra, Bolivia.
 
-> **Compatibilidad:** instrucciones para la versión beta Android v0.2 en desarrollo. Algunas funciones dependen del motor de voz del dispositivo, de la conectividad y de la página abierta. Esta guía documenta funciones implementadas; no es un asistente conversacional universal ni una garantía de control sobre cualquier sitio.
+> **Compatibilidad:** instrucciones para la versión beta Android en desarrollo. Algunas funciones dependen del motor de voz del dispositivo, de la conectividad y de la página abierta. Esta guía documenta funciones implementadas; no es un asistente conversacional universal ni una garantía de control sobre cualquier sitio.
 
 ## Cómo abrir esta guía desde ACCESSIA
 
 - Pulsa el botón **Ayuda** en la cabecera.
 - En el menú **⋯**, selecciona **Guía de comandos**.
 - Con el micrófono activo, di **«ayuda»**, **«mostrar comandos»**, **«guía de comandos»** o **«qué puedo decir»**.
-- La guía funciona **sin Internet y sin cargar una página web**. Selecciona una categoría para ver ejemplos y vuelve a «Más categorías» cuando quieras.
+- La guía visual funciona **sin Internet y sin cargar una página web**. Selecciona una categoría para ver ejemplos y vuelve a «Más categorías» cuando quieras.
+
+La ayuda solicitada por voz lee una guía breve de comandos sin abrir una ventana que requiera tocar la pantalla; el audio depende del motor TTS disponible. Los botones de Ayuda y del menú conservan la guía visual por categorías. Al iniciar **Dictar +** después de navegar, la dirección de la página mostrada se retira de la consulta nueva; los fragmentos escritos deliberadamente se conservan.
 
 ## Preparar el reconocimiento de voz
 
@@ -26,7 +28,7 @@ Android no identifica de manera uniforme el género de las voces TTS. Si el disp
 
 | Función | Ejemplos de voz | Requisitos / comportamiento |
 |---|---|---|
-| Abrir la guía | «ayuda», «mostrar comandos», «guía de comandos», «qué puedo decir» | Función local; también sin página abierta |
+| Escuchar la guía | «ayuda», «mostrar comandos», «guía de comandos», «qué puedo decir» | Guía hablada sin diálogo; requiere TTS disponible y funciona también sin página abierta |
 | Buscar información | «buscar universidades de Santa Cruz de la Sierra», «buscar en Google inclusión educativa» | Abre resultados de búsqueda; admite frases largas |
 | Abrir un sitio | «abrir wikipedia.org», «abrir ejemplo.com» | Navega o busca el destino pronunciado |
 | Regresar | «atrás», «volver», «página anterior» | Debe existir una página anterior |

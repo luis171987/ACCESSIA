@@ -608,6 +608,12 @@ class MainActivity : Activity() {
         }.start()
     }
 
+    private fun speakCommandGuide() {
+        announce("Puedes decir: buscar becas; abrir wikipedia.org; atrás; adelante; recargar; " +
+            "guardar en favoritos; ver favoritos; ver historial; abrir descargas; " +
+            "cursor siguiente; seleccionar; pausar; continuar; acerca de; desactivar voz; o salir de ACCESSIA.")
+    }
+
     private fun showCommandGuide() {
         val categories = arrayOf(
             "🔎 Buscar y abrir sitios", "🧭 Navegar por páginas",
@@ -853,6 +859,10 @@ class MainActivity : Activity() {
 
     private fun toggleLongDictation() {
         if (longDictationEnabled) { finishLongDictation(); return }
+        // A displayed location is not a query fragment; preserve deliberate edits.
+        if (currentUrl != "about:blank" && address.text.toString().trim() == currentUrl) {
+            address.setText("")
+        }
         longDictationEnabled = true
         lastPartialTranscript = ""
         updateStatus("Dictado largo activo: habla por partes. Pulsa Dictar + al terminar; luego Ir.")
@@ -1065,7 +1075,7 @@ class MainActivity : Activity() {
                 "lista de comandos", "que puedo decir", "que comandos puedo usar",
                 "informacion", "informacion de comandos", "manual",
                 "dime los comandos", "cuales son los comandos", "abrir la guia",
-                "mostrar la guia", "abrir el manual", "lista de funciones") -> showCommandGuide()
+                "mostrar la guia", "abrir el manual", "lista de funciones") -> speakCommandGuide()
 
             command in setOf("salir", "salir de accessia", "cerrar accessia",
                 "cerrar aplicacion", "cerrar navegador", "terminar navegador",
