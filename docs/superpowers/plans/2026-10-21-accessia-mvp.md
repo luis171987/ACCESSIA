@@ -59,6 +59,6 @@
 ### Task 5: Despliegue y certificación
 **Files:** `.github/workflows/`, `docs/`
 **Interfaces:** build de PR + binarios de pre-release solo tras QA.
-- [x] Crear repositorio público autenticado en GitHub (evidencia: registro Termux del autor 21/10/2026).
+- [x] Crear repositorio público autenticado en GitHub (evidencia: historial público de commits de ACCESSIA).
 - [ ] Configurar runners, firmas, SBOM y gestión de incidencias.
 - [ ] Ejecutar pruebas de usuario y auditoría WCAG/Play policies.

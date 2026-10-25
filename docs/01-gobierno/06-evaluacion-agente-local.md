@@ -82,7 +82,7 @@ Si «CLOUD» se refiere a Claude: la documentación de Anthropic sobre herramien
 
 ## Situación del teléfono y trabajo pendiente
 
-El Honor Magic 7 Lite sigue en pausa mientras se trasladan archivos. No acceder a Download/Descargas ni al USB-C; no instalar, desinstalar, descargar modelos ni efectuar pruebas o capturas en ese teléfono hasta que el usuario confirme que terminó el traspaso.
+Las pruebas físicas permanecen pausadas. No instalar, desinstalar, descargar modelos ni efectuar pruebas o capturas en un dispositivo físico hasta contar con autorización expresa de su responsable.
 
 Pendiente: elegir IA local o nube opcional; cerrar el diseño; comprobar licencias y compatibilidad del motor/modelo; implementar y validar en una rama propia. La decisión de fusionar el PR #2 y su validación física continúan siendo asuntos separados. Este documento no modifica código, instaladores, comentarios de revisión ni el estado de esa fusión.
 
