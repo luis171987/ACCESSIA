@@ -35,9 +35,9 @@ Recursos de identidad archivados: [logotipo oficial](imagenes/identidad/00-logo-
 
 | Plataforma | Vistas que deben documentarse | Situación |
 |---|---|---|
-| Android | Inicio, navegación o flujo principal, voz/opciones y accesibilidad, si esas pantallas existen en la versión ejecutada. | Sin capturas verificadas. Pruebas del Honor pausadas durante la transferencia de archivos. |
+| Android | Inicio, navegación o flujo principal, voz/opciones y accesibilidad, si esas pantallas existen en la versión ejecutada. | Sin capturas verificadas. Pruebas físicas pausadas hasta autorización expresa. |
 | Windows | Inicio, navegación o flujo principal y opciones, según la interfaz real. | Sin capturas verificadas de esta entrega. |
 
-No se accede a Download/Descargas ni al USB-C, ni se instala/desinstala o captura el Honor, hasta confirmación de que finalizó la transferencia. No hay una conexión de control autorizada con ese teléfono disponible en esta sesión.
+La instalación, desinstalación y captura en un dispositivo físico requieren autorización expresa. No hay una conexión de control autorizada con un dispositivo físico disponible en esta sesión.
 
 [Volver al archivo de versiones](../README.md) · [Estado actual del proyecto](../../../README.md).

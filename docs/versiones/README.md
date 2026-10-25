@@ -18,6 +18,6 @@ Este índice conserva entregas publicadas, instaladores existentes, archivos de 
 - El README principal destaca la versión completa verificada disponible y permite consultar las anteriores. Si falta un instalador, una validación o una captura real, se registra el pendiente en lugar de inventarlo.
 - El manifiesto `archivos.json` enumera todos los archivos del árbol de la versión cuando la consulta de Git es completa. Un identificador de blob Git no se presenta como SHA-256 de un instalador.
 
-**Pausa vigente:** no se utiliza Download/Descargas ni el USB-C del Honor y no se realizan instalaciones, desinstalaciones ni capturas del dispositivo hasta que su responsable confirme que terminó la transferencia. Las capturas reales de Android y Windows de esta beta permanecen pendientes.
+**Validación física pendiente:** no se realizan instalaciones, desinstalaciones ni capturas en un dispositivo físico sin autorización expresa de su responsable. Las capturas reales de Android y Windows de esta beta permanecen pendientes.
 
 [Volver al README principal](../../README.md).
