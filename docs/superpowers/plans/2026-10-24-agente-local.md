@@ -9,7 +9,7 @@
 
 ## Global Constraints
 
-- No tocar teléfono, Download/Descargas, memoria compartida ni USB-C.
+- Realizar las pruebas en entornos aislados; las pruebas físicas requieren autorización expresa previa.
 - No nube, credenciales, shell ni código generado; no puertos HTTP innecesarios.
 - Mantener Android minSdk28 y controles existentes; informar incompatibilidad del motor si aplica.
 - Modelo opcional descargado con consentimiento, tamaño y SHA256 comprobados en almacenamiento privado.

@@ -1,6 +1,6 @@
 # Agente local por voz — primera integración experimental
 
-El responsable autorizó continuar y tomar decisiones técnicas el 24-10-2026, sin tocar el teléfono ni sus memorias. Se elige IA local como base; no se añade nube ni credenciales. Esta entrega será experimental, no una versión completa ni una promesa de ejecución universal o de ausencia de errores.
+El responsable autorizó continuar y tomar decisiones técnicas el 24-10-2026, con trabajo limitado a entornos de desarrollo y pruebas aislados. Se elige IA local como base; no se añade nube ni credenciales. Esta entrega será experimental, no una versión completa ni una promesa de ejecución universal o de ausencia de errores.
 
 Reutilizar LiteRT-LM (motor de AI Edge Gallery, Apache-2.0) en Android y LLamaSharp/llama.cpp (MIT) en Windows. No reemplazar GeckoView por Chromium ni copiar un navegador AGPL. Qwen3-0.6B cuantizado es el candidato inicial de distribución Apache-2.0; comprobar archivos, SHA256 y tamaño antes de habilitarlos. La aplicación sigue funcionando sin modelo. No descargar modelos al instalar ni al abrir sin consentimiento explícito y espacio suficiente.
 
@@ -20,7 +20,7 @@ El host inicia la solicitud exclusivamente por entrada del usuario. Android usa 
 
 ## Instalación y límites
 
-Incluir los motores como dependencias de cada aplicación y guardar los modelos en datos privados de ACCESSIA. Configuración visible del asistente con explicación de descarga, tamaño y borrado; verificación SHA256, archivo parcial y sustitución atómica. No usar Download/Descargas, almacenamiento compartido o USB. Android conserva minSdk 28: si LiteRT requiere un API superior, usar un adaptador aislado y mostrar la incompatibilidad sin romper funciones existentes. El reconocimiento de voz del sistema puede usar red: no anunciar voz íntegramente offline.
+Incluir los motores como dependencias de cada aplicación y guardar los modelos en datos privados de ACCESSIA. Configuración visible del asistente con explicación de descarga, tamaño y borrado; verificación SHA256, archivo parcial y sustitución atómica. No usar almacenamiento compartido ni dispositivos externos para los modelos. Android conserva minSdk 28: si LiteRT requiere un API superior, usar un adaptador aislado y mostrar la incompatibilidad sin romper funciones existentes. El reconocimiento de voz del sistema puede usar red: no anunciar voz íntegramente offline.
 
 La inferencia se ejecuta dentro de la aplicación; no abrir un servidor HTTP innecesario. Esto satisface ejecución local sin exponer puertos ni exigir Termux, Python, Docker, cuentas externas o un servicio privilegiado. La primera carga del modelo y su descarga pueden ser lentas; no prometer velocidad o memoria del Honor sin mediciones.
 
@@ -28,4 +28,4 @@ Decisión verificada durante implementación: usar llamadas estructuradas a herr
 
 ## Verificación y distribución
 
-Pruebas de instantáneas obsoletas, campos privados, acciones desconocidas, confirmación, cancelación y citas. Pruebas nativas con modelo simulado para el flujo y compilación de ambos clientes. Cuando sea viable, probar inferencia real en este entorno, indicando que no representa un teléfono. Publicar rama/PR independiente del PR #2, sin fusionar ni cambiar las descargas beta actuales. Actualizar README con estado experimental y limitaciones; no fabricar capturas. Validación física y versión completa quedan pendientes hasta que el usuario confirme el fin de la transferencia.
+Pruebas de instantáneas obsoletas, campos privados, acciones desconocidas, confirmación, cancelación y citas. Pruebas nativas con modelo simulado para el flujo y compilación de ambos clientes. Cuando sea viable, probar inferencia real en este entorno, indicando que no representa un teléfono. Publicar rama/PR independiente del PR #2, sin fusionar ni cambiar las descargas beta actuales. Actualizar README con estado experimental y limitaciones; no fabricar capturas. Validación física y versión completa quedan pendientes hasta contar con autorización expresa y completar la validación física.

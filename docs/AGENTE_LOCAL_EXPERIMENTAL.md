@@ -13,7 +13,7 @@ No implementa todavía secuencias autónomas entre sitios ni todas las funciones
 ## Recursos y privacidad
 
 - Android conserva el navegador para Android 9+; la función de IA se habilita de forma conservadora en Android 12+. Windows conserva .NET8/WebView2 y añade bibliotecas CPU de inferencia al paquete.
-- El modelo se guarda en datos privados de la aplicación/cuenta, con archivo parcial, tamaño y SHA256 comprobados. La descarga puede consumir datos móviles; sin espacio suficiente se rechaza. No utiliza Download/Descargas ni USB-C.
+- El modelo se guarda en datos privados de la aplicación/cuenta, con archivo parcial, tamaño y SHA256 comprobados. La descarga puede consumir datos móviles; sin espacio suficiente se rechaza. El modelo no utiliza almacenamiento compartido ni dispositivos externos.
 - El APK debug de desarrollo contiene distintas arquitecturas y es grande (alrededor de 583 MiB en la primera compilación), aparte del modelo. No equivale al tamaño de una distribución optimizada por arquitectura.
 - No hay proveedor de inferencia en la nube ni credenciales incorporadas. El reconocimiento de voz y la síntesis del sistema dependen de su configuración y pueden utilizar red. Navegar y buscar implica comunicación con los sitios consultados.
 - Modelo, memoria, CPU, latencia y batería necesitan evaluación por dispositivo. No se ha medido el Honor Magic 7 Lite y no se afirman pruebas físicas.
@@ -34,6 +34,6 @@ Para reproducir la prueba LiteRT en un entorno de desarrollo aislado con Python 
 
 ## Pendientes de aceptación
 
-Elegir un modelo que supere peticiones y paráfrasis en español con argumentos correctos; completar pruebas virtuales por sistema; medir en hardware autorizado cuando finalice la transferencia; revisar accesibilidad con usuarios, privacidad y distribución firmada/optimizada. Hasta entonces esta función sigue siendo experimental.
+Elegir un modelo que supere peticiones y paráfrasis en español con argumentos correctos; completar pruebas virtuales por sistema; medir en hardware autorizado cuando exista autorización expresa para las pruebas físicas; revisar accesibilidad con usuarios, privacidad y distribución firmada/optimizada. Hasta entonces esta función sigue siendo experimental.
 
-El teléfono del responsable, su memoria interna, Download/Descargas y la unidad USB-C permanecen fuera de toda prueba hasta su confirmación expresa de fin de transferencia.
+Los dispositivos físicos permanecen fuera de toda instalación, desinstalación, prueba y captura hasta contar con autorización expresa de su responsable.

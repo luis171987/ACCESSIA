@@ -20,7 +20,7 @@ Los resultados se refieren al código identificado, no a funciones supuestamente
 
 ## Dispositivo de validación: pausa solicitada
 
-El responsable está transfiriendo archivos de Download/Descargas a una unidad externa USB-C para liberar espacio. **Las pruebas en el Honor quedan pausadas hasta que confirme que finalizó la transferencia y que puede reanudarlas.** Durante esa operación se posponen el acceso a Download/Descargas y a la unidad USB-C y las instalaciones, desinstalaciones o pruebas que dependan de esos archivos.
+**Las pruebas físicas permanecen pausadas hasta que el responsable autorice expresamente su reanudación.** No se realizarán instalaciones, desinstalaciones ni pruebas en un dispositivo físico sin autorización y un procedimiento acordado.
 
 El responsable dispone actualmente del teléfono; no hay una conexión de control remoto autorizada disponible en esta sesión. La instalación y las pruebas necesitan ejecución manual guiada o una conexión autorizada que se establezca posteriormente. No se documentan instalación, desinstalación ni pruebas físicas de la revisión actual en el Honor.
 
@@ -28,7 +28,7 @@ El responsable dispone actualmente del teléfono; no hay una conexión de contro
 
 Los identificadores y criterios de cierre **DT01–DT09** están detallados en [el README](../README.md#deuda-de-trabajo-y-siguientes-entregas):
 
-1. **DT01:** terminar la preparación de almacenamiento y confirmar la reanudación.
+1. **DT01:** acordar y autorizar la reanudación de la validación física pendiente.
 2. **DT02:** probar y registrar la APK actual en el Honor con TalkBack, voz, dictado, teclado, letra grande, orientación, idiomas, navegación y Descargas.
 3. **DT03:** evaluar la fusión del PR #2 y cierre de la incidencia #1 tras aceptación física y comprobaciones actuales aprobadas.
 4. **DT04:** medir precisión, latencia, recursos y uso real sin manos.
@@ -42,6 +42,6 @@ Los identificadores y criterios de cierre **DT01–DT09** están detallados en [
 
 ## Corrección de información histórica
 
-La publicación de documentación y las descargas preliminares ya tienen evidencia en GitHub; no se mantiene como pendiente actual el antiguo paso de publicar la actualización 0.1.1 desde Termux. La guía de compilación del README se actualizó contra los archivos Gradle y CI: AGP 9.4.0, Gradle 9.6.0, Kotlin 2.4.21, JDK 17, SDK 37.2 y Build Tools 36.0.0.
+La publicación de documentación y las descargas preliminares ya tienen evidencia en GitHub. La guía de compilación del README se actualizó contra los archivos Gradle y CI: AGP 9.4.0, Gradle 9.6.0, Kotlin 2.4.21, JDK 17, SDK 37.2 y Build Tools 36.0.0.
 
 Los seis agentes especializados siguen siendo roles de arquitectura; no se declara que existan seis agentes autónomos ni un agente instalado con control del teléfono. Las pruebas automatizadas y la existencia de un APK no certifican accesibilidad universal, funcionamiento real en todos los dispositivos ni distribución firmada de producción.

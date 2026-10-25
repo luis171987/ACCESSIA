@@ -36,7 +36,7 @@ Esta rama integra una primera implementación de IA local reutilizando **Google 
 
 ### Pausa de las pruebas en el Honor Magic 7 Lite
 
-**La validación en el dispositivo del responsable está temporalmente pausada mientras termina una transferencia de archivos desde Download/Descargas a almacenamiento externo USB-C.** Durante esa operación se posponen el uso de esa carpeta, el acceso a la unidad externa y las instalaciones, desinstalaciones o pruebas que dependan de esos archivos. Las pruebas se reanudarán cuando el responsable confirme que terminó la transferencia y que dispone de espacio.
+**La validación física permanece pendiente y pausada hasta contar con autorización expresa para reanudarla.** Las pruebas automatizadas no sustituyen la aceptación física; la instalación y las capturas requieren un procedimiento acordado y un dispositivo autorizado.
 
 La sesión de trabajo no tiene una conexión de control autorizada con ese teléfono. La instalación y las pruebas quedan pendientes de ejecución manual guiada o de una conexión autorizada que se establezca posteriormente. **No se han documentado instalación, desinstalación ni pruebas físicas de esta revisión en el Honor.** Esta pausa corresponde al dispositivo de validación, no al acceso público al repositorio.
 
@@ -135,7 +135,7 @@ Los 22 comentarios corregidos no representan el cierre de toda la hoja de ruta. 
 
 | ID / prioridad | Trabajo pendiente | Criterio para darlo por terminado |
 |---|---|---|
-| DT01 · Bloqueo actual | Terminar la preparación de almacenamiento del Honor y reanudar la validación pausada. | Confirmación del responsable de que finalizó la transferencia; espacio disponible y procedimiento de instalación acordado, preservando los datos de una versión previa. |
+| DT01 · Bloqueo actual | Acordar y autorizar la reanudación de la validación física pendiente. | Autorización expresa del responsable y procedimiento de instalación y pruebas acordado, preservando los datos de una versión previa. |
 | DT02 · Alta | Validar la APK actual en Honor Magic 7 Lite y con accesibilidad real. | Registrar commit/APK, Android y motores STT/TTS; probar TalkBack, ambos micrófonos, letra ampliada y orientación horizontal, dictado, teclado, comandos, ayuda, idiomas, cierre de páginas y Descargas. [Lista detallada](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md). |
 | DT03 · Alta | Resolver la puerta de fusión del PR #2 y cerrar la incidencia #1 cuando corresponda. | DT02 documentado y satisfactorio, revisión y CI del commit que vaya a fusionarse aprobados. Los hilos resueltos y una compilación exitosa no sustituyen esa prueba. |
 | DT04 · Alta | Medir voz, rendimiento y uso sin manos con personas usuarias. | Ensayos reproducibles de precisión y errores de intención, latencia, inicio, RAM/CPU, batería y datos. Las mediciones propuestas están en la [investigación de voz](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md). |
@@ -145,7 +145,7 @@ Los 22 comentarios corregidos no representan el cierre de toda la hoja de ruta. 
 | DT08 · Media | STT/VAD streaming, memoria contextual segura y evaluación de TTS neuronal latinoamericana. | Elegir modelos/proveedor tras pruebas, licencias, privacidad y costes; consentimiento y borrado para memoria opcional; credenciales fuera del APK y del repositorio. |
 | DT09 · Media | Validación Windows y distribución con instalación asistida. | Pruebas físicas de WebView2/voz/accesibilidad y un instalador firmado con actualización comprobada. El ZIP portable publicado sigue siendo experimental. |
 
-La documentación correlativa y las betas ya están publicadas en GitHub. Las antiguas indicaciones de «pendiente de publicar 0.1.1 desde Termux» corresponden a una etapa anterior y no describen el bloqueo actual. La prioridad inmediata es **reanudar y documentar la validación física cuando finalice la transferencia**, seguida de evaluar la fusión; las mejoras de producto posteriores conservan su estado pendiente.
+La documentación correlativa y las betas ya están publicadas en GitHub. La prioridad inmediata es **reanudar y documentar la validación física cuando exista autorización expresa**, seguida de evaluar la fusión; las mejoras de producto posteriores conservan su estado pendiente.
 
 
 ## Pruebas locales
