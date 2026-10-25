@@ -341,4 +341,29 @@ class MainActivityReviewTest {
         invoke("submitAddress")
         assertEquals("https://www.google.com/search?q=becas+universitarias", field("currentUrl"))
     }
+    @Test fun enabledAssistantPreservesPauseAndDisableContinuityCommands() {
+        val agent=invoke("getLocalAgent")!!
+        agent.javaClass.getDeclaredField("enabled").apply { isAccessible=true; setBoolean(agent,true) }
+        val port=mock(org.mozilla.geckoview.WebExtension.Port::class.java)
+        field("contentPort",port)
+        invoke("handleSpoken","pausar video")
+        invoke("handleSpoken","desactivar estudio automatico")
+        val messages=org.mockito.ArgumentCaptor.forClass(org.json.JSONObject::class.java)
+        verify(port,times(2)).postMessage(messages.capture())
+        assertEquals(listOf("pausar","desactivar estudio automatico"),messages.allValues.map { it.optString("command") })
+    }
+
+    @Test fun cancellingStudyConsentPreventsALaterConfirmation() {
+        val port = mock(org.mozilla.geckoview.WebExtension.Port::class.java)
+        field("contentPort", port)
+        invoke("handleSpoken", "activar estudio automatico")
+        assertEquals(true, field("autoConsentPending"))
+        invoke("handleSpoken", "cancelar")
+        assertEquals(false, field("autoConsentPending"))
+        invoke("handleSpoken", "confirmar")
+        val messages = org.mockito.ArgumentCaptor.forClass(org.json.JSONObject::class.java)
+        verify(port, atLeast(0)).postMessage(messages.capture())
+        assertFalse(messages.allValues.any { it.optString("command") == "activar estudio automatico" })
+    }
+
 }

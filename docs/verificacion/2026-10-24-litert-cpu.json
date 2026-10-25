@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-24",
+  "environment": "Linux x86_64 cloud CPU; not an Android device test",
+  "runtime": "LiteRT-LM 0.18.0",
+  "model": "Qwen3-0.6B.litertlm",
+  "bytes": 613722264,
+  "sha256": "c5f39b4191926786c3e6668b62af4d6eb15248dfc7a5348252a9b406f33f2108",
+  "automatic_tool_calling": false,
+  "cases": [
+    {
+      "request": "Encuentra información sobre accesibilidad en Bolivia",
+      "text": "",
+      "calls": [
+        {
+          "name": "search",
+          "arguments": {
+            "value": "accesibilidad en Bolivia"
+          }
+        }
+      ],
+      "seconds": 13.23
+    },
+    {
+      "request": "Quisiera escuchar el contenido de esta página",
+      "text": "",
+      "calls": [
+        {
+          "name": "read",
+          "arguments": {}
+        }
+      ],
+      "seconds": 12.74
+    },
+    {
+      "request": "Abre el enlace de más información",
+      "text": "",
+      "calls": [
+        {
+          "name": "open",
+          "arguments": {
+            "target": "c1"
+          }
+        }
+      ],
+      "seconds": 13.26
+    },
+    {
+      "request": "Muévete un poco hacia abajo",
+      "text": "",
+      "calls": [
+        {
+          "name": "scroll_down",
+          "arguments": {}
+        }
+      ],
+      "seconds": 12.01
+    }
+  ],
+  "limits": "Four synthetic single-turn fixtures; no browser effect, microphone, phone, battery or general accuracy validated."
+}

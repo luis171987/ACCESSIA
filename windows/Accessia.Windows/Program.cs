@@ -17,11 +17,11 @@ internal static class Program
     }
 }
 
-public sealed class MainWindow : Form
+public sealed partial class MainWindow : Form
 {
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill, AccessibleName = "Contenido del navegador" };
-    private readonly TextBox address = new() { Dock = DockStyle.Fill, AccessibleName = "Dirección o búsqueda" };
-    private readonly Label status = new() { Dock = DockStyle.Fill, Text = "ACCESSIA: preparando navegador.", AutoSize = false, AccessibleName = "Estado" };
+    private readonly TextBox address = new() { Dock = DockStyle.Fill, Enabled = false, AccessibleName = "Dirección o búsqueda" };
+    private readonly Label status = new() { Name = "AccessiaStatus", Dock = DockStyle.Fill, Text = "ACCESSIA: preparando navegador.", AutoSize = false, AccessibleName = "Estado" };
     private readonly Button voiceButton = new() { Text = "Activar voz", AutoSize = true, AccessibleName = "Activar o desactivar control por voz" };
     private SpeechRecognitionEngine? recognition;
     private SpeechSynthesizer? speech;
@@ -40,9 +40,10 @@ public sealed class MainWindow : Form
         Font = new System.Drawing.Font("Segoe UI", 12);
         KeyPreview = true;
 
-        var page = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 4, ColumnCount = 1 };
+        var page = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 5, ColumnCount = 1 };
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+        page.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
         page.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
         page.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         var top = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 1, ColumnCount = 2 };
@@ -66,8 +67,11 @@ public sealed class MainWindow : Form
         voiceButton.Click += (_, _) => ToggleVoice();
         controls.Controls.Add(voiceButton);
         page.Controls.Add(controls, 0, 1);
-        page.Controls.Add(status, 0, 2);
-        page.Controls.Add(browser, 0, 3);
+        var assistantControls = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoScroll = true, WrapContents = true };
+        AddAgentControls(assistantControls);
+        page.Controls.Add(assistantControls, 0, 2);
+        page.Controls.Add(status, 0, 3);
+        page.Controls.Add(browser, 0, 4);
         Controls.Add(page);
 
         Shown += async (_, _) => await InitializeBrowser();
@@ -103,6 +107,7 @@ public sealed class MainWindow : Form
                     SetStatus("ACCESSIA abre solo páginas HTTPS en esta versión.");
                 }
                 autoConsentPending = false;
+                CancelAgent();
             };
             browser.CoreWebView2.NewWindowRequested += (_, e) =>
             {
@@ -127,6 +132,7 @@ public sealed class MainWindow : Form
             string script = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "assets", "accessia.js"));
             await browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(script);
             browserReady = true;
+            address.Enabled = true;
             Navigate(address.Text);
             SetupVoice();
         }
@@ -249,6 +255,8 @@ public sealed class MainWindow : Form
     private void HandleSpeech(string spoken)
     {
         string command = spoken.ToLowerInvariant().Trim();
+        if(command is "cancelar" or "detener") { CancelAgent(); autoConsentPending=false; _ = Command("pausar"); SetStatus("Petición cancelada."); return; }
+        if(command=="confirmar" && pendingAgent!=null) {_ = ConfirmAgent();return;}
         if (autoConsentPending)
         {
             autoConsentPending = false;
@@ -268,7 +276,8 @@ public sealed class MainWindow : Form
                 SetStatus("¿Activar continuación al finalizar esta lección? Di confirmar o cancelar.");
                 break;
             default:
-                if (command.StartsWith("buscar ") || command.StartsWith("abrir ")) Navigate(spoken[(spoken.IndexOf(' ') + 1)..]);
+                if(agentEnabled && command is not ("pausar" or "continuar" or "reproducir" or "cursor siguiente" or "cursor anterior" or "seleccionar" or "siguiente lección" or "subir" or "bajar" or "leer página" or "desactivar estudio automático" or "ayuda")) _ = AskAgent(spoken);
+                else if (command.StartsWith("buscar ") || command.StartsWith("abrir ")) Navigate(spoken[(spoken.IndexOf(' ') + 1)..]);
                 else _ = Command(command);
                 break;
         }
@@ -278,6 +287,7 @@ public sealed class MainWindow : Form
     {
         if (disposed || IsDisposed) return;
         status.Text = text;
+        status.AccessibleName = "Estado: " + text;
         status.AccessibleDescription = text;
         if (!voiceOn || speech is null) return;
         // Prevent speech recognizer from interpreting synthesized speech as user commands.
@@ -289,6 +299,7 @@ public sealed class MainWindow : Form
 
     private void Cleanup()
     {
+        CancelAgent();
         disposed = true;
         voiceOn = false;
         recognition?.RecognizeAsyncCancel();

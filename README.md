@@ -26,6 +26,14 @@
 
 **[Informe de las correcciones y lista de pruebas físicas](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md)** · [Estado y deuda de trabajo actualizados](docs/ESTADO_ACTUAL.md) · [Pendientes priorizados](#deuda-de-trabajo-y-siguientes-entregas). · [Guía de comandos de la revisión Android](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/GUIA_COMANDOS_ACCESSIA.md).
 
+### Asistente local por voz y texto — rama experimental
+
+Esta rama integra una primera implementación de IA local reutilizando **Google AI Edge LiteRT-LM** en Android y **LLamaSharp/llama.cpp** en Windows. Propone una acción por petición sobre controles observados: leer, desplazar, enfocar, escribir, pulsar, buscar o abrir un enlace. Las acciones que cambian contenido o navegan requieren confirmación; los comandos existentes siguen disponibles.
+
+**No está incluida en las descargas beta publicadas ni constituye una versión completa.** El modelo es opcional, se descarga con consentimiento y se comprueba por tamaño y SHA256. La ruta inicial de texto libre produjo errores; se sustituyó por llamadas estructuradas a herramientas. Las pruebas de humo reales en CPU Linux aprobaron cuatro peticiones con cada motor (lectura, búsqueda con argumentos, apertura y desplazamiento); ese conjunto pequeño no acredita precisión general ni rendimiento en teléfonos. Los enlaces de respaldo identifican páginas consultadas, pero no garantizan que un resumen de IA sea correcto. La voz del sistema puede usar Internet aunque la inferencia del modelo sea local.
+
+[Funcionamiento, requisitos y límites](docs/AGENTE_LOCAL_EXPERIMENTAL.md) · [Diseño técnico](docs/superpowers/specs/2026-10-24-agente-local-design.md) · [Avisos de terceros](shared/THIRD_PARTY_NOTICES.txt). Las pruebas virtuales y la inferencia en Linux se documentarán por separado de las pruebas físicas, que permanecen pausadas.
+
 ### Pausa de las pruebas en el Honor Magic 7 Lite
 
 **La validación física permanece pendiente y pausada hasta contar con autorización expresa para reanudarla.** Las pruebas automatizadas no sustituyen la aceptación física; la instalación y las capturas requieren un procedimiento acordado y un dispositivo autorizado.

@@ -1,0 +1,166 @@
+[
+  {
+    "name": "read",
+    "description": "Lee en voz alta el contenido de la página actual.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "scroll_up",
+    "description": "Desplaza hacia arriba.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "scroll_down",
+    "description": "Desplaza hacia abajo.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "focus",
+    "description": "Enfoca un control observado.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Id del control observado, como c1."
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "click",
+    "description": "Propone pulsar un control observado; necesita confirmación.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Id del control observado, como c1."
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "fill",
+    "description": "Propone escribir texto solicitado en un campo observado.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Id del campo observado, como c1."
+        },
+        "value": {
+          "type": "string",
+          "description": "Texto exacto solicitado por la persona."
+        }
+      },
+      "required": [
+        "target",
+        "value"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "search",
+    "description": "Busca información en Internet cuando la persona pide encontrar información o un sitio.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Tema real que la persona desea buscar; no copiar ejemplos."
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "open",
+    "description": "Propone abrir un enlace HTTPS que aparece en los controles observados.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Id del enlace observado, como c1."
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "answer",
+    "description": "Resume solamente el contenido observado de la página, con respaldo.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Resumen fiel al texto observado."
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "page"
+            ]
+          }
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "clarify",
+    "description": "Pregunta si la petición es ambigua o no puede realizarse.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Pregunta breve en español."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  }
+]
