@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-08",
+  "source_head": "495e9ee6a4ae9a04122e0a8ff172f506a86661be",
+  "main_before_preparation": "89c6c0deb1ea190ad2dfea0b25258263f1e500c6",
+  "apk_workflow_run": 40153274595,
+  "apk_artifact_id": 12583606666,
+  "artifact_zip_sha256": "56038cab09c01e25cf57ce1283630014c33913a16847a990e7df7e652ef8ede3",
+  "apk_name": "ACCESSIA-Android-0.3.0-dev-495e9ee-DEBUG.apk",
+  "apk_bytes": 610592865,
+  "apk_sha256": "2d0096bd7d2ff5dd8c0467c880af241c23aa234fb9314410230f94a69049ea09",
+  "application_id": "org.accessia.browser.beta03",
+  "version_name": "0.3.0-dev",
+  "signature": "APK v2, Android Debug; cryptographic verification passed",
+  "emulator_evidence_run": 40153274615,
+  "emulator_artifact_id": 12583377059,
+  "emulator_evidence_sha256": "92439f42d20a49a9bd537f8e1d4cf21a7292886f8fa6943b847ae9805a8cbd80",
+  "physical_tests": false,
+  "source_prs_merged": false,
+  "assistant_ui": "Available screenshot shows information dialog only; activation/download acceptance remains pending"
+}
