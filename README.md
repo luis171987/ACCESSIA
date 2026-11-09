@@ -1,100 +1,94 @@
 # ACCESSIA — Navegador Inteligente de Accesibilidad Universal
 
+https://github.com/user-attachments/assets/b8aecb3b-311d-4151-b8ca-f3ce1a8bdcae
+
+*Video de 3 minutos: simulación ilustrativa del prototipo. Las capturas de la guía inferior proceden de la aplicación ejecutada en un emulador Android.*
+
+### [⬇️ Descargar ACCESSIA para Android — APK 0.3.0-dev, revisión 495e9ee](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-preview.20261109/ACCESSIA-Android-0.3.0-dev-495e9ee-DEBUG.apk)
+
+**Android 9 o posterior · APK experimental de 611 MB aprox. · Descarga directa del archivo `.apk`.** No necesitas GitHub, Termux ni herramientas de programación para instalarlo. [Procedencia y comprobación de la descarga](docs/PUBLICACION_VERIFICADA.md).
+
 <p align="center">
   <img src="docs/assets/accessia-logo-oficial.png" alt="Logotipo oficial aprobado de ACCESSIA, creado por GENAI INDUSTRIES" width="600" />
 </p>
 
-<p align="center"><sub><strong>Creado por GENAI INDUSTRIES</strong> · <strong>Creador y propietario único: Luis Carlos Moreno Jiménez</strong> · Santa Cruz de la Sierra, Bolivia</sub></p>
-
 **Creado por GENAI INDUSTRIES. Creador y propietario único: Luis Carlos Moreno Jiménez.** Santa Cruz de la Sierra, Bolivia.
 
-**Proyecto público y gratuito · Código fuente MIT · Android + Windows · Español inicial**
+ACCESSIA busca reducir acciones físicas repetidas al navegar y estudiar: permite abrir sitios, dictar búsquedas, recorrer controles y manejar vídeos compatibles mediante voz. El contenido y las decisiones siguen siendo tuyos.
 
+## Instalar y empezar
 
-## Estado verificado — 24 de octubre de 2026
+1. Pulsa **Descargar ACCESSIA para Android** y espera a que termine la descarga del APK.
+2. Abre el archivo desde **Descargas**. Si Android lo solicita, autoriza a ese gestor a instalar la aplicación y sigue el instalador; después puedes retirar esa autorización.
+3. Abre **ACCESSIA Beta 0.3**. El paquete de esta revisión es `org.accessia.browser.beta03` y utiliza firma de desarrollo. Una instalación anterior con otra firma puede impedir actualizar: conserva tus datos antes de modificarla.
 
-| Área | Evidencia y situación |
+La versión es experimental y las pruebas físicas de aceptación siguen pendientes. El navegador requiere Android 9+; el motor del asistente local experimental requiere Android 12+ y un modelo adicional opcional. El APK contiene varias arquitecturas y todavía no está optimizado para distribución final.
+
+## 1. Buscar, navegar y activar la voz
+
+<img src="docs/assets/revision-495e9ee/android-36-01-inicio.png" alt="Captura real del inicio de ACCESSIA en emulador Android 16: búsqueda, Dictar más, Ir, ayuda y micrófono" width="360" />
+
+*Captura real de emulador Android 16 / API 36, revisión del PR #4 para `495e9ee`, obtenida el 25 de octubre de 2026.*
+
+1. En **Buscar o escribir dirección**, escribe una dirección HTTPS o una consulta y pulsa **Ir**. También puedes enviar desde el teclado.
+2. Usa **Atrás**, **Adelante** y **Recargar** para navegar. La barra de botones se puede desplazar horizontalmente para ver los demás controles.
+3. Para una consulta larga, pulsa **Dictar +**. Revisa los fragmentos acumulados en la barra y envía la consulta cuando esté correcta.
+4. Pulsa **Activar micrófono** en la bienvenida o **Activar voz** en la barra inferior y concede el permiso de micrófono cuando Android lo solicite. Espera el estado **Escuchando** antes de hablar.
+5. Di, por ejemplo, «abrir wikipedia.org», «buscar universidades de Santa Cruz con becas», «atrás» o «recargar». El reconocimiento necesita un motor Android disponible y puede utilizar Internet según su proveedor.
+6. El botón **Ayuda**, **Guía de comandos** o la orden «ayuda» muestran las funciones. El botón flotante **☰** despliega controles accesibles. La escucha funciona con ACCESSIA visible y puede detenerse con «desactivar voz».
+
+## 2. Controles, idiomas y continuidad de estudio
+
+<img src="docs/assets/revision-495e9ee/android-36-02-menu.png" alt="Captura real del menú ACCESSIA desplazado: estudio automático, guía de comandos, voces, dictado, idiomas y asistente local" width="360" />
+
+*El menú de la captura está desplazado. Deslízalo para encontrar también Favoritos, Historial y Descargas.*
+
+1. Abre **⋯**. En **Idioma para escuchar**, selecciona el idioma del reconocimiento. En **Elegir voz de respuesta**, elige y prueba una voz instalada compatible; su disponibilidad depende del dispositivo.
+2. Guarda una página HTTPS con **★ Favorito** o «guardar en favoritos». Abre **Favoritos** para volver a ella. **Historial** permite consultar visitas y pide confirmación antes de borrarlas.
+3. En una página compatible, di **«cursor siguiente»**, **«cursor anterior»** y **«seleccionar»** para mover el foco y activar el control elegido.
+4. Con un vídeo HTML5 compatible, di **«pausar»** para detenerlo y **«continuar»** para reanudarlo.
+5. En **Estudio automático**, confirma el permiso para la página actual. ACCESSIA solo puede avanzar cuando termina un vídeo y existe un único siguiente válido. Una navegación nueva requiere una autorización nueva. Las evaluaciones y los controles ambiguos bloquean el avance.
+6. **Descargas** abre el gestor de Android y permite consultar documentos existentes. La descarga completa de contenidos desde GeckoView continúa pendiente.
+7. **Idioma de páginas web** cambia la preferencia solicitada a los sitios. **Traducir página** abre Google Traductor tras confirmar el envío de la URL; no lo uses con páginas privadas o autenticadas. **Sugerir idioma por IP** es opcional y consulta un servicio externo solo si lo autorizas.
+8. Para terminar, desactiva el micrófono y elige **Salir** o di «cerrar navegador». «Cerrar página» vuelve a la portada.
+
+La locución femenina del vídeo se produce para esta presentación. La voz que responde dentro de la aplicación se selecciona entre las voces instaladas en Android; el vídeo no instala esa voz en el teléfono.
+
+## 3. Vista previa del asistente local experimental
+
+<img src="docs/assets/revision-495e9ee/android-36-03-asistente.png" alt="Captura real del panel informativo del asistente local experimental: Qwen3 de 0,6B, modelo adicional, Android 12 o posterior y CPU local" width="360" />
+
+1. En **⋯ → Asistente local** se abre el panel informativo mostrado arriba. Esta captura verifica la apertura del panel; no demuestra la descarga del modelo ni una inferencia real en el emulador.
+2. El código incluye un motor local opcional, apagado al iniciar, con un modelo de aproximadamente **614 MB**. Su descarga, activación y uso por dispositivo siguen en aceptación; no son necesarios para la navegación básica ni para los comandos de voz del sistema.
+
+La revisión del asistente permanece en el **PR #4, en borrador**. El flujo de descarga y activación debe comprobarse antes de presentarlo como una función terminada: en las capturas disponibles se ve el cuadro informativo. Consulta el [alcance, privacidad y limitaciones de esta revisión](https://github.com/luis171987/ACCESSIA/blob/495e9ee6a4ae9a04122e0a8ff172f506a86661be/docs/AGENTE_LOCAL_EXPERIMENTAL.md). No necesita una suscripción de IA ni una clave de proveedor para su motor local; puede cometer errores y las acciones de navegación propuestas necesitan confirmación.
+
+## Versión y evidencias de esta guía
+
+Estado contrastado el **8 de noviembre de 2026**. La fecha de esta documentación no representa una nueva compilación del APK.
+
+| Elemento | Referencia verificable |
 |---|---|
-| Código Android en revisión | [PR #2](https://github.com/luis171987/ACCESSIA/pull/2), rama `feat/accessia-v02-ui-voice`; última revisión funcional comprobada: [`b7a97fd`](https://github.com/luis171987/ACCESSIA/commit/b7a97fd34a9677041fc411d8decd72b98132d069). El PR permanece abierto. |
-| Comentarios de revisión | **22 de 22 hilos respondidos y resueltos**. La revisión automática de `b7a97fd` terminó sin nuevos hallazgos. |
-| Pruebas de esa revisión | **25 nativas Android, 12 JavaScript y 24 Python aprobadas: 61 en total.** Son resultados del código del PR, no una afirmación de que las funciones nuevas estén fusionadas en `main`. |
-| Integración continua | [Android: pruebas y APK](https://github.com/luis171987/ACCESSIA/actions/runs/40056410475) y [JS/Python y escaneo](https://github.com/luis171987/ACCESSIA/actions/runs/40056410471) aprobados para `b7a97fd`. |
-| Seguridad revisada | Escaneo del árbol de trabajo: **71 archivos de texto, cero hallazgos**. No equivale a auditar todo el historial ni a una revisión de seguridad completa. |
-| Distribución publicada | Prelanzamiento [`v0.3.0-beta.3`](https://github.com/luis171987/ACCESSIA/releases/tag/v0.3.0-beta.3), publicado el 22 de octubre desde `e947910`: APK Android debug y ZIP portable Windows. |
-| APK con las correcciones actuales | [Artefacto experimental de `b7a97fd`](https://github.com/luis171987/ACCESSIA/actions/runs/40056410475/artifacts/12546010778), generado por Actions. Es un ZIP que contiene el APK; puede requerir iniciar sesión y caduca según la retención de artefactos. |
-| Fusión y validación física | **Pendientes.** La [incidencia #1](https://github.com/luis171987/ACCESSIA/issues/1) y el PR exigen probar la APK actual en **Honor Magic 7 Lite** antes de fusionar. La instalación reportada de una APK anterior no valida esta revisión. |
+| APK y código de la guía | `0.3.0-dev`, revisión [`495e9ee`](https://github.com/luis171987/ACCESSIA/commit/495e9ee6a4ae9a04122e0a8ff172f506a86661be), PR #4 en borrador. |
+| Origen del APK | [Compilación Android de Actions, 25 de octubre](https://github.com/luis171987/ACCESSIA/actions/runs/40153274595). Se conserva el APK original, sin recompilar ni cambiar su firma. |
+| Integridad del APK | SHA-256 `2d0096bd7d2ff5dd8c0467c880af241c23aa234fb9314410230f94a69049ea09`; 610.592.865 bytes; firma Android APK v2 verificada, certificado debug. |
+| Capturas reales | [Pruebas virtuales Android / Windows](https://github.com/luis171987/ACCESSIA/actions/runs/40153274615), para el mismo head del PR. Las tres imágenes mostradas corresponden a API 36 x86_64. |
+| Revisión de navegación y voz | [PR #2](https://github.com/luis171987/ACCESSIA/pull/2), revisión `6c9316d`, con compilación Android y pruebas automáticas aprobadas. |
+| Integración del código | Los PR #2 y #4 conservan su estado de revisión. Publicar documentación o un APK experimental no equivale a fusionarlos en `main`. |
+| Aceptación física | Pendiente y pausada. No se efectuaron instalaciones ni pruebas en un teléfono físico para esta entrega. |
 
-**[Informe de las correcciones y lista de pruebas físicas](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md)** · [Estado y deuda de trabajo actualizados](docs/ESTADO_ACTUAL.md) · [Pendientes priorizados](#deuda-de-trabajo-y-siguientes-entregas). · [Guía de comandos de la revisión Android](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/GUIA_COMANDOS_ACCESSIA.md).
+El vídeo es una simulación del prototipo. Las capturas de esta guía son de un emulador ejecutando la aplicación. Ninguna de esas evidencias certifica accesibilidad universal, el rendimiento de todos los dispositivos ni una versión de producción.
 
-### Pausa de las pruebas en el Honor Magic 7 Lite
+## Versiones anteriores y Windows
 
-**La validación física permanece pendiente y pausada hasta contar con autorización expresa para reanudarla.** Las pruebas automatizadas no sustituyen la aceptación física; la instalación y las capturas requieren un procedimiento acordado y un dispositivo autorizado.
+| Canal | Descarga y alcance |
+|---|---|
+| Beta Android anterior, 22 de octubre | [APK de `v0.3.0-beta.3`](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Android-Beta-0.3-DEBUG.apk), fuente `e947910`. Se conserva como versión histórica; no es el APK de la guía actual. |
+| Windows portable experimental publicado | [Descargar ZIP de Windows](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Windows-Beta-portable.zip). Extrae todo el ZIP y abre `Accessia.Windows.exe`; requiere Windows x64, .NET 8 Desktop Runtime y WebView2. No es un instalador asistido ni incorpora automáticamente las revisiones del PR #4. |
 
-La sesión de trabajo no tiene una conexión de control autorizada con ese teléfono. La instalación y las pruebas quedan pendientes de ejecución manual guiada o de una conexión autorizada que se establezca posteriormente. **No se han documentado instalación, desinstalación ni pruebas físicas de esta revisión en el Honor.** Esta pausa corresponde al dispositivo de validación, no al acceso público al repositorio.
+[Todas las versiones](https://github.com/luis171987/ACCESSIA/releases) · [Archivo visual cronológico](docs/versiones/README.md) · [Guía anterior de instalación por plataforma](docs/GUIA_DESCARGA_E_INSTALACION.md).
 
-
-## 📥 Descargar ACCESSIA — instalación fácil
-
-**No necesitas instalar GitHub, Termux ni herramientas de programación.** Abre el enlace de tu sistema operativo y descarga el archivo directamente desde la página oficial.
-
-| Tu dispositivo | Descargar | Qué obtendrás |
-|---|---|---|
-| 📱 **Android 9 o posterior** | **[⬇️ Descargar ACCESSIA Beta 0.3 (.apk)](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Android-Beta-0.3-DEBUG.apk)** | Aplicación experimental de 533 MB aprox.; abre el APK desde Descargas y sigue las instrucciones de Android. |
-| 🖥️ **Windows 10/11 x64** | **[⬇️ Descargar ACCESSIA Windows portable (.zip)](https://github.com/luis171987/ACCESSIA/releases/download/v0.3.0-beta.3/ACCESSIA-Windows-Beta-portable.zip)** | Carpeta portable experimental: extrae **todo** el ZIP y abre `Accessia.Windows.exe`. No es instalador asistido. |
-
-**Diferencia entre canales:** los enlaces directos de la tabla corresponden a la beta publicada `e947910`. Las correcciones de los 22 comentarios están en `b7a97fd` y se obtienen del [artefacto del PR #2](https://github.com/luis171987/ACCESSIA/actions/runs/40056410475/artifacts/12546010778); todavía esperan la prueba física y la fusión. La actualización de este README documenta el estado del proyecto y no publica una nueva versión binaria.
-
-**[📦 Ver todas las versiones y archivos disponibles](https://github.com/luis171987/ACCESSIA/releases)** · **[📖 Tutorial paso a paso para Android y Windows](docs/GUIA_DESCARGA_E_INSTALACION.md)**
-
-**Instalación en 3 pasos:** (1) descarga el APK de Android o ZIP de Windows; (2) en Android abre el APK y sigue el instalador; en Windows extrae el ZIP completo; (3) abre ACCESSIA. Si Android pide autorización para instalar desde el gestor de archivos, concédela solo para esta instalación y revócala después. En Windows podrías necesitar [**.NET 8 Desktop Runtime**](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) y [**Microsoft Edge WebView2 Runtime**](https://developer.microsoft.com/en-us/microsoft-edge/webview2/consumer/).
-
-> **Importante:** son versiones preliminares, sin firma de distribución de producción ni certificación de accesibilidad. La APK Android usa firma debug, que puede impedir actualizar una instalación anterior firmada de otra forma; **no la desinstales sin conservar tus datos**. El ZIP de Windows incluye un ejecutable, pero todavía no existe un instalador firmado `.exe` o `.msi` con asistente. No hay instaladores para iOS, macOS o Linux. Nunca confundas **Source code (zip)** con un instalador.
-
-### 📣 Compartir ACCESSIA con su logotipo
-
-Comparte esta dirección: **https://github.com/luis171987/ACCESSIA**. Para que **WhatsApp o Facebook** muestren el logotipo en la vista previa, el propietario debe subir la imagen oficial desde **GitHub → Settings → Social preview → Edit → Upload an image**; la imagen del README **no se utiliza automáticamente**. **[Abrir el logotipo original](https://raw.githubusercontent.com/luis171987/ACCESSIA/main/docs/assets/accessia-logo-oficial.png)** · [Tutorial para configurar la vista previa](docs/GUIA_DESCARGA_E_INSTALACION.md#cómo-hacer-que-aparezca-el-logotipo-al-compartir-el-repositorio). Algunas plataformas guardan versiones antiguas en caché.
-
-
-> **Estado: prototipo experimental.** Hay una beta publicada y una revisión Android más reciente con pruebas automatizadas y APK compilada. La aceptación física y la fusión siguen pendientes según el estado verificado de arriba; no se certifica accesibilidad universal ni funcionamiento correcto en todos los dispositivos.
-
-ACCESSIA pretende facilitar la educación y navegación a personas con discapacidad motora. La automatización **sustituye acciones físicas**, pero no decisiones académicas. No resuelve exámenes, no salta videos y no elude CAPTCHA, DRM ni reglas de las plataformas.
-
-## Versiones, instaladores y archivo visual
-
-Cada entrega conserva sus descargas, código, documentación y recursos visuales en el [archivo cronológico de versiones](docs/versiones/README.md).
-
-| Publicación | Estado | Descargas e imágenes | Todos los archivos |
-|---|---|---|---|
-| [v0.3.0-beta.3 · 2026-10-22](docs/versiones/2026-10-22_v0.3.0-beta.3/README.md) | Beta experimental: Android debug y Windows portable; capturas reales pendientes. | [Instaladores por plataforma y galería de referencia](docs/versiones/2026-10-22_v0.3.0-beta.3/README.md) | [Índice de 69 archivos, assets y procedencia visual](docs/versiones/2026-10-22_v0.3.0-beta.3/archivos.json) |
-
-Al publicarse una versión completa verificada, el seguimiento actualizará los enlaces de descarga y las vistas reales de la interfaz que estén disponibles. Las imágenes anteriores se conservan por fecha y versión con nombres correlativos; los instaladores grandes permanecen en Releases. Las ilustraciones se mantienen identificadas como tales. Las capturas del Honor siguen sujetas a la pausa de pruebas descrita arriba.
-
-
-## 🖼️ Interfaz de ACCESSIA en Android
-
-Las siguientes **vistas ilustrativas** reproducen los elementos de interfaz definidos en el código Kotlin de la Beta v0.2: inicio, controles flotantes y ayuda por voz. **No son capturas de pantalla tomadas de un teléfono**; la apariencia final puede variar según Android, la resolución y las voces instaladas.
-
-<p align="center">
-  <img src="docs/assets/accessia-v02-vista-inicio.svg" alt="Vista ilustrativa del inicio de ACCESSIA con barra de búsqueda y acceso al micrófono" width="270" />
-  <img src="docs/assets/accessia-v02-vista-controles.svg" alt="Vista ilustrativa del navegador ACCESSIA con panel de controles flotantes desplegado" width="270" />
-  <img src="docs/assets/accessia-v02-vista-guia.svg" alt="Vista ilustrativa de la guía integrada de comandos de voz y accesibilidad" width="270" />
-</p>
-
-<p align="center"><sub>Inicio · Panel flotante · Guía de comandos</sub></p>
-
-**[Ver implementación Android y avances de la Beta v0.2 (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2)** · **[Consultar las imágenes de interfaz](docs/assets/)**
-
-## 🌍 Voz natural, idiomas y traducción — actualización v0.3 en desarrollo
-
-ACCESSIA está evolucionando para ser un navegador accesible **multilingüe** y admitir **dictado prolongado**. Las pruebas de campo evidencian que el reconocimiento por sesiones cortas puede truncar consultas y confundir palabras. La nueva rama de desarrollo incorpora un modo `Dictar +` para **acumular fragmentos en la barra de búsqueda y revisarlos antes de pulsar Ir**. La revisión `b7a97fd` ya compiló y aprobó las pruebas automatizadas en GitHub Actions; las pruebas físicas en el Honor siguen pendientes y están temporalmente pausadas.
-
-**Idioma y localización:** al iniciar, se toma el idioma del dispositivo. El usuario puede seleccionar el idioma del reconocimiento y el idioma preferido que GeckoView solicita a las páginas, de una lista o mediante una etiqueta BCP 47. **Opcionalmente**, se ofrece una sugerencia aproximada por país de la IP pública, previa autorización expresa para consultar `ipapi.co`; no se persiste la IP y siempre puede rechazarse o cambiarse manualmente. **La IP no determina el idioma de una persona.**
-
-**Traducción:** una opción permite elegir destino y, con confirmación, abrir la página mediante Google Traductor, que recibirá la URL. No usarla con páginas privadas o autenticadas; no todas las webs son traducibles. La traducción local e integrada, y la internacionalización **de todos los textos de la interfaz**, permanecen pendientes.
-
-**Voz femenina humana, español latino:** seguimos evaluando proveedores, no se garantiza todavía una voz neuronal incluida. Entre las candidatas documentadas figuran `es-BO-SofiaNeural` y `es-MX-DaliaNeural` (Azure), y voces españolas de Piper para uso local; la elección final deberá comprobar calidad, licencias, privacidad y coste. No se incorporarán claves de proveedores al APK ni a GitHub.
-
-**[Leer investigación, comparación de Vosk/sherpa-onnx/Piper, privacidad y plan de pruebas](https://github.com/luis171987/ACCESSIA/blob/feat/accessia-v02-ui-voice/docs/ACCESSIA_V03_VOZ_IDIOMAS_TRADUCCION.md)** · [Código en revisión (PR #2)](https://github.com/luis171987/ACCESSIA/pull/2).
+Las ilustraciones SVG anteriores y sus versiones se conservan en el archivo histórico. La galería actual usa las capturas reales identificadas arriba. El código fuente utiliza licencia MIT; las dependencias y recursos conservan sus propias licencias.
 
 ## Acceso rápido y orden correlativo
 
@@ -111,19 +105,18 @@ ACCESSIA está evolucionando para ser un navegador accesible **multilingüe** y 
 
 Las carpetas técnicas conservan nombres estándar (`.github`, `android/app/src/main`, `windows/`, `shared/`) para no romper las herramientas de compilación; su orden correlativo se expresa con los identificadores **M01–M06** y con documentos **D01–D12**, no con renombres artificiales incompatibles.
 
-## Características implementadas en el prototipo
 
-- Motor JavaScript compartido `shared/accessia.js`: foco, selección, video HTML5, continuidad explícita limitada al documento y bloqueo ante evaluaciones o navegación ambigua.
-- Android: fuente Kotlin/GeckoView, voz experimental en primer plano y controles accesibles. En el PR #2: dictado por fragmentos, ayuda y créditos hablados, selección de idioma/voz, favoritos e historial, panel flotante adaptable y apertura del documento elegido en el selector de Descargas.
-- Correcciones del PR #2: sincronización de ambos micrófonos y TalkBack, reintentos limitados, descarte de callbacks de reconocedores detenidos, prioridad de hipótesis de transcripción, dominios conservados, envío con teclado, dictado nuevo sin arrastrar la URL y cierre del historial de navegación de la sesión. [Evidencia y alcance](https://github.com/luis171987/ACCESSIA/blob/b7a97fd34a9677041fc411d8decd72b98132d069/docs/REVISION_PR2_2026-10-24.md).
-- Windows: fuente C#/WinForms/WebView2, reconocimiento de voz según motores disponibles, perfil del navegador separado por cuenta de Windows.
-- Demo educativa y pruebas unitarias Node. **Los seis agentes especializados son roles de arquitectura, no seis modelos autónomos implementados.**
+## Características y alcance del prototipo
 
-Comandos: `pausar`, `continuar`, `cursor siguiente`, `cursor anterior`, `seleccionar`, `activar estudio automático`, `desactivar estudio automático`, `cerrar página`, `cerrar navegador`, `acerca de` (créditos).
+- Navegación Kotlin/GeckoView en Android y C#/WinForms/WebView2 en Windows.
+- Foco y selección, controles de vídeo HTML5, continuidad educativa por documento y bloqueo ante evaluaciones o ambigüedad.
+- Voz del sistema en primer plano, dictado por fragmentos, ayuda, idiomas y voces instaladas, favoritos e historial, panel flotante adaptable y acceso al gestor de Descargas en la revisión Android.
+- Asistente local opcional en revisión, con herramientas limitadas y confirmación para acciones. Los seis roles de la arquitectura no equivalen a seis modelos autónomos implementados.
+- El reconocimiento de voz y la traducción pueden usar servicios externos. La traducción local integrada, la localización completa y la distribución de producción continúan pendientes.
 
 ## Deuda de trabajo y siguientes entregas
 
-Los 22 comentarios corregidos no representan el cierre de toda la hoja de ruta. Esta es la deuda revisada al 24 de octubre:
+Se conservan DT01–DT09; las pruebas físicas y la integración de las revisiones siguen pendientes:
 
 | ID / prioridad | Trabajo pendiente | Criterio para darlo por terminado |
 |---|---|---|
@@ -140,6 +133,7 @@ Los 22 comentarios corregidos no representan el cierre de toda la hoja de ruta. 
 La documentación correlativa y las betas ya están publicadas en GitHub. La prioridad inmediata es **reanudar y documentar la validación física cuando exista autorización expresa**, seguida de evaluar la fusión; las mejoras de producto posteriores conservan su estado pendiente.
 
 
+
 ## Pruebas locales
 
 ```bash
@@ -148,7 +142,7 @@ python3 -m unittest discover -s tools/tests -p 'test_*.py'
 python3 tools/check_public_secrets.py
 ```
 
-Las pruebas nativas se incorporaron en la rama del **PR #2**. Con JDK, SDK y Gradle configurados en esa rama:
+Para reproducir el APK documentado, utiliza la revisión `495e9ee` del PR #4; el código de `main` conserva su propia historia. Con JDK, SDK y Gradle configurados en esa rama:
 
 ```bash
 cd android
@@ -163,14 +157,17 @@ Los comandos se ejecutan en un entorno de desarrollo; la persona que solo quiera
 - **Windows**: Windows 10/11, .NET SDK 8, WebView2 Runtime; `dotnet build windows/Accessia.Windows/Accessia.Windows.csproj -c Release`. Consultar `windows/README.md`.
 - **GitHub Actions**: `.github/workflows/` ejecuta pruebas y compilaciones de desarrollo. Un artefacto no equivale a instalador auditado o firmado.
 
+
 ## Cuentas, claves y privacidad
 
 **ACCESSIA no incluye contraseñas, usuarios de demostración compartidos, claves SSH privadas ni tokens de acceso.** Cada persona usa sus propias cuentas de los sitios que visita; ACCESSIA no solicita la contraseña de GitHub del creador. Los perfiles web quedan bajo las protecciones de la cuenta del sistema operativo (no se promete aislamiento total frente a malware o un sistema comprometido).
 
 NUNCA agregues `.env` real, `*.pem`, `*.key`, `id_rsa`, archivos de sesión, cookies, logs de autenticación ni certificados de firma al repositorio. Antes de publicar ejecuta `python3 tools/check_public_secrets.py`, inspecciona las diferencias y revisa GitHub secret scanning. Consulta [la política de credenciales](docs/03-seguridad/01-credenciales-por-usuario.md).
 
+
 ## Créditos y licencia
 
 **ACCESSIA — creado por GENAI INDUSTRIES. Creador y propietario único: Luis Carlos Moreno Jiménez. Santa Cruz de la Sierra, Bolivia.** Código fuente licenciado bajo **MIT**: ver [LICENSE](LICENSE). MIT permite modificar, redistribuir e incluso comercializar derivados; el repositorio oficial se ofrece gratuitamente. La licencia del código no confiere por sí misma derechos de uso sobre la marca **GENAI INDUSTRIES** ni garantiza registro marcario. Las dependencias de terceros conservan sus propias licencias.
 
 **Contacto y reportes de seguridad:** ver [SECURITY.md](SECURITY.md). No envíes contraseñas, capturas de cuentas ni datos personales en incidencias públicas.
+
